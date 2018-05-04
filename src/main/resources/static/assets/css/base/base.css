@@ -1,0 +1,47 @@
+/*edit by cyt*/
+@charset "utf-8";
+/******************浏览器样式统一初始化******************/
+*{margin: 0px;padding: 0px;}
+html, body, div, span, input, object, iframe, h1, h2, h3, h4, h5, h6, a, p, blockquote, pre, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary, time, mark, audio, video {border: 0; outline: 0; vertical-align:baseline; background: transparent; }
+body { line-height: 1.42857143; font:12px/15px "Microsoft YaHei", Helvetica, Arial, sans-serif;background-color:#F9F9F9;margin: 0px; }
+a { text-decoration: none; cursor: pointer; color: #444444; }
+a:hover, a:visited, a:link, a:active { text-decoration: none; cursor: pointer; color: #444444; }
+ol, ul { list-style: none; }
+table { border-collapse: collapse; border-spacing: 0; }
+input, button, select, textarea { border: none;outline: 0;}
+/*select, option { box-sizing: content-box; }*/
+textarea { resize: none; }
+input, select { vertical-align: middle; }
+img { border: none;}
+/*浮动与清除*/
+.cf{ zoom: 1; }
+.cf:after {display: table; content: ""; clear: both; }
+/*伪类--清楚浮动*/
+.row:before, .row:after {display: table; content: " "; }
+.row:after {clear: both; }
+*, *:before, *:after {-webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+.fl {float: left !important; }
+.fr { float: right !important; }
+.tl { text-align: left !important; }
+.tr { text-align: right !important; }
+.tc { text-align: center !important; }
+/*右侧内容布局*/
+.wrapper-content{padding:10px;margin-bottom:25px;box-sizing:border-box;}
+/*栅格化---方法一*/
+.row{/*overflow: hidden;  clear: both; */margin: 0 0 10px 0;}
+.span1,.span1-3,.span1-5,.span2,.span2-5,.span3,.span4,.span5,.span6,.span7,.span8,.span9,.span10,.span11,.span12{  position:relative;  min-height:1px;  padding-right:10px;  padding-left:10px;  float:left;box-sizing: border-box;}
+.span12 {width:100%;/*  width: 99%\0; */ }
+.span11 {width:91.66666667%; /* width: 90.66666667%\0;  */}
+.span10 {  width:83.33333333%;  /*width: 82.33333333%\0; */ }
+.span9 {  width:75%; /* width: 74%\0; */ }
+.span8 {  width:66.66666667%; /* width: 65.66666667%\0; */ }
+.span7 {  width:58.33333333%; /* width: 57.33333333%\0; */ }
+.span6 {  width:50%; /* width: 49%\0; */ }
+.span5 {  width:41.66666667%; /* width: 40%\0; */ }
+.span4 {  width:33.33333333%;/*  width: 32%\0; */ }
+.span3 {  width:25%; /* width: 24%\0;*/  }
+.span2-5 {  width:20.83333333%; /* width: 19.83333333%\0;*/  }
+.span2 {  width:16.66666667%; /* width: 15.6666666%\0;*/  }
+.span1-5 {  width:12.33333333%; /* width: 11.33333333%\0; */ }
+.span1-3{width:11.33333333%; /* width: 10.33333333%\0;*/}
+.span1 {  width:8.33333333%; /* width: 8.33333333%\0; */ }

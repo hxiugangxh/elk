@@ -1,0 +1,98 @@
+/*edit by cyt*/
+@charset "utf-8";
+/******************表格按钮样式****************/
+.bootstrap-table .table a.btn {
+    padding: 2px 4px;
+    display: inline-block;
+    text-decoration: none;
+    background-color: white;
+    font-size: 10px;
+}
+.bootstrap-table .table a.btn i.iconfont{
+    font-size: 12px;
+}
+.bootstrap-table .table a.btn-primary {
+    border: 1px solid #428bca;
+    color: #428bca;
+}
+.bootstrap-table .table a.btn-primary:hover{
+    background:#428bca !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-danger {
+    border: 1px solid #c9302c;
+    color: #c9302c;
+}
+.bootstrap-table .table a.btn-danger:hover{
+    background:#c9302c !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-success {
+    border: 1px solid #5cb85c;
+    color: #5cb85c;
+}
+.bootstrap-table .table a.btn-success:hover{
+    background:#5cb85c !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-warning {
+    border: 1px solid #ed9c28;
+    color: #ed9c28;
+}
+.bootstrap-table .table a.btn-warning:hover {
+    background:#ed9c28 !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-purple {
+    border: 1px solid #a069c3;
+    color: #a069c3;
+}
+.bootstrap-table .table a.btn-purple:hover {
+    background:#a069c3 !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a{
+    background: #fff !important;
+}
+
+/*-----表格列表样式，多用于显示详细信息*/
+.table-list {  width: 100%;border-collapse: collapse;background-color: #fff;  }
+.table-list td {  border: 1px solid #ddd;  padding: 6px; font-size:13px;color:#333; }
+.table-list .field {  background-color:transparent;  text-align: right;  width: 160px;  }
+
+/*-----搜索框，表格数据搜索样式*/
+/*.form-search{  !*padding: 20px 200px 20px 20px; !*background-color: #f5f5f5;*! !* margin-bottom: 35px;*! position: relative;padding-right: 160px;  }*/
+/*.form-search .form-btn {*/
+    /*position: absolute;*/
+    /*right: -10px;*/
+    /*top: 50%;*/
+    /*margin-top: -15px;*/
+/*}*/
+/*表格样式重定义*/
+.no-radius-btn .table a.btn {
+    border-radius: 0;
+}
+.bootstrap-table{
+    font-size: 12px;
+}
+.fixed-table-toolbar .btn-group>.btn-group:last-child>.btn,.btn-group>.btn:first-child:not(:last-child):not(.dropdown-toggle){
+    border-radius: 0;
+}
+
+.fixed-table-pagination .pagination a{
+    padding: 6px 12px;
+    line-height: 1;
+}
+
+/*表格重置*/
+.icheckbox_minimal-theme{
+    background-position: 0px 0;
+    width:14px;
+    height:14px;
+}
+.icheckbox_minimal-theme:hover {
+    background-position: -15px 0;
+}
+.icheckbox_minimal-theme.checked.hover:hover{
+    background-position: -30px 0;
+}

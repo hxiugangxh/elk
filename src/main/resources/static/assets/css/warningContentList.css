@@ -1,0 +1,47 @@
+/*报警列表页样式*/
+.profile-activity:first-child {
+    border-top: 1px dotted transparent;
+}
+.profile-activity {
+    padding: 10px 4px;
+    border-bottom: 1px dotted #d0d8e0;
+    position: relative;
+    border-left: 1px dotted #FFF;
+    border-right: 1px dotted #FFF;
+}
+.profile-activity img {
+    border: 2px solid #c9d6e5;
+    border-radius: 100%;
+    max-width: 40px;
+    margin-right: 10px;
+    margin-left: 0;
+    box-shadow: none;
+}
+.profile-activity a.user {
+    font-weight: bold;
+    color: #9585bf;
+}
+.profile-activity .time {
+    display: block;
+    margin-top: 4px;
+    color: #777;
+}
+.profile-activity .tools {
+    position: absolute;
+    right: 12px;
+    bottom: 8px;
+    display: none;
+}
+.action-buttons a {
+    margin: 0 3px;
+    display: inline-block;
+    opacity: .85;
+    -webkit-transition: all .1s;
+    transition: all .1s;
+}
+.blue {
+    color: #478fca!important;
+}
+.red {
+    color: #dd5a43!important;
+}

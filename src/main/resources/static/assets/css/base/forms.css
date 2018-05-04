@@ -1,0 +1,205 @@
+/*edit by cyt*/
+@charset "utf-8";
+/******************表单样式******************/
+/**必输入框的样式**/
+.has-required .help-block,
+.has-required .control-label,
+.has-required .radio,
+.has-required .checkbox,
+.has-required .radio-inline,
+.has-required .checkbox-inline,
+.has-required.radio label,
+.has-required.checkbox label,
+.has-required.radio-inline label,
+.has-required.checkbox-inline label {  color:#e51c23;  }
+.has-required .form-control {  border-color:#e51c23;  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);  }
+.has-required .form-control:focus {  border-color:#e51c23;  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 6px #ce8483;  }
+.has-required .input-group-addon {  color: #e51c23;  background-color: #f2dede;  border-color: #e51c23;  }
+.has-required .form-control-feedback {  color: #e51c23;  }
+.has-required .bootstrap-select .dropdown-toggle{ border-color: #e51c23;  }
+
+
+/*表单重写*/
+.form-group {position: relative; }
+.form-group-sm .btn{height:25px; padding: 5px 10px; font-size: 12px; line-height: 1; border-radius: 3px; }
+.form-group-sm .bootstrap-select .btn{height: 25px;line-height: 1;}
+.btn-group-sm .btn .i{font-size: 12px; }
+.form-group-sm .input-group-addon{font-size: 10px; }
+.form-horizontal .form-group {margin-bottom: 5px;}
+.form-horizontal .form-group.form-group-sm>div{/*height: 25px;*/    margin-bottom: 5px;}
+.form-group-sm textarea.form-control {height: auto; resize: none; }
+.input-group-addon:not(:first-child):not(:last-child), .input-group-btn:not(:first-child):not(:last-child){border-radius: 0; border-right: 0; border-left: 0; }
+.btn i{margin-right: 4px; }
+.form-control[readonly]{cursor:default; }
+.form-control{width: 100%!important; box-sizing: border-box;}
+.form-horizontal .control-label {padding-top: 7px; margin-bottom: 0; text-align: right; }
+
+/*-----校验错误样式*/
+input.error,input.error:focus,input.error:active,.btn-group.error .btn{  border-color:#E6A6B1 ;  }
+label.error{  position: absolute;  background-color:#F9EDDC;  z-index: 3;  top: -31px;  right: 0px;  padding: 3px 8px;  color:#D66D6D;  font-size: 12px;  border-radius: 3px;  }
+label.error:before{  content: "";  position: absolute;  border-top: 5px solid #F9EDDC;  border-left: 5px solid transparent;  border-right: 5px solid transparent;  bottom: -5px;  right: 10px;  }
+.form_date label.error,.bootstrap-select label.error{  /* left: 0;*/  }
+
+
+/***所选人员表单样式定义***/
+.selectLable{vertical-align: middle;border: none; -webkit-box-shadow:none; box-shadow:none; padding-left: 0px; display: inline-block; }
+.selectLable span{padding: 0px 25px 0px 10px; margin-right: 5px; position: relative; display: inline-block; box-sizing: border-box; line-height:25px; cursor: pointer; background: #eeeeee; font-family: "Microsoft YaHei", Helvetica, Arial, sans-serif; }
+.selectLable span:hover,.selectLable span:focus,.selectLable span:active{background:#cccaca; }
+.selectLable span .close{display: inline-block; width: 10px; height: 10px; background: url(../../img/close.png); position: absolute; opacity: 1; top: 50%; margin-top: -5px; right: 7px; }
+.selectValue{line-height: 30px; margin-bottom: 10px; }
+
+
+/*-----表格列表样式，多用于显示详细信息*/
+.table-list {  width: 100%;border-collapse: collapse;background-color: #fff;  }
+.table-list td {  border: 1px solid #ddd;  padding: 6px; font-size:13px;color:#333; }
+.table-list .field {  background-color:transparent;  text-align: right;  width: 160px;  }
+
+/**************************************实名认证*************************************************/
+.yl-auth{  display: block;  background: url("../../img/yl.png") left center no-repeat;  padding-left: 140px;  }
+
+/**************流程图*****************/
+.flows{  text-align: center;  margin: 40px auto 30px;  }
+.flows .flow{  width: 30%;  text-align: left;  display: inline-block;  position: relative;  }
+.flows .flow.last{width: auto;  }
+.flows .flow:after{  position: absolute;  content: '';  height:3px;  background: #bfbebe;  top: 18px;  right:-7px;  left: 40px;  }
+.flows .flow.last:after{  content: none;  }
+.flows .flow .flow-num{  display: block;  background: #bfbebe;  width: 40px;  height: 40px;  line-height: 40px;  text-align: center;  border-radius: 50%;  font-size: 16px;  color: #fff;  margin-bottom: 5px;  }
+.flows .flow.on{  color: #6693d2  }
+.flows .flow.on:after{  background: #6693d2;  }
+.flows .flow.on .flow-num{  background: #6693d2;  }
+.success-img{
+    position: relative;
+    top: 21px;
+    width: 5%;
+}
+.next-btn{
+    text-align: center;
+    margin-top: 20px;
+}
+.msg-b{
+    position: relative;
+    left:-4px;
+    margin-top:10px;
+    display: inline-block;
+}
+.fieldset{
+    width: 600px;
+    margin: 0 auto;
+}
+.glyphicon-arrow-right{
+    position: relative;
+    right: -12px;
+}
+.width-135{
+    width:135px;
+}
+.vcode-img{  height: 28px;  display: inline-block;  vertical-align: middle;  }
+.vcode{display: inline-block;  height: 28px;  line-height: 28px;  box-sizing: border-box;  border: 1px solid #54b5e7;  color: #54b5e7;  vertical-align: bottom;  padding: 0px 10px;  }
+.auth-ok{  text-align: center;  color: #9ccc65;  font-size: 20px;  margin: 70px auto 20px;  }
+/*表单样式二*/
+/*表单容器*/
+.field-content{
+    margin: 0 auto;
+    width: 600px;
+}
+.form-control-feedback{
+    height: 28px;
+    line-height:28px;
+}
+/*必填项目*/
+.sign-required {
+    color: #e51c23;
+    position: relative;
+    display: inline-block;
+    top: 2px;
+    right: 5px;
+}
+.help-block{
+   margin-bottom:0;
+}
+/*银联入口*/
+.bg-set-block{
+    background-color: #f5f5f5;
+    padding: 1px 0 5px;
+}
+textarea.form-control{
+    height: auto;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding-top:5px;
+}
+
+/*数据*/
+.left-cont3{
+    height: 200px;
+    padding:0;
+}
+.left-cont3 .control-label{
+    display: block;
+    text-align: left;
+    margin-bottom:10px;
+    margin-left:10px;
+}
+.left-cont3 .search-info{
+    padding-bottom:20px !important;
+    /*border-bottom:1px dashed  #ccc;*/
+}
+.icon-xiangyou2,.icon-xialaxuanxiang01{
+    font-size: 14px;
+    cursor: pointer;
+    position: absolute;
+    top: 4px;
+    left: -2px;
+    z-index:99;
+}
+.icon-xialaxuanxiang01{
+    font-size:17px;
+}
+.icon-xiangyou2:hover,.icon-xialaxuanxiang01:hover{
+    color:#ee531f;
+}
+.data-cont{
+    line-height:18px;
+}
+.data-line{
+    position: relative;
+    margin: 10px 0;
+    margin-left: 28px;
+    /*padding-top:15px;*/
+    margin-bottom:30px;
+}
+.no-pd{
+    padding:0 !important;
+}
+.cont-format{
+   margin-top:20px
+}
+.tab-content{
+    padding-top: 10px;
+}
+.json-table tr{
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    border-bottom: 1px solid #ccc;
+}
+.json-table tr td{
+    padding:0 10px;
+    padding:0 10px;
+}
+.json-table .table-fir{
+    width: 150px;
+    font-weight: bold;
+    text-align: left;
+    border-right: 1px dashed #ccc;
+    border-left: 2px solid #336690;
+}
+.json-code-show{
+    /*border:1px solid #e3e3e3;*/
+    min-height: 200px;
+    overflow: auto;
+    padding:10px;
+}
+.btn-search{
+    height: 35px;
+}

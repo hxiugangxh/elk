@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>日志搜索</title>
+  <!--基础样式-->
+  <th:block th:include="common/pub_head :: default"></th:block>
+  <th:block th:include="common/pub_head :: base-css"></th:block>
+  <!--主题色-->
+  <th:block th:include="common/pub_head :: theme-blue"></th:block>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/log.css}"/>
+</head>
+
+<body>
+<div class="wrapper-content">
+  <div class="box">
+
+    <div class="box-header with-border">
+      <div class="box-title dec_1 theme-border-left">日志查询</div>
+    </div>
+    <div class="box-body">
+      <div class="search-form cf mt15">
+
+        <div class="form-group col-xs-12">
+          <div class="input-group col-xs-12" style="margin-top:0px; positon:relative">
+            <input type="text" class="form-control" placeholder="请输入字段名" />
+            <span class="input-group-btn">
+              <button class="btn btn-info btn-search"><i class="iconfont icon-sousuo"></i>查找</button>
+            </span>
+            <span class="ml-20">搜索总数:&nbsp;&nbsp;</span><span class="bold border-bottom">1231</span>
+            <span>hts</span>
+          </div>
+        </div>
+      </div>
+      <div class="widget-box transparent">
+        <div class="widget-header">
+          <div class="widget-title theme-border-bottom">查询结果</div>
+          <div class="widget-toolbar hide">
+            <a class="widget-shrink"><i class="iconfont icon-down"></i></a>
+            <a class="widget-close"><i class="iconfont icon-guanbi2"></i></a>
+          </div>
+        </div>
+        <div class="widget-body">
+          <div class="span2 wrapper-content-left left-cont3">
+            <form class="form-horizontal cf form-box" id="myform">
+              <div class="row no-pd search-info">
+                <label class="control-label no-pd"><b class="mr5 red500">*</b>项目列表</label>
+                <div class="col-xs-12">
+                  <select class="js-example-basic-single span12">
+                    <option value="0">选项一</option>
+                    <option value="1">选项二</option>
+                    <option value="2">选项三</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row no-pd search-info">
+                <label class="control-label no-pd"><b class="mr5 red500">*</b>筛选条件</label>
+                <div class="col-xs-12">
+                  <select class="js-example-basic-single2 span12">
+                    <option value="0">选项一</option>
+                    <option value="1">选项二</option>
+                    <option value="2">选项三</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+
+          </div>
+          <div class="span10 wrapper-content-right right-cont">
+            <div class="cf data-line data-line-odd">
+              <i class="iconfont icon-xiangyou2  text-center" data-status="0"></i>
+              <div class="col-xs-12 data-cont">
+                <div class="cont-elips">
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途/
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                </div>
+                <div class="cont-format hide">
+                  <ul id="myTab1" class="nav nav-tabs">
+                    <li class="active">
+                      <a href="#home1" data-toggle="tab" aria-expanded="false">Table</a>
+                    </li>
+                    <li class=""><a href="#ios1" data-toggle="tab" aria-expanded="true">Json</a>
+                    </li>
+                    <button class="btn btn-info btn-search btn-look"><i
+                        class="iconfont icon-quanping"></i>全屏展示
+                    </button>
+                  </ul>
+                  <div id="myTabContent1" class="tab-content">
+                    <div class="tab-pane fade  active in" id="home1">
+                      <table class="json-table col-xs-10">
+                        <tr>
+                          <td class="table-fir">key</td>
+                          <td class="table-sec">项目一</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Id</td>
+                          <td class="table-sec">1233444</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">OrderNum</td>
+                          <td class="table-sec">723432493</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Cont</td>
+                          <td class="table-sec">内容</td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="tab-pane fade" id="ios1">
+                      <div class="json-code-show col-xs-12">
+                        <div id="json-collapsed1"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cf data-line  data-line-even">
+              <i class="iconfont icon-xiangyou2  text-center" data-status="0"></i>
+              <div class="col-xs-12 data-cont">
+                <div class="cont-elips">
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途/
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                </div>
+                <div class="cont-format hide">
+                  <ul id="myTab2" class="nav nav-tabs">
+                    <li class="active">
+                      <a href="#home2" data-toggle="tab" aria-expanded="false">Table</a>
+                    </li>
+                    <li class=""><a href="#ios2" data-toggle="tab" aria-expanded="true">Json</a>
+                    </li>
+                    <button class="btn btn-info btn-search btn-look"><i
+                        class="iconfont icon-quanping"></i>全屏展示
+                    </button>
+                  </ul>
+                  <div id="myTabContent2" class="tab-content">
+                    <div class="tab-pane fade  active in" id="home2">
+                      <table class="json-table col-xs-10">
+                        <tr>
+                          <td class="table-fir">key</td>
+                          <td class="table-sec">项目一</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Id</td>
+                          <td class="table-sec">1233444</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">OrderNum</td>
+                          <td class="table-sec">723432493</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Cont</td>
+                          <td class="table-sec">内容</td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="tab-pane fade" id="ios2">
+                      <div class="json-code-show col-xs-12">
+                        <div id="json-collapsed2"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cf data-line data-line-odd">
+              <i class="iconfont icon-xiangyou2  text-center" data-status="0"></i>
+              <div class="col-xs-12 data-cont">
+                <div class="cont-elips">
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途/
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                </div>
+                <div class="cont-format hide">
+                  <ul id="myTab3" class="nav nav-tabs">
+                    <li class="active">
+                      <a href="#home3" data-toggle="tab" aria-expanded="false">Table</a>
+                    </li>
+                    <li class=""><a href="#ios3" data-toggle="tab" aria-expanded="true">Json</a>
+                    </li>
+                    <button class="btn btn-info btn-search btn-look"><i
+                        class="iconfont icon-quanping"></i>全屏展示
+                    </button>
+                  </ul>
+                  <div id="myTabContent3" class="tab-content">
+                    <div class="tab-pane fade  active in" id="home3">
+                      <table class="json-table col-xs-10">
+                        <tr>
+                          <td class="table-fir">key</td>
+                          <td class="table-sec">项目一</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Id</td>
+                          <td class="table-sec">1233444</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">OrderNum</td>
+                          <td class="table-sec">723432493</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Cont</td>
+                          <td class="table-sec">内容</td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="tab-pane fade" id="ios3">
+                      <div class="json-code-show col-xs-12">
+                        <div id="json-collapsed3"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cf data-line  data-line-even">
+              <i class="iconfont icon-xiangyou2  text-center" data-status="0"></i>
+              <div class="col-xs-12 data-cont">
+                <div class="cont-elips">
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途/
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                  称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途
+                </div>
+                <div class="cont-format hide">
+                  <ul id="myTab" class="nav nav-tabs">
+                    <li class="active">
+                      <a href="#home" data-toggle="tab" aria-expanded="false">Table</a>
+                    </li>
+                    <li class=""><a href="#ios" data-toggle="tab" aria-expanded="true">Json</a></li>
+                    <button class="btn btn-info btn-search btn-look"><i
+                        class="iconfont icon-quanping"></i>全屏展示
+                    </button>
+                  </ul>
+                  <div id="myTabContent" class="tab-content">
+                    <div class="tab-pane fade  active in" id="home">
+                      <table class="json-table col-xs-10">
+                        <tr>
+                          <td class="table-fir">key</td>
+                          <td class="table-sec">项目一</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Id</td>
+                          <td class="table-sec">1233444</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">OrderNum</td>
+                          <td class="table-sec">723432493</td>
+                        </tr>
+                        <tr>
+                          <td class="table-fir">Cont</td>
+                          <td class="table-sec">内容</td>
+                        </tr>
+                      </table>
+                    </div>
+                    <div class="tab-pane fade" id="ios">
+                      <div class="json-code-show col-xs-12">
+                        <div id="json-collapsed4"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="pagination-ele" class="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+<div class="dialog-cont" id="dialog-cont" style="display: none">
+  <p class="data-show"><span class=" pd-10">项目名称：</span><span class="mr-40 bold">项目一</span><span
+      class="pd-10">文档Id:</span><span class="bold">575757676</span></p>
+  <div class="cont-bg">
+    <ul id="myTab-d" class="nav nav-tabs">
+      <li class="active">
+        <a href="#home-d" data-toggle="tab" aria-expanded="false">Table</a>
+      </li>
+      <li class=""><a href="#ios-d" data-toggle="tab" aria-expanded="true">Json</a></li>
+    </ul>
+    <div id="myTabContent-d" class="tab-content cf">
+      <div class="tab-pane fade  active in" id="home-d">
+        <table class="json-table col-xs-10">
+          <tr>
+            <td class="table-fir">key</td>
+            <td class="table-sec">项目一</td>
+          </tr>
+          <tr>
+            <td class="table-fir">Id</td>
+            <td class="table-sec">1233444</td>
+          </tr>
+          <tr>
+            <td class="table-fir">OrderNum</td>
+            <td class="table-sec">723432493</td>
+          </tr>
+          <tr>
+            <td class="table-fir">Cont</td>
+            <td class="table-sec">内容</td>
+          </tr>
+          <tr>
+            <td class="table-fir">key</td>
+            <td class="table-sec">项目一</td>
+          </tr>
+          <tr>
+            <td class="table-fir">Id</td>
+            <td class="table-sec">1233444</td>
+          </tr>
+          <tr>
+            <td class="table-fir">OrderNum</td>
+            <td class="table-sec">723432493</td>
+          </tr>
+          <tr>
+            <td class="table-fir">Cont</td>
+            <td class="table-sec">内容</td>
+          </tr>
+          <tr>
+            <td class="table-fir">key</td>
+            <td class="table-sec">项目一</td>
+          </tr>
+          <tr>
+            <td class="table-fir">Id</td>
+            <td class="table-sec">1233444</td>
+          </tr>
+          <tr>
+            <td class="table-fir">OrderNum</td>
+            <td class="table-sec">723432493</td>
+          </tr>
+          <tr>
+            <td class="table-fir">Cont</td>
+            <td class="table-sec">内容</td>
+          </tr>
+          <tr>
+            <td class="table-fir">key</td>
+            <td class="table-sec">项目一</td>
+          </tr>
+
+        </table>
+      </div>
+      <div class="tab-pane fade" id="ios-d">
+        <div class="json-code-show show-600 col-xs-12">
+          <div id="json-collapsed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  $(".js-example-basic-single").size() > 0 && $(".js-example-basic-single").select2({
+    theme: "classic"
+  });
+  $(".js-example-basic-single2").size() > 0 && $(".js-example-basic-single2").select2({
+    theme: "classic"
+  });
+
+  $(".icon-xiangyou2").on("click", function () {
+    var status = $(this).data("status");
+    if (status == 0) {
+      $(this).siblings(".data-cont").find(".cont-format").removeClass("hide");
+      $(this).data("status", "1");
+      $(this).removeClass("icon-xiangyou2").addClass("icon-xialaxuanxiang01");
+    } else {
+      $(this).siblings(".data-cont").find(".cont-format").addClass("hide");
+      $(this).data("status", "0");
+      $(this).removeClass("icon-xialaxuanxiang01").addClass("icon-xiangyou2");
+    }
+  });
+
+  //    分页
+  var options = {
+    containerClass: "pagination",
+    currentPage: 1,
+    numberOfPages: 5,
+    totalPages: 13,
+    prev: "上一页",
+    next: "下一页",
+    itemTexts: function (type, page, current) {
+      switch (type) {
+        case "first":
+          return "首页";
+        case "prev":
+          return "上一页";
+        case "next":
+          return "下一页";
+        case "last":
+          return "尾页";
+        case "page":
+          return page;
+      }
+    },
+    pageUrl: function (type, page) {
+      return null;
+    },
+    onPageClicked: function (event, originalEvent, type,page) {
+    },
+    onPageChanged: function () {
+      console.log("onPageChanged");
+    }
+  };
+  $("#pagination-ele").bootstrapPaginator(options);
+
+  //    弹出窗
+  $(".btn-look").on("click", function () {
+    var layerIndex = layer.open({
+      type: 1,
+      title: '全屏展示',
+      area: ['100%', '100%'], //宽高
+      shadeClose: true,
+      content: $("#dialog-cont"),
+
+      yes: function (index, layero) {
+        $("#add1_form").submit();
+      },
+      bnt2: function (index, layero) {
+        layer.close(index);
+      }
+    });
+  });
+  var json = {
+    "hey": "guy",
+    "anumber": 243,
+    "anobject": {
+      "whoa": "nuts",
+      "anarray": [1, 2, "thr<h1>ee"],
+      "more": "stuff"
+    },
+    "awesome": true,
+    "bogus": false,
+    "meaning": null,
+    "japanese": "明日がある。",
+    "link": "http://jsonview.com",
+    "notLink": "http://jsonview.com is great",
+    "multiline": ['Much like me, you make your way forward,',
+      'Walking with downturned eyes.',
+      'Well, I too kept mine lowered.',
+      'Passer-by, stop here, please.'].join("\n")
+  };
+  $("#json-collapsed,#json-collapsed1,#json-collapsed2,#json-collapsed3,#json-collapsed4").JSONView(json, {
+    collapsed: true,
+    nl2br: true
+  });
+  /*]]>*/
+</script>
+</body>
+</html>

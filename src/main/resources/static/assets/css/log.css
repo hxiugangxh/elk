@@ -1,0 +1,119 @@
+/*created by cyt*/
+.cont-elips{
+    color:#666;
+    padding-left:10px;
+}
+.icon-xiangyou2:hover, .icon-arrow_down_full:hover,.icon-arrow_down_full{
+    color: #ee531f;
+}
+.btn-look:hover, .btn-look:focus, .btn-look.focus, .btn-look:active, .btn-look.active, .open>.dropdown-toggle.btn-look{
+    border:1px solid #31b0d5;
+    background: #fff;
+    color:#31b0d5;
+}
+.icon-xiangyou2{
+    color: #336690;
+}
+.nav-tabs{
+    position: relative;
+}
+.btn-search{
+    height: 35px;
+    line-height: 35px;
+    padding: 0 18px 0 35px;
+    top:-2px;
+}
+.btn-search>i{
+    font-size: 21px;
+    position: absolute;
+    left: 5px;
+}
+.btn-search .icon-sousuo{
+    font-size: 19px;
+    left: 10px;
+}
+.log-space{
+    height: 1px;
+    background: #c1bdbd;
+    width: 100%;
+}
+.data-line-odd{
+    border-right: 2px solid #87dae2;
+}
+.data-line-even{
+    border-right: 2px solid #f1ac95;
+}
+.form-box{
+    padding: 10px;
+    /*background: #8e8e8e;*/
+/* border-radius: 9px; */
+    /*color: #fff;*/
+    border-right:1px dashed #ccc;
+}
+.btn-look{
+    position: absolute;
+    right: 0;
+    background: #fff;
+    color: #269abc;
+    border: 1px solid transparent;
+}
+/*分页*/
+.pagination{
+    margin-left: 25px;
+    margin-top:0;
+}
+.pagination>li:first-child>a, .pagination>li:first-child>span{
+    border-radius: 0;
+}
+.pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus{
+    background-color: #336690 !important;
+    color: #fff !important;
+    border-color: #336690 !important;
+}
+.pagination>li>a, .pagination>li>span {
+    color: #336690;
+}
+.dialog-cont{
+  padding:30px 70px 20px;
+}
+.data-show{
+   margin:0px 0 20px 0;
+}
+.bold{
+    font-weight: bold;
+    font-size:16px;
+}
+.border-bottom{
+    border-bottom:1px solid #0177db;
+}
+.mr-40{
+    margin-right:40px;
+}
+.pd-10{
+    padding-right:10px;
+}
+.show-600{
+    min-height: 400px;
+}
+.layui-layer-title {
+    padding: 0 80px 0 20px;
+    height: 42px;
+    line-height: 42px;
+    border-bottom: 1px solid #eee !important;
+    font-size: 14px;
+    color: #fff !important;
+    overflow: hidden;
+    background-color: #0173d0 !important;
+    border-radius: 2px 2px 0 0;
+}
+.cont-bg{
+    background: #fff;
+    padding:20px;
+    border-radius:2px;
+}
+.layui-layer-content{
+    background: #fbfbfb;
+}
+.ml-20{
+    margin-left:20px;
+}

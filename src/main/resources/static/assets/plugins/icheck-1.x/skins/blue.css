@@ -1,0 +1,62 @@
+/* iCheck plugin Minimal skin, blue
+----------------------------------- */
+.icheckbox_minimal-theme,
+.iradio_minimal-theme {
+    display: inline-block;
+    *display: inline;
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+    width: 15px;
+    height: 18px;
+    background: url(blue.png) no-repeat;
+    border: none;
+    cursor: pointer;
+    margin-right: 3px;
+    background-color: #fff;
+}
+
+
+.icheckbox_minimal-theme {
+    background-position: 1px 0;
+}
+    .icheckbox_minimal-theme.hover {
+        background-position: -14px 0;
+    }
+    .icheckbox_minimal-theme.checked {
+        background-position: -30px 0;
+    }
+    .icheckbox_minimal-theme.disabled {
+        background-position: -44px 0;
+        cursor: default;
+    }
+    .icheckbox_minimal-theme.checked.disabled {
+        background-position: -59px 0;
+    }
+
+.iradio_minimal-theme {
+    background-position: -74px 0;
+}
+    .iradio_minimal-theme.hover {
+        background-position: -89px 0;
+    }
+    .iradio_minimal-theme.checked {
+        background-position: -104px 0;
+    }
+    .iradio_minimal-theme.disabled {
+        background-position: -119px 0;
+        cursor: default;
+    }
+    .iradio_minimal-theme.checked.disabled {
+        background-position: -134px 0;
+    }
+
+/* HiDPI support */
+@media (-o-min-device-pixel-ratio: 5/4), (-webkit-min-device-pixel-ratio: 1.25), (min-resolution: 120dpi), (min-resolution: 1.25dppx) {
+    .icheckbox_minimal-theme,
+    .iradio_minimal-theme {
+        background-image: url(blue@2x.png);
+        -webkit-background-size: 165px 15px;
+        background-size: 165px 15px;
+    }
+}

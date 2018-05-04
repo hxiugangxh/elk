@@ -75,7 +75,8 @@ public class ShiroConfiguration {
         filterChainMap.put("/img/**", "anon");
 
         //authc:所有的URL都必须认证通过才可以访问.
-        filterChainMap.put("/**", "authc");
+//        filterChainMap.put("/**", "authc");
+        filterChainMap.put("/**", "anon");
 
         //设置默认登录的URL.
         shiroFilterFactoryBean.setLoginUrl("/login");

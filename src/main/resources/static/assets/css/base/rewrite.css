@@ -1,0 +1,337 @@
+/*edit by cyt*/
+@charset "utf-8";
+/******************表单重写****************/
+/*.form-group-sm .btn{  height: 30px;  padding: 5px 10px;  font-size: 12px;  line-height: 1.5;  border-radius: 3px;  }*/
+.btn-group-sm .btn .i{  font-size: 12px;  }
+/*.form-group-sm .input-group-addon{  font-size: 11.5px;  }*/
+.form-horizontal .form-group {  margin-bottom: 12px;  }
+.form-group-sm textarea.form-control {  height: auto;  resize: none;  }
+.form-horizontal .form-group-sm .control-label {padding-top: 5px;  }
+.input-group-addon:not(:first-child):not(:last-child), .input-group-btn:not(:first-child):not(:last-child){  border-radius: 0;  border-right: 0;  border-left: 0;  }
+.btn i{margin-right: 4px;}
+
+/* nav-tab 重写*/
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus {  color: #555;  cursor: default;  background-color: #ffffff;  border: none;  border-bottom:2px solid #f0ad4e;  }
+.tab-item{display: none;}
+/*table重写*/
+.fixed-table-container{  border-radius: 0;  border-color: #fff;  }
+.bootstrap-table .table>thead>tr>th {  border-color:#fff;  }
+.fixed-table-container tbody tr td,.fixed-table-container thead tr th{  border-left-color:#fff;  border-top-color:#eee;padding:2px  5px; }
+.fixed-table-container tbody td .th-inner{  padding: 2px 4px;  }
+.fixed-table-container thead th .th-inner{  padding:1px 4px !important;  color: #fff;height:29px;line-height: 29px;}
+.fixed-table-container thead th .th-inner .icheckbox_minimal-theme.checked{background-position: -151px 0;}
+/*.fixed-table-container .icheckbox_square-blue.checked {  background-position: -49px 0;  }*/
+/*.icheckbox_square-blue{background: #fff;}*/
+
+/*1203新加*/
+.bootstrap-table .table:not(.table-condensed), .bootstrap-table .table:not(.table-condensed)>tbody>tr>td, .bootstrap-table .table:not(.table-condensed)>tbody>tr>th, .bootstrap-table .table:not(.table-condensed)>tfoot>tr>td, .bootstrap-table .table:not(.table-condensed)>tfoot>tr>th, .bootstrap-table .table:not(.table-condensed)>thead>tr>td {  padding: 4px;  }
+/******************bootstrap-table  表格按钮样式****************/
+.bootstrap-table .table a.btn {
+    padding: 2px 4px;
+    display: inline-block;
+    text-decoration: none;
+    background-color: white;
+    font-size: 10px;
+}
+.bootstrap-table .table a.btn i.iconfont{
+    font-size: 12px;
+}
+.bootstrap-table .table a.btn-primary {
+    border: 1px solid #428bca;
+    color: #428bca;
+}
+.bootstrap-table .table a.btn-primary:hover{
+    background:#428bca !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-danger {
+    border: 1px solid #c9302c;
+    color: #c9302c;
+}
+.bootstrap-table .table a.btn-danger:hover{
+    background:#c9302c !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-success {
+    border: 1px solid #5cb85c;
+    color: #5cb85c;
+}
+.bootstrap-table .table a.btn-success:hover{
+    background:#5cb85c !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-warning {
+    border: 1px solid #ed9c28;
+    color: #ed9c28;
+}
+.bootstrap-table .table a.btn-warning:hover {
+    background:#ed9c28 !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a.btn-purple {
+    border: 1px solid #a069c3;
+    color: #a069c3;
+}
+.bootstrap-table .table a.btn-purple:hover {
+    background:#a069c3 !important;
+    color:#fff !important;
+}
+.bootstrap-table .table a{
+    background: #fff !important;
+}
+.bootstrap-table{
+    font-size: 12px;
+}
+.fixed-table-toolbar .btn-group>.btn-group:last-child>.btn,.btn-group>.btn:first-child:not(:last-child):not(.dropdown-toggle){
+    border-radius: 0;
+}
+
+.fixed-table-pagination .pagination a{
+    padding: 8px 12px;
+    line-height: 1;
+}
+
+/******************bootstrap-table  表格按钮样式****************/
+
+
+
+
+/*面包屑重写*/
+.breadcrumb {  margin: 10px 0;  background-color: #fff;  }
+.breadcrumb li>a{  color:#428bca;  font-weight: bold;  }
+.breadcrumb li>span{  margin-right: 4px;  color: #428bca;  }
+
+/*webuploader 重写*/
+.webuploader-pick {  height:25px;  padding: 5px 10px;  font-size: 12px;  line-height: 1.1;  border-radius: 0px; }
+.uploader-list .item{  padding: 6px 0;  }
+.uploader-list .item span{  display: inline-block;  margin: 0 10px 0 0;  }
+.jrPage{margin: 0 auto;}
+
+/**重写单选框和复选框插件的样式***/
+/*.icheckbox_square-blue, .iradio_square-blue{width: 17px;height: 17px;background-image:url("../img/blue.png");margin-right: 5px;}*/
+/*.iradio_square-blue{width: 19px;}*/
+/*.icheckbox_square-blue{  background-position: 0px 0;  }*/
+/*.icheckbox_square-blue.hover {  background-position: -18px 0;  }*/
+/*.icheckbox_square-blue.checked {  background-position: -35px 0;  }*/
+/*.icheckbox_square-blue.checked.disabled {  background-position: -72px 0;  }*/
+/*.iradio_square-blue {background-position: -143px 0;}*/
+/*.iradio_square-blue:hover {background-position: -106px 0;  }*/
+/*.iradio_square-blue.checked {  background-position: -125px 0  }*/
+/*.iradio_square-blue.disabled {  background-position:-143px 0;  cursor: default;  }*/
+/*.iradio_square-blue.checked.disabled {  background-position: -161px 0;  }*/
+/*.icheckbox_square-blue.disabled{background-position: -54px 0;}*/
+/***重写bootstrap的只读样式 ***/
+.form-control[readonly]{  cursor:default;  }
+
+/***表格工具按钮***/
+/*.btn-sm, .btn-group-sm>.btn{padding: 3px 7px;}*/
+/*.form-control{width: 100%!important;}*/
+.form-horizontal .control-label {padding-top: 7px;  margin-bottom: 0;  text-align: right;  }
+
+/*****为bootstrap-table添加橙色*****/
+.fixed-table-header{background-color:#d8b16f;}
+.table-blue-head .fixed-table-header{background-color:#4C9ECE;}
+/*表格表头颜色设置*/
+.table-orange thead{
+    background-color: #d8b16f;
+}
+.fixed-table-footer{
+    border-top:none;
+}
+.table-blue thead {
+    background-color: #4C9ECE !important;
+}
+
+/*form 保存按钮区块样式*/
+.btn-block{
+    padding-top: 20px;
+    border-top: 1px solid #e2e2e2;
+    margin-bottom: 20px;
+}
+/*****为bootstrap btn-primary重定义为主题色*****/
+.btn-primary {background-color: #3598dc;border-color: #2c91d6;}
+
+/**自定义z-tree样式***/
+/*.ztree{padding: 0px;}
+.ztree li span.button.switch{  display: none;  }
+.ztree li a{display: block;text-decoration: none; color: #999;border: solid transparent;border-width: 0px 0px 0px 4px;position: relative;}
+.ztree .iconleft{margin-right: 10px;}
+.ztree .iconright{position: absolute;right: 10px;}*/
+/*.ztree li a.level0{
+    line-height: 50px;
+    padding: 0px 1em 0em 2em;
+    overflow: hidden;
+    clear: both;
+    height: 50px;
+    text-decoration: none;
+}*/
+/*.ztree li ul{padding: 0px;}*/
+/*.ztree li a.level1{
+    line-height: 45px;
+    height: 45px;
+    padding: 0px 1em 0em 3em;
+    text-decoration: none;
+}
+.ztree li a.level2{
+    line-height: 40px;
+    height: 40px;
+    padding: 0px 1em 0em 5em;
+    text-decoration: none;
+}*/
+/*
+.ztree li a.curSelectedNode,.ztree li a:hover,.ztree li a:focus,.ztree li a:active{
+    color: #0e8cd9;
+    background-color: #ebf4ff;
+    border: solid #3598dc;
+    border-width: 0px 0px 0px 4px;
+}
+*/
+
+
+
+/*新的表单样式重写*/
+/*表单输入框*/
+.form-control {
+    display: block;
+    width: 100%;
+    height: 28px;
+    padding: 0px 10px;
+    font-size: 12px;
+    line-height: 1.428571429;
+    color: #555;
+    vertical-align: middle;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 0 !important;
+    /* -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075); */
+    /* box-shadow: inset 0 1px 1px rgba(0,0,0,0.075); */
+    /* -webkit-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; */
+    /* transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s; */
+}
+/**********select2****************/
+/*插件去除圆角*/
+.input-daterange input:first-child,.select2-container,.textbox,.btn-group>.btn:first-child,.form-group-sm .input-group-addon,.select2-container--classic .select2-selection--single{
+    border-radius: 0;
+}
+.select2-container .select2-selection--single{
+    height: 25px;
+}
+.select2-container--classic .select2-selection--single .select2-selection__rendered{
+    line-height: 25px;
+}
+.select2-container--classic .select2-selection--single .select2-selection__arrow{
+     border-top-right-radius: 4px;
+     border-bottom-right-radius: 4px;
+    height: 24px;
+}
+.select2-container .select2-selection--multiple{
+    min-height: 25px;
+}
+.select2-container--classic .select2-selection--multiple .select2-selection__choice{
+    margin-top: 2px;margin-right: 2px;
+}
+span.select2.select2-container.select2-container--classic {
+width: 100% !important;
+}
+
+
+
+/*表格按钮样式重写*/
+.btn-group-sm>.btn {
+    padding:6px 12px;
+    font-size: 12px;
+    line-height: 1;
+}
+.no-radius-btn .btn-group-sm>.btn{
+    border-radius: 0px;
+}
+
+.btn-danger-bgwhite {
+    color: #d9534f;
+    background-color: #fff;
+    border-color: #d43f3a;
+}
+.btn-success-bgwhite{
+    color: #4cae4c;
+    background-color: #fff;
+    border-color: #4cae4c;
+}
+.btn-primary-bgwhite{
+    color: #428bca;
+    background-color: #fff;
+    border-color: #357ebd;
+}
+
+/*表单编辑框样式圆角统一*/
+/*.wangEditor-container, .wangEditor-container *{*/
+    /*border-radius: 4px;*/
+/*}*/
+.report-op{
+    margin-left: 18px;
+}
+.report-op .btn-sm, .btn-xs{
+    margin:0 5px;
+}
+
+/***bootstrap-table 工具栏的间隙****/
+.fixed-table-toolbar .bs-bars, .fixed-table-toolbar .columns, .fixed-table-toolbar .search{
+     margin-top: 0px;
+     margin-bottom:0px;
+}
+/***bootstrap-select 下来选的字体大小****/
+.bootstrap-select.btn-group .dropdown-menu li a span.text{
+    font-size: 12px;
+}
+
+.input-group-addon{
+    border-radius: 0px;
+    font-size: 12px;
+    padding: 6px 12px 6px;
+}
+
+.form-group-sm .form-control{
+    line-height: 1;
+    height: 25px;
+    padding: 0px 10px;
+}
+.dropdown-menu{
+    font-size: 12px;
+}
+
+.form-group-sm .form-control-static{
+    height: 25px;
+    min-height: 25px;
+}
+
+.datepicker table tr td.active:hover, .datepicker table tr td.active:hover:hover, .datepicker table tr td.active.disabled:hover, .datepicker table tr td.active.disabled:hover:hover, .datepicker table tr td.active:active, .datepicker table tr td.active:hover:active, .datepicker table tr td.active.disabled:active, .datepicker table tr td.active.disabled:hover:active, .datepicker table tr td.active.active, .datepicker table tr td.active:hover.active, .datepicker table tr td.active.disabled.active, .datepicker table tr td.active.disabled:hover.active, .datepicker table tr td.active.disabled, .datepicker table tr td.active:hover.disabled, .datepicker table tr td.active.disabled.disabled, .datepicker table tr td.active.disabled:hover.disabled, .datepicker table tr td.active[disabled], .datepicker table tr td.active:hover[disabled], .datepicker table tr td.active.disabled[disabled], .datepicker table tr td.active.disabled:hover[disabled]{
+    background-color: #ee6c2d;
+    background-image:none;
+}
+
+.input-group{
+    height: 100%;
+}
+.input-group .form-control{
+    /*height: 100%;*/
+    box-sizing: border-box;
+}
+
+/**********基于bootstrap 的下拉表格***************/
+.form-group-sm .input-group .input-group-btn .btn{
+    height: 25px;
+    line-height: 1;
+}
+
+/**********基于ztree 的下拉树***************/
+.downTreePraent .layer-anim{
+    top: 25px!important;
+    left: 0px !important;
+}
+
+/*分页样式重写*/
+.pagination>li:first-child>a, .pagination>li:first-child>span{
+    border-radius: 0;
+}
+.pagination>li:last-child>a, .pagination>li:last-child>span{
+    border-radius: 0;
+}
