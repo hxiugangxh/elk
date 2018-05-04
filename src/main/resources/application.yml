@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/mybatis?useSSL=false
+#  redis:
+#    host: localhost
+#  session:
+#      store-type: redis
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  http:
+    encoding:
+      force: true
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  config-location: classpath:config/mybatis-conf.xml
+
+pagehelper:
+  auto-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql

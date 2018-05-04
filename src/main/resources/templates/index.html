@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8" />
+<title>Insert title here</title>
+</head>
+<body>
+	
+	<!-- 1、显示当前登录的用户名. -->
+	<h3>
+		<span th:text="'登录账号：'+${userInfo.username}+'--名称：'+${userInfo.name}"></span>
+		
+		<a href="/logout">退出</a>
+		
+	</h3>
+	
+	<!-- 2、通过shiro标签控制权限信息. -->
+	<h5>通过shiro标签控制权限信息-2017</h5>
+
+	<p shiro:hasPermission="userInfo:view">
+		<a href="/userInfo/userList">用户查询</a>
+	</p>
+	<p shiro:hasPermission="userInfo:add">
+		<a href="/userInfo/userAdd">用户添加</a>
+	</p>
+	<p shiro:hasPermission="userInfo:del">
+		<a href="/userInfo/userDelete">用户删除</a>
+	</p>
+	
+	<!-- 3、通过数据库获取权限信息.(实际当中使用的是这种方式，不是上面的方式.) 角色+权限信息展示出来-->
+	
+	<hr />
+
+	<h5>通过数据库获取权限信息</h5>
+	<div th:each="role:${userInfo.roles}">
+		<span th:text="${role.description}"></span>
+		<p  th:each="permissions:${role.permissions}" style="color:blue;margin-left:30px;">
+			<a th:href="${permissions.url}" th:text="${permissions.name}"></a>
+		</p>
+	</div>
+	
+	
+</body>
+</html>
