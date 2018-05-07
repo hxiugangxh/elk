@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>日志搜索</title>
+  <!--基础样式-->
+  <th:block th:include="common/pub_head :: default"></th:block>
+  <th:block th:include="common/pub_head :: base-css"></th:block>
+  <!--主题色-->
+  <th:block th:include="common/pub_head :: theme-blue"></th:block>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/log.css}"/>
+</head>
+
+<body>
+<div class="wrapper-content">
+  <div class="box">
+
+    <div class="box-header with-border">
+      <div class="box-title dec_1 theme-border-left">日志查询</div>
+    </div>
+    <div class="box-body">
+      <div class="search-form cf mt15">
+
+        <div class="form-group col-xs-12">
+          <div class="input-group col-xs-12" style="margin-top:0px; positon:relative">
+            <input type="text" class="form-control" placeholder="请输入搜索内容"/>
+            <span class="input-group-btn">
+              <button class="btn btn-info btn-search" onclick="queryByEs()"><i class="iconfont icon-sousuo"></i>查找</button>
+            </span>
+            <span class="ml-20">搜索总数:&nbsp;&nbsp;</span><span class="bold border-bottom" id="total">0</span>
+            <span>hts</span>
+          </div>
+        </div>
+      </div>
+      <div class="widget-box transparent">
+        <div class="widget-header">
+          <div class="widget-title theme-border-bottom">查询结果</div>
+          <div class="widget-toolbar hide">
+            <a class="widget-shrink"><i class="iconfont icon-down"></i></a>
+            <a class="widget-close"><i class="iconfont icon-guanbi2"></i></a>
+          </div>
+        </div>
+        <div class="widget-body">
+          <div class="span2 wrapper-content-left left-cont3">
+            <form class="form-horizontal cf form-box" id="myform">
+              <div class="row no-pd search-info">
+                <label class="control-label no-pd"><b class="mr5 red500">*</b>索引列表</label>
+                <div class="col-xs-12">
+                  <select id="index" class="js-example-basic-single span12">
+                    <th:block th:if="${#lists.isEmpty(esFieldmap.indexList)}">
+                      <option value="">没有数据</option>
+                    </th:block>
+                    <th:block th:if="${!#lists.isEmpty(esFieldmap.indexList)}">
+                      <th:block th:each="index : ${esFieldmap.indexList}">
+                        <option th:value="${index}" th:text="${index}"></option>
+                      </th:block>
+                    </th:block>
+                  </select>
+                </div>
+              </div>
+              <div class="row no-pd search-info">
+                <label class="control-label no-pd"><b class="mr5 red500">*</b>字段列表</label>
+                <div class="col-xs-12">
+                  <select id="field" class="js-example-basic-single2 span12">
+                    <option value="">全部</option>
+                    <th:block th:each="field : ${esFieldmap.fieldList}">
+                      <option th:value="${field}" th:text="${field}"></option>
+                    </th:block>
+                  </select>
+                </div>
+              </div>
+            </form>
+
+          </div>
+          <div class="span10 wrapper-content-right right-cont">
+            <div id="data-line-div"></div>
+            <div id="pagination-ele" class="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="dialog-cont" id="dialog-cont" style="display: none">
+  <p class="data-show">
+    <span class=" pd-10">索引名称：</span>
+    <span class="mr-40 bold name">项目一</span>
+    <span class="pd-10">文档Id:</span>
+    <span class="bold id"></span>
+  </p>
+  <div class="cont-bg">
+    <ul id="myTab-d" class="nav nav-tabs">
+      <li class="active">
+        <a href="#home-d" data-toggle="tab" aria-expanded="false">Table</a>
+      </li>
+      <li class=""><a href="#ios-d" data-toggle="tab" aria-expanded="true">Json</a></li>
+    </ul>
+    <div id="myTabContent-d" class="tab-content cf">
+      <div class="tab-pane fade  active in" id="home-d">
+        <table class="json-table col-xs-10">
+          <tr>
+            <td class="table-fir">key</td>
+            <td class="table-sec">项目一</td>
+          </tr>
+        </table>
+      </div>
+      <div class="tab-pane fade" id="ios-d">
+        <div class="json-code-show show-600 col-xs-12">
+          <div id="json-collapsed"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="data-line-model" style="display: none;">
+  <div class="cf data-line">
+    <i class="iconfont icon-xiangyou2  text-center" data-status="0"></i>
+    <div class="col-xs-12 data-cont">
+      <div class="cont-elips">
+        称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途/
+      </div>
+      <div class="cont-format hide">
+        <ul class="nav nav-tabs">
+          <li class="active">
+            <a class="homeTab" data-toggle="tab" aria-expanded="false">Table</a>
+          </li>
+          <li class="">
+            <a class="iosTab" data-toggle="tab" aria-expanded="true">Json</a>
+          </li>
+          <button class="btn btn-info btn-search btn-look"><i
+              class="iconfont icon-quanping"></i>全屏展示
+          </button>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane fade active in home">
+            <table class="json-table col-xs-10">
+              <tr>
+                <td class="table-fir">key</td>
+                <td class="table-sec">项目一</td>
+              </tr>
+            </table>
+          </div>
+          <div class="tab-pane fade ios">
+            <div class="json-code-show col-xs-12">
+              <div class="json-collapsed"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  jQuery(function () {
+    queryByEs()
+  });
+
+  window.onkeyup = function (ev) {
+    var key = ev.keyCode || ev.which;
+    if (key == 13) { //按下Escape
+      queryByEs();
+    }
+  }
+
+  function queryByEs() {
+    var URL = "/monior/queryByEs";
+    var index = $("#index").val();
+    var formData = {
+      "index": index
+    }
+
+    $.post(URL, formData, function (jsonData) {
+      $("#total").html(jsonData.length);
+
+      var domEle = "";
+
+      /* 参考原始demo吧 */
+      for (var i = 0; i < jsonData.length; i++) {
+        var dataLineModel = $("#data-line-model").clone();
+        var clazz = "data-line-odd";
+        if (i % 2 == 1) {
+          clazz = "data-line-even";
+        }
+
+        // 挂载全屏展示index
+        dataLineModel.find(".btn-look").attr("data-index", i);
+        dataLineModel.find(".btn-look").attr("data-es-index", index);
+
+        // 单双行颜色区分
+        dataLineModel.find(".data-line").addClass(clazz);
+        // tab美工定义使用方案
+        dataLineModel.find(".nav-tabs").attr("id", "myTab" + i);
+        dataLineModel.find(".tab-content").attr("id", "myTabContent" + i);
+        dataLineModel.find(".homeTab").attr("href", "#home" + i);
+        dataLineModel.find(".home").attr("id", "home" + i);
+        dataLineModel.find(".iosTab").attr("href", "#ios" + i);
+        dataLineModel.find(".ios").attr("id", "ios" + i);
+
+        var tableDomEle = "";
+        $.each(jsonData[i], function (key, value) {
+          tableDomEle += "<tr>";
+          tableDomEle += "<td class='table-fir'>" + key + "</td>";
+          tableDomEle += "  <td class='table-sec'>" + value + "</td>";
+          tableDomEle += " </tr>";
+        });
+
+        // table数据插入
+        dataLineModel.find("table").html(tableDomEle);
+
+        // jsonTab数据插入
+        dataLineModel.find(".cont-elips").html(JSON.stringify(jsonData[i]));
+
+        dataLineModel.find(".json-collapsed").JSONView(jsonData[i], {
+          collapsed: true,
+          nl2br: true
+        });
+
+        // 藏匿原始数据
+        dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData[i]));
+
+        domEle += dataLineModel.html();
+      }
+
+      $("#data-line-div").html(domEle);
+    }, "json")
+  }
+
+  /*]]>*/
+</script>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  $(".js-example-basic-single").size() > 0 && $(".js-example-basic-single").select2({
+    theme: "classic"
+  });
+  $(".js-example-basic-single2").size() > 0 && $(".js-example-basic-single2").select2({
+    theme: "classic"
+  });
+
+  $(document).on("click", ".icon-xiangyou2,.icon-xialaxuanxiang01", function () {
+    var status = $(this).data("status");
+    if (status == 0) {
+      $(this).siblings(".data-cont").find(".cont-format").removeClass("hide");
+      $(this).data("status", "1");
+      $(this).removeClass("icon-xiangyou2").addClass("icon-xialaxuanxiang01");
+    } else {
+      $(this).siblings(".data-cont").find(".cont-format").addClass("hide");
+      $(this).data("status", "0");
+      $(this).removeClass("icon-xialaxuanxiang01").addClass("icon-xiangyou2");
+    }
+  });
+
+  //    分页
+  var options = {
+    containerClass: "pagination",
+    currentPage: 1,
+    numberOfPages: 5,
+    totalPages: 13,
+    prev: "上一页",
+    next: "下一页",
+    itemTexts: function (type, page, current) {
+      switch (type) {
+        case "first":
+          return "首页";
+        case "prev":
+          return "上一页";
+        case "next":
+          return "下一页";
+        case "last":
+          return "尾页";
+        case "page":
+          return page;
+      }
+    },
+    pageUrl: function (type, page) {
+      return null;
+    },
+    onPageClicked: function (event, originalEvent, type, page) {
+    },
+    onPageChanged: function () {
+      console.log("onPageChanged");
+    }
+  };
+  $("#pagination-ele").bootstrapPaginator(options);
+
+  //    弹出窗
+  $(document).on("click", ".btn-look", function () {
+    var index = $(this).attr("data-index");
+    $("#dialog-cont").find("table").html($(".data-line").eq(index).find("table").html());
+    var jsonData = eval("(" + $(".data-line").eq(index).find(".json-collapsed").attr("data") + ")");
+    $("#dialog-cont").find(".name").html($(this).attr("data-es-index"));
+    $("#dialog-cont").find(".id").html(jsonData.id);
+    $("#dialog-cont").find("#json-collapsed").JSONView(jsonData, {
+      collapsed: true,
+      nl2br: true
+    });
+
+    var layerIndex = layer.open({
+      type: 1,
+      title: '全屏展示',
+      area: ['100%', '100%'], //宽高
+      shadeClose: true,
+      content: $("#dialog-cont"),
+      yes: function (index, layero) {
+        $("#add1_form").submit();
+      },
+      bnt2: function (index, layero) {
+        layer.close(index);
+      }
+    });
+
+    window.onkeyup = function (ev) {
+      var key = ev.keyCode || ev.which;
+      if (key == 27) { //按下Escape
+        layer.close(layerIndex); //关闭信息框
+      }
+    }
+  });
+
+
+  var json = {
+    "hey": "guy",
+    "anumber": 243,
+    "anobject": {
+      "whoa": "nuts",
+      "anarray": [1, 2, "thr<h1>ee"],
+      "more": "stuff"
+    },
+    "awesome": true,
+    "bogus": false,
+    "meaning": null,
+    "japanese": "明日がある。",
+    "link": "http://jsonview.com",
+    "notLink": "http://jsonview.com is great",
+    "multiline": ['Much like me, you make your way forward,',
+      'Walking with downturned eyes.',
+      'Well, I too kept mine lowered.',
+      'Passer-by, stop here, please.'].join("\n")
+  };
+  /* $("#json-collapsed,#json-collapsed1,#json-collapsed2,#json-collapsed3,#json-collapsed4").JSONView(json, {
+     collapsed: true,
+     nl2br: true
+   });*/
+  /*]]>*/
+</script>
+</body>
+</html>

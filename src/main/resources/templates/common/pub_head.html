@@ -8,6 +8,8 @@
     <script type="text/javascript" th:src="@{/assets/plugins/jsonview/jquery.jsonview.js}"></script>
     <script type="text/javascript" th:src="@{/assets/plugins/layer-v2.4/layer.js}"></script>
     <script type="text/javascript" th:src="@{/assets/js/common.js}"></script>
+    <a th:href="${#httpServletRequest.getContextPath()} + '/'"
+       id="contextPath"></a>
     <script>
         var path = $("#contextPath").attr("href");
     </script>

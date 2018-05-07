@@ -15,7 +15,10 @@ spring:
   http:
     encoding:
       force: true
-
+  data:
+    elasticsearch:
+      cluster-name: wali
+      cluster-nodes: 127.0.0.1:9300
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml
@@ -26,3 +29,7 @@ pagehelper:
   reasonable: true
   support-methods-arguments: true
   params: count=countSql
+
+server:
+  port: 8081
+
