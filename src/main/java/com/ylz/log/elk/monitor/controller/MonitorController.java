@@ -1,6 +1,7 @@
 package com.ylz.log.elk.monitor.controller;
 
 import com.ylz.log.elk.monitor.service.MonitorService;
+import org.apache.shiro.subject.support.SubjectThreadState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,11 +38,11 @@ public class MonitorController {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam(value = "index") String index,
-            @RequestParam(value = "field", defaultValue = "") String field
+            @RequestParam(value = "field", defaultValue = "") String field,
+            @RequestParam(value = "searchContent", defaultValue = "") String searchContent
     ) {
-        Map<String, Object> dataMap = monitorService.queryByEs(page, pageSize, index, field);
 
-        return dataMap;
+        return monitorService.queryByEs(page, pageSize, index, field, searchContent);
     }
 
     @RequestMapping("/changeIndex")

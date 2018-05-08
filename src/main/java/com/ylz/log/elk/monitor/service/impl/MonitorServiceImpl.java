@@ -37,9 +37,10 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field) {
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String
+            searchContent) {
 
-        return monitorDao.queryByEs(page, pageSize, index, field);
+        return monitorDao.queryByEs(page, pageSize, index, field, searchContent);
     }
 
     @Override

@@ -8,16 +8,20 @@ import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
+import org.springframework.data.elasticsearch.core.query.MoreLikeThisQuery;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Slf4j
 @Repository("monitorDao")
@@ -79,7 +83,8 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field) {
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String
+            searchContent) {
 
         log.info("queryByEs--查询es数据: index = {}, page = {}, pageSize = {}", index, page, pageSize);
 
@@ -94,6 +99,10 @@ public class MonitorDaoImpl implements MonitorDao {
             nativeSearchQueryBuilder
                     .withSourceFilter(new FetchSourceFilter(new String[]{"address"}, null));
         }
+        if (StringUtils.isNotEmpty(searchContent)) {
+            nativeSearchQueryBuilder
+                    .withQuery(queryStringQuery(searchContent));
+        }
 
         return elasticsearchTemplate.query(nativeSearchQueryBuilder.build(), response -> {
             SearchHits hits = response.getHits();
@@ -101,11 +110,11 @@ public class MonitorDaoImpl implements MonitorDao {
             long total = hits.getTotalHits();
             long totalPages = (total % pageSize == 0) ? total / pageSize : total / pageSize + 1;
             long currentPage = page + 1;
-            if (currentPage > totalPages) {
+            if (totalPages != 0 && currentPage > totalPages) {
                 log.info("该页面无数据，处理page后再次查询");
                 currentPage = totalPages;
 
-                return this.queryByEs((int) (currentPage -1), pageSize,index, field);
+                return this.queryByEs((int) (currentPage -1), pageSize,index, field, searchContent);
             }
 
             List<Map<String, Object>> result = new ArrayList<>();
@@ -116,7 +125,6 @@ public class MonitorDaoImpl implements MonitorDao {
 
                 result.add(map);
             }
-
 
             dataMap.put("currentPage", currentPage);
             dataMap.put("total", total);

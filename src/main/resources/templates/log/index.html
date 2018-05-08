@@ -25,7 +25,7 @@
 
         <div class="form-group col-xs-12">
           <div class="input-group col-xs-12" style="margin-top:0px; positon:relative">
-            <input type="text" class="form-control" placeholder="请输入搜索内容"/>
+            <input type="text" class="form-control" placeholder="请输入搜索内容" id="searchContent" />
             <span class="input-group-btn">
               <button class="btn btn-info btn-search" onclick="queryByEs()"><i class="iconfont icon-sousuo"></i>查找</button>
             </span>
@@ -188,18 +188,27 @@
     var URL = "/monitor/queryByEs";
 
     var index = $("#index").val();
-    var filed = $("#filed").val();
+    var field = $("#field").val();
+    var searchContent = $("#searchContent").val();
 
     var formData = {
       "index":  index,
       "page":   options.currentPage - 1,
-      "filed":  filed
-    }
+      "field":  field,
+      "searchContent": searchContent
+    };
 
     $.post(URL, formData, function (jsonData) {
-      $("#total").html(jsonData.total);
-
       var domEle = "";
+
+      $("#total").html(jsonData.total);
+      if (jsonData.total == 0) {
+        $("#pagination-ele").html("<span>暂无数据</span>");
+        $("#data-line-div").html(domEle);
+
+        return ;
+
+      }
 
       /* 参考原始demo吧 */
       for (var i = 0; i < jsonData.source.length; i++) {
