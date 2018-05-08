@@ -186,10 +186,14 @@
 
   function queryByEs() {
     var URL = "/monitor/queryByEs";
+
     var index = $("#index").val();
+    var filed = $("#filed").val();
+
     var formData = {
-      "index": index,
-      "page": options.currentPage - 1
+      "index":  index,
+      "page":   options.currentPage - 1,
+      "filed":  filed
     }
 
     $.post(URL, formData, function (jsonData) {
@@ -247,6 +251,7 @@
       $("#data-line-div").html(domEle);
 
       options.totalPages = jsonData.totalPages;
+      options.currentPage = jsonData.currentPage;
       $("#pagination-ele").bootstrapPaginator(options);
     }, "json")
   }

@@ -36,9 +36,10 @@ public class MonitorController {
     public Map<String, Object> queryByEs(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
-            @RequestParam(value = "index") String index
+            @RequestParam(value = "index") String index,
+            @RequestParam(value = "field", defaultValue = "") String field
     ) {
-        Map<String, Object> dataMap = monitorService.queryByEs(page, pageSize, index);
+        Map<String, Object> dataMap = monitorService.queryByEs(page, pageSize, index, field);
 
         return dataMap;
     }
