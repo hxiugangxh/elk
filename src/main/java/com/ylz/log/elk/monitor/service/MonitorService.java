@@ -6,5 +6,7 @@ import java.util.Map;
 public interface MonitorService {
     Map<String, Object> esFieldMap();
 
-    List<Map<String, Object>> queryByEs(String index);
+    Map<String, Object> queryByEs(Integer page, Integer pageSize, String index);
+
+    List<String> changeIndex(String index);
 }

@@ -1,10 +1,6 @@
 package com.ylz.log.elk.monitor.dao.impl;
 
-import com.carrotsearch.hppc.ObjectContainer;
-import com.carrotsearch.hppc.ObjectLookupContainer;
-import com.ylz.log.elk.base.util.EsUtil;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
-import jdk.management.resource.internal.inst.SocketOutputStreamRMHooks;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
@@ -13,15 +9,11 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.index.query.MatchAllQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.hibernate.boot.model.source.spi.PluralAttributeElementSourceOneToMany;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQuery;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -38,6 +30,7 @@ public class MonitorDaoImpl implements MonitorDao {
 
     /**
      * 获取所有的index
+     *
      * @return
      */
     @Override
@@ -51,6 +44,7 @@ public class MonitorDaoImpl implements MonitorDao {
 
     /**
      * 通过index获取type，以type获取其所有字段
+     *
      * @param index
      * @return
      */
@@ -84,7 +78,7 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public List<Map<String, Object>> queryByEs(String index) {
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index) {
 
         log.info("queryByEs--查询es数据: index = {}", index);
 
@@ -93,20 +87,23 @@ public class MonitorDaoImpl implements MonitorDao {
         MatchAllQueryBuilder matchAllQueryBuilder = QueryBuilders.matchAllQuery();
 
         SearchResponse searchResponse = this.client.prepareSearch(index)
-                .setQuery(matchAllQueryBuilder).setFrom(0).setSize(5).setExplain(true).execute().actionGet();
+                .setQuery(matchAllQueryBuilder).setFrom(page).setSize(pageSize).setExplain(true).execute().actionGet();
 
         SearchHits hits = searchResponse.getHits();
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (SearchHit hit : hits) {
             Map<String, Object> map = new LinkedHashMap<>();
-            dataMap.put("id", hit.getId());
-            dataMap.putAll(hit.getSource());
-            result.add(dataMap);
+            map.put("id", hit.getId());
+            map.putAll(hit.getSource());
+            result.add(map);
         }
+
+        long total = hits.getTotalHits();
         dataMap.put("total", hits.getTotalHits());
+        dataMap.put("totalPages", (total % pageSize == 0) ? total / pageSize : total / pageSize + 1);
         dataMap.put("source", result);
 
-        return result;
+        return dataMap;
     }
 }

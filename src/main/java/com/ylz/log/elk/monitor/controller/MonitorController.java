@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/monior")
+@RequestMapping("/monitor")
 public class MonitorController {
 
     @Autowired
@@ -33,11 +33,20 @@ public class MonitorController {
 
     @RequestMapping("/queryByEs")
     @ResponseBody
-    public List<Map<String, Object>> queryByEs(
-            @RequestParam(value = "index", required = false) String index) {
-        List<Map<String, Object>> dataList = monitorService.queryByEs(index);
+    public Map<String, Object> queryByEs(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "index") String index
+    ) {
+        Map<String, Object> dataMap = monitorService.queryByEs(page, pageSize, index);
 
-        return dataList;
+        return dataMap;
+    }
+
+    @RequestMapping("/changeIndex")
+    @ResponseBody
+    public List<String> changeIndex(@RequestParam("index") String index) {
+        return monitorService.changeIndex(index);
     }
 
 }

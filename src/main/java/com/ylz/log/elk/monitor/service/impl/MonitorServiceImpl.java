@@ -5,7 +5,6 @@ import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.expression.Lists;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,8 +37,13 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public List<Map<String, Object>> queryByEs(String index) {
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index) {
 
-        return monitorDao.queryByEs(index);
+        return monitorDao.queryByEs(page, pageSize, index);
+    }
+
+    @Override
+    public List<String> changeIndex(String index) {
+        return monitorDao.fieldList(index);
     }
 }

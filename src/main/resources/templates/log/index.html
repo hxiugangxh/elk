@@ -48,7 +48,8 @@
               <div class="row no-pd search-info">
                 <label class="control-label no-pd"><b class="mr5 red500">*</b>索引列表</label>
                 <div class="col-xs-12">
-                  <select id="index" class="js-example-basic-single span12">
+                  <select id="index" class="js-example-basic-single span12"
+                    ONCHANGE="changeIndex(this)">
                     <th:block th:if="${#lists.isEmpty(esFieldmap.indexList)}">
                       <option value="">没有数据</option>
                     </th:block>
@@ -166,20 +167,38 @@
     }
   }
 
-  function queryByEs() {
-    var URL = "/monior/queryByEs";
-    var index = $("#index").val();
+  function changeIndex(thisObj) {
+    var index = $(thisObj).val();
+    var URL = "/monitor/changeIndex";
     var formData = {
       "index": index
+    };
+
+    $.post(URL, formData, function (fieldList) {
+      var domEle = "<option value=''>全部</option>";
+      for (var i = 0; i < fieldList.length; i++) {
+        domEle += "<option value='" + fieldList[i] + "'>" + fieldList[i] + "</option>";
+      }
+
+      $("#field").html(domEle);
+    }, "json");
+  }
+
+  function queryByEs() {
+    var URL = "/monitor/queryByEs";
+    var index = $("#index").val();
+    var formData = {
+      "index": index,
+      "page": options.currentPage - 1
     }
 
     $.post(URL, formData, function (jsonData) {
-      $("#total").html(jsonData.length);
+      $("#total").html(jsonData.total);
 
       var domEle = "";
 
       /* 参考原始demo吧 */
-      for (var i = 0; i < jsonData.length; i++) {
+      for (var i = 0; i < jsonData.source.length; i++) {
         var dataLineModel = $("#data-line-model").clone();
         var clazz = "data-line-odd";
         if (i % 2 == 1) {
@@ -201,7 +220,7 @@
         dataLineModel.find(".ios").attr("id", "ios" + i);
 
         var tableDomEle = "";
-        $.each(jsonData[i], function (key, value) {
+        $.each(jsonData.source[i], function (key, value) {
           tableDomEle += "<tr>";
           tableDomEle += "<td class='table-fir'>" + key + "</td>";
           tableDomEle += "  <td class='table-sec'>" + value + "</td>";
@@ -212,20 +231,23 @@
         dataLineModel.find("table").html(tableDomEle);
 
         // jsonTab数据插入
-        dataLineModel.find(".cont-elips").html(JSON.stringify(jsonData[i]));
+        dataLineModel.find(".cont-elips").html(JSON.stringify(jsonData.source[i]));
 
-        dataLineModel.find(".json-collapsed").JSONView(jsonData[i], {
+        dataLineModel.find(".json-collapsed").JSONView(jsonData.source[i], {
           collapsed: true,
           nl2br: true
         });
 
         // 藏匿原始数据
-        dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData[i]));
+        dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData.source[i]));
 
         domEle += dataLineModel.html();
       }
 
       $("#data-line-div").html(domEle);
+
+      options.totalPages = jsonData.totalPages;
+      $("#pagination-ele").bootstrapPaginator(options);
     }, "json")
   }
 
@@ -257,8 +279,8 @@
   var options = {
     containerClass: "pagination",
     currentPage: 1,
-    numberOfPages: 5,
-    totalPages: 13,
+    numberOfPages: 6,
+    totalPages: 5,
     prev: "上一页",
     next: "下一页",
     itemTexts: function (type, page, current) {
@@ -279,12 +301,13 @@
       return null;
     },
     onPageClicked: function (event, originalEvent, type, page) {
+      options.currentPage = page;
+      queryByEs();
     },
     onPageChanged: function () {
       console.log("onPageChanged");
     }
   };
-  $("#pagination-ele").bootstrapPaginator(options);
 
   //    弹出窗
   $(document).on("click", ".btn-look", function () {

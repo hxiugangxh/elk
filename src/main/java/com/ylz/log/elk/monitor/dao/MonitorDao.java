@@ -9,5 +9,5 @@ public interface MonitorDao {
 
     List<String> fieldList(String index);
 
-    List<Map<String, Object>> queryByEs(String index);
+    Map<String, Object> queryByEs(Integer page, Integer pageSize, String index);
 }
