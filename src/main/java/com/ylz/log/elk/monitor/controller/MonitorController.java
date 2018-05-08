@@ -52,4 +52,11 @@ public class MonitorController {
         return monitorService.changeIndex(index);
     }
 
+
+    @RequestMapping("/test")
+    @ResponseBody
+    public List<Map<String, Object>> test() {
+
+        return monitorService.test();
+    }
 }

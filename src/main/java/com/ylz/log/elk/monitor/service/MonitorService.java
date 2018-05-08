@@ -9,4 +9,6 @@ public interface MonitorService {
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String searchContent);
 
     List<String> changeIndex(String index);
+
+    List<Map<String, Object>> test();
 }

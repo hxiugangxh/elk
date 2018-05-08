@@ -47,4 +47,9 @@ public class MonitorServiceImpl implements MonitorService {
     public List<String> changeIndex(String index) {
         return monitorDao.fieldList(index);
     }
+
+    @Override
+    public List<Map<String, Object>> test() {
+        return monitorDao.test();
+    }
 }

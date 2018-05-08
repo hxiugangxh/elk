@@ -9,4 +9,6 @@ public interface MonitorDao {
     List<String> fieldList(String index);
 
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String searchContent);
+
+    List<Map<String, Object>> test();
 }

@@ -6,6 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
@@ -133,5 +134,25 @@ public class MonitorDaoImpl implements MonitorDao {
         dataMap.put("source", result);
 
         return dataMap;
+    }
+
+    @Override
+    public List<Map<String, Object>> test() {
+        SearchResponse hello = this.client.prepareSearch("hello*")
+                .setQuery(matchAllQuery())
+                .setSize(50)
+                .setExplain(true)
+                .execute().actionGet();
+
+        System.out.println(this.client.prepareSearch("helloworld")
+                .setQuery(matchAllQuery()));
+
+        SearchHits hits = hello.getHits();
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for (SearchHit hit : hits) {
+            mapList.add(hit.getSource());
+        }
+
+        return mapList;
     }
 }
