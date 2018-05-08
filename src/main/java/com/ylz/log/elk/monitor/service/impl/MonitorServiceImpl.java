@@ -1,5 +1,6 @@
 package com.ylz.log.elk.monitor.service.impl;
 
+import com.ylz.log.elk.monitor.bean.MutilIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,13 +22,13 @@ public class MonitorServiceImpl implements MonitorService {
     public Map<String, Object> esFieldMap() {
         Map<String, Object> esFieldMap = new HashMap<>();
 
-        List<String> indexList = monitorDao.indexList();
+        List<String> indexList = monitorDao.listIndex();
         List<String> fieldList = new ArrayList<>();
 
         if (CollectionUtils.isNotEmpty(indexList)) {
             String index = "";
             index = indexList.get(0);
-            fieldList = monitorDao.fieldList(index);
+            fieldList = monitorDao.listField(index);
         }
 
         esFieldMap.put("indexList", indexList);
@@ -44,12 +45,22 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public List<String> changeIndex(String index) {
-        return monitorDao.fieldList(index);
+    public List<String> listField(String index) {
+        return monitorDao.listField(index);
     }
 
     @Override
-    public List<Map<String, Object>> test() {
+    public Object test() {
         return monitorDao.test();
+    }
+
+    @Override
+    public List<String> listIndex() {
+        return monitorDao.listIndex();
+    }
+
+    @Override
+    public List<MutilIndexBean> listMultiIndex() {
+        return monitorDao.listMultiIndex();
     }
 }

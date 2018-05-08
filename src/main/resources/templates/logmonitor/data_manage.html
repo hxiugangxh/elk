@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>索引管理页面</title>
+  <!--基础样式-->
+  <th:block th:include="common/pub_head :: default"></th:block>
+  <th:block th:include="common/pub_head :: base-css"></th:block>
+  <!--主题色-->
+  <th:block th:include="common/pub_head :: theme-blue"></th:block>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/mage.css}"/>
+  <style>
+    .deal {
+      margin-left: 30px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrapper-content">
+  <div class="box">
+    <div class="wrapper-content-all">
+      <div class="box-header with-border">
+        <div class="box-title dec_1 theme-border-left">索引管理</div>
+      </div>
+      <div class="box-body">
+
+        <!-- 按钮 -->
+        <div class="col-md-4 mt15 manage">
+          <button type="button" class="btn btn-primary btn-add-label mb-20" data-toggle="modal"
+                  data-target="#myModal">
+            <span class="glyphicon glyphicon-plus"></span>
+            添加索引
+          </button>
+          <div>
+            <span class="list-group-item tab">
+                <a href="javascript:void(0);">
+                  <i class="iconfont icon-down"></i>
+                </a>
+                <span class="deal">复合索引</span>
+            </span>
+            <ul class="list-group" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
+              <th:block th:each="multiIndexBean : ${multiIndexList}">
+                <li class="list-group-item">
+                  <a href="javascript:void(0)" class="deal" th:text="${multiIndexBean.multiIndex}"></a></li>
+              </th:block>
+            </ul>
+          </div>
+          <div>
+            <span class="list-group-item tab">
+                <a href="javascript:void(0);">
+                  <i class="iconfont icon-down"></i>
+                </a>
+                <span class="deal">Elasticsearch索引</span>
+            </span>
+            <ul class="list-group" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
+              <th:block th:each="index : ${indexList}">
+                <li class="list-group-item">
+                  <a href="javascript:void(0)" class="deal" th:text="${index}"></a></li>
+              </th:block>
+            </ul>
+          </div>
+        </div>
+        <!-- 弹框 -->
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-hidden="true">&times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">添加索引</h4>
+              </div>
+              <div class="modal-body " style="min-height: 300px;">
+                <div class="input-group col-md-6  col-md-offset-3">
+                  <label>索引名称：</label>
+                  <input type="text" name="" id="txt" class="form-control"/>
+                </div>
+                <div class="col-md-6  col-md-offset-3"
+                     style="height: 180px;overflow-y: scroll;padding:0">
+                  <ul class="list-group" id="listCell">
+                    <li class="list-group-item">12141gwegwg</li>
+                    <li class="list-group-item">12141gwegwg</li>
+                    <li class="list-group-item">548gwegwg</li>
+                    <li class="list-group-item">99999gwegwg</li>
+                    <li class="list-group-item">77777gwegwg</li>
+                    <li class="list-group-item">666666gwegwg</li>
+                  </ul>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="btn_ok">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 表格 -->
+        <div class="col-md-8">
+          <div class="cf mb-20">
+            <div class="mt15 fl">
+              <h4 style="margin:0">索引名称：<span id="name_info" class="bold-reset blue-color"></span></h4>
+            </div>
+            <div class="mt15 fr">
+              <button type="button" class="btn btn-info">
+                <span class="glyphicon glyphicon-star"></span>
+                收藏
+              </button>
+              <button type="button" class="btn btn-danger" id="remove_info">
+                <span class="glyphicon glyphicon-remove"></span>
+                删除
+              </button>
+
+              <button type="button" class="btn btn-info" onclick="location.reload();">
+                <span class="glyphicon glyphicon-refresh"></span>
+                刷新
+              </button>
+            </div>
+          </div>
+          <table id="table" class="table table-bordered">
+            <thead>
+            <tr>
+              <th data-field="state" data-checkbox="true"></th>
+              <th data-field="id">ID</th>
+              <th data-field="name">复合索引</th>
+              <th data-field="name">对应Es索引</th>
+              <th data-field="date">创建时间</th>
+            </tr>
+            </thead>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  $("#table").bootstrapTable({
+    url: '/assets/data/test_table_mag.json',
+    pagination: true,
+    pageSize: 10,
+    pageList: [5, 10, 15, 20]
+  });
+  function listField() {
+    var index = $("#name_info").html();
+    var formData = {
+      "index": index
+    };
+    var URL = "/logmonitor/listField";
+
+    $.post(URL, formData, function (fieldList) {
+      console.log(fieldList);
+    }, "json");
+  }
+
+  $(document).on("click", ".tab", function () {
+    var clazz = $(this).find(".iconfont").attr("class");
+    if (clazz.indexOf("icon-down") != -1) {
+      $(this).find(".iconfont").removeClass("icon-down").addClass("icon-up");
+    } else {
+      $(this).find(".iconfont").removeClass("icon-up").addClass("icon-down");
+    }
+    $(this).next().find("li").toggleClass("hide");
+  });
+  $(document).on("click", ".manage ul li", function () {
+    $(".manage ul li").removeClass("active");
+    $(this).addClass("active");
+    $("#name_info").html($(this).find("a").html());
+  });
+  /*]]>*/
+</script>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  //弹出框，input框字符匹配
+  $("#txt").keyup(function () {
+    if ($("#txt").val().length <= 0) {
+      $("#listCell li").css('background-color', '#fff');
+      return;
+    }
+    for (var i = 0; i < $("#listCell li").length; i++) {
+      //模糊匹配，将所有匹配项显示
+      if ($("#listCell li").eq(i).text().substr(0, $("#txt").val().length) == $("#txt").val()) {
+        $("#listCell li").eq(i).css('background-color', '#ccc');
+      }
+    }
+  });
+  $("#listCell li").click(function () {
+    $("#txt").val($(this).text());
+  });
+  //按钮保存
+  $("#btn_ok").on("click", function () {
+    var _text = $("#txt").val();
+    if (!_text == "") {
+      $("#list_info").append(" <li class='list-group-item'><a href='javascript:void(0);'>" + _text + "</a></li>");
+      $('#myModal').modal('hide')
+      _text = "";
+    } else {
+      return
+    }
+  })
+  //选中索引
+  $(document).on("click", "#list_info li a", function () {
+    $(this).parent().addClass("active").siblings().removeClass("active");
+    act();
+  })
+
+  function act() {
+    var text_info = $(".manage ul li.active a").text();
+    // alert(text_info)
+    $("#name_info").text(text_info);
+  }
+
+  //索引删除
+  $(function () {
+    $(".manage ul li").eq(0).addClass("active");
+    act();
+    $("#remove_info").on("click", function () {
+      $("#list_info li.active").remove();
+      $("#list_info li:first-child").addClass("active");
+      act();
+    });
+
+    listField();
+  })
+  /*]]>*/
+</script>
+</body>
+
+</html>

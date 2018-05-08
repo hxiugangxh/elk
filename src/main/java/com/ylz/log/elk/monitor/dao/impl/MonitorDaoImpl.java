@@ -1,22 +1,22 @@
 package com.ylz.log.elk.monitor.dao.impl;
 
+import com.ylz.log.elk.monitor.bean.MutilIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
-import org.elasticsearch.index.query.MatchAllQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -34,13 +34,16 @@ public class MonitorDaoImpl implements MonitorDao {
     @Autowired
     private Client client;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     /**
      * 获取所有的index
      *
      * @return
      */
     @Override
-    public List<String> indexList() {
+    public List<String> listIndex() {
 
         Set<String> indexSet = client.admin().indices().stats(new IndicesStatsRequest().all()).actionGet()
                 .getIndices().keySet();
@@ -55,32 +58,38 @@ public class MonitorDaoImpl implements MonitorDao {
      * @return
      */
     @Override
-    public List<String> fieldList(String index) {
-        List<String> fieldList = new ArrayList<>();
+    public List<String> listField(String index) {
+        log.info("listField: index = {}", index);
+        Set<String> fieldSet = new HashSet<>();
 
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
-                .prepareGetMappings(index).execute()
+                .prepareGetMappings(index.split(",")).execute()
                 .actionGet().getMappings();
 
-        if (mappings.get(index).keys().size() > 0) {
-            Iterator<String> stringIterator = mappings.get(index).keysIt();
+        Iterator<String> indexIterator = mappings.keysIt();
 
-            //type已经只有一个
-            String type = stringIterator.next();
+        while (indexIterator.hasNext()) {
+            String indexKey = indexIterator.next();
 
-            Collection values = elasticsearchTemplate.getMapping(index, type).values();
+            Iterator<String> typeIterator = mappings.get(indexKey).keysIt();
 
-            if (CollectionUtils.isNotEmpty(values)) {
-                Iterator iterator = values.iterator();
-                while (iterator.hasNext()) {
-                    Map<String, ?> obj = (Map<String, ?>) iterator.next();
+            while (typeIterator.hasNext()) {
+                String typeKey = typeIterator.next();
 
-                    fieldList.addAll(obj.keySet());
+                Collection values = elasticsearchTemplate.getMapping(indexKey, typeKey).values();
+
+                if (CollectionUtils.isNotEmpty(values)) {
+                    Iterator iterator = values.iterator();
+                    while (iterator.hasNext()) {
+                        Map<String, ?> obj = (Map<String, ?>) iterator.next();
+
+                        fieldSet.addAll(obj.keySet());
+                    }
                 }
             }
         }
 
-        return fieldList;
+        return new ArrayList<>(fieldSet);
     }
 
     @Override
@@ -137,22 +146,48 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public List<Map<String, Object>> test() {
-        SearchResponse hello = this.client.prepareSearch("hello*")
-                .setQuery(matchAllQuery())
-                .setSize(50)
-                .setExplain(true)
-                .execute().actionGet();
+    public Object test() {
+        String index = "hello*";
+        Set<String> fieldSet = new HashSet<>();
 
-        System.out.println(this.client.prepareSearch("helloworld")
-                .setQuery(matchAllQuery()));
+        ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
+                .prepareGetMappings(index).execute()
+                .actionGet().getMappings();
 
-        SearchHits hits = hello.getHits();
-        List<Map<String, Object>> mapList = new ArrayList<>();
-        for (SearchHit hit : hits) {
-            mapList.add(hit.getSource());
+        Iterator<String> indexIterator = mappings.keysIt();
+
+        while (indexIterator.hasNext()) {
+            String indexKey = indexIterator.next();
+
+            Iterator<String> typeIterator = mappings.get(indexKey).keysIt();
+
+            while (typeIterator.hasNext()) {
+                String typeKey = typeIterator.next();
+
+                Collection values = elasticsearchTemplate.getMapping(indexKey, typeKey).values();
+
+                if (CollectionUtils.isNotEmpty(values)) {
+                    Iterator iterator = values.iterator();
+                    while (iterator.hasNext()) {
+                        Map<String, ?> obj = (Map<String, ?>) iterator.next();
+
+                        fieldSet.addAll(obj.keySet());
+                    }
+                }
+            }
         }
 
-        return mapList;
+        return new ArrayList<>(fieldSet);
     }
+
+    @Override
+    public List<MutilIndexBean> listMultiIndex() {
+        String querySQL = "select * from cm_multi_index";
+
+        log.info("listMultiIndex--获取多重复合索引:\n" + querySQL);
+
+        return this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper<>(MutilIndexBean.class));
+    }
+
+
 }

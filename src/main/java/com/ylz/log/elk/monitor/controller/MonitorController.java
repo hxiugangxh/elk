@@ -1,6 +1,7 @@
 package com.ylz.log.elk.monitor.controller;
 
 import com.ylz.log.elk.base.util.EsUtil;
+import com.ylz.log.elk.monitor.bean.MutilIndexBean;
 import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/monitor")
+@RequestMapping("/logmonitor")
 public class MonitorController {
 
     @Autowired
@@ -30,7 +31,7 @@ public class MonitorController {
 
         map.put("esFieldmap", esFieldmap);
 
-        return "log/index";
+        return "logmonitor/index";
     }
 
     @RequestMapping("/queryByEs")
@@ -46,16 +47,27 @@ public class MonitorController {
         return monitorService.queryByEs(page, pageSize, index, field, searchContent);
     }
 
-    @RequestMapping("/changeIndex")
+    @RequestMapping("/listField")
     @ResponseBody
-    public List<String> changeIndex(@RequestParam("index") String index) {
-        return monitorService.changeIndex(index);
+    public List<String> listField(@RequestParam("index") String index) {
+        return monitorService.listField(index);
     }
 
+    @RequestMapping("/dataManage")
+    public String dataManage(Map<String, Object> map) {
+
+        List<MutilIndexBean> multiIndexList = monitorService.listMultiIndex();
+        List<String> indexList = monitorService.listIndex();
+
+        map.put("multiIndexList", multiIndexList);
+        map.put("indexList", indexList);
+
+        return "logmonitor/data_manage";
+    }
 
     @RequestMapping("/test")
     @ResponseBody
-    public List<Map<String, Object>> test() {
+    public Object test() {
 
         return monitorService.test();
     }

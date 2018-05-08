@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>管理页面</title>
+    <!--基础样式-->
+    <link rel="stylesheet" type="text/css" href="./assets/plugins/bootstrap-3.3.0/css/bootstrap.css"/>
+    <link type="text/css" rel="stylesheet" href="./assets/plugins/select2/css/select2.css"/>
+    <link rel="stylesheet" type="text/css" href="./assets/plugins/bootstrap-table-1.11.0/bootstrap-table.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/base/base.css"/>
+    <link type="text/css" rel="stylesheet" href="./assets/font/log/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="./assets/css/base/common.css"/>
+    <link rel="stylesheet" type="text/css" href="./assets/css/base/forms.css"/>
+    <!--主题色-->
+    <link type="text/css" rel="stylesheet" href="./assets/css/base/themecolor_blue.css"/>
+    <link type="text/css" rel="stylesheet" href="./assets/css/mage.css"/>
+</head>
+
+<body>
+<div class="wrapper-content">
+    <div class="box">
+        <div class="wrapper-content-all">
+            <div class="box-header with-border">
+                <div class="box-title dec_1 theme-border-left">索引管理</div>
+            </div>
+            <div class="box-body">
+                <!-- 按钮 -->
+                <div class="col-md-4 mt15 manage">
+                    <button type="button" class="btn btn-primary btn-add-label mb-20" data-toggle="modal"
+                            data-target="#myModal">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        添加索引
+                    </button>
+                    <div class="">
+                        <ul class="list-group" id="list_info">
+                            <li class="list-group-item active">
+                                <a href="javascript:void(0)">wgwegewg</a></li>
+                            <li class="list-group-item">
+                                <a href="javascript:void(0)">25g1eergrg</a></li>
+                            <li class="list-group-item">
+                                <a href="javascript:void(0)">8584eeeeerrr</a></li>
+                            <li class="list-group-item">
+                                <a href="javascript:void(0)">2dbffrr00</a></li>
+                            <li class="list-group-item">
+                                <a href="javascript:void(0)">wrgererreerer</a></li>
+                            <li class="list-group-item">
+                                <a href="javascript:void(0)">wrgererreerer</a></li>
+                            <li class="list-group-item">
+                                <a href="javascript:void(0)">wrgererreerer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- 弹框 -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"
+                                        aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">添加索引</h4>
+                            </div>
+                            <div class="modal-body " style="min-height: 300px;">
+                                <div class="input-group col-md-6  col-md-offset-3">
+                                    <label>索引名称：</label>
+                                    <input type="text" name="" id="txt" class="form-control"/>
+                                </div>
+                                <div class="col-md-6  col-md-offset-3"
+                                     style="height: 180px;overflow-y: scroll;padding:0">
+                                    <ul class="list-group" id="listCell">
+                                        <li class="list-group-item">12141gwegwg</li>
+                                        <li class="list-group-item">12141gwegwg</li>
+                                        <li class="list-group-item">548gwegwg</li>
+                                        <li class="list-group-item">99999gwegwg</li>
+                                        <li class="list-group-item">77777gwegwg</li>
+                                        <li class="list-group-item">666666gwegwg</li>
+                                    </ul>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                                <button type="button" class="btn btn-primary" id="btn_ok">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 表格 -->
+                <div class="col-md-8">
+                    <div class="cf mb-20">
+                        <div class="mt15 fl">
+                            <h4 style="margin:0">索引名称：<span id="name_info" class="bold-reset blue-color"></span></h4>
+                        </div>
+                        <div class="mt15 fr">
+                            <button type="button" class="btn btn-info">
+                                <span class="glyphicon glyphicon-star"></span>
+                                收藏
+                            </button>
+                            <button type="button" class="btn btn-danger" id="remove_info">
+                                <span class="glyphicon glyphicon-remove"></span>
+                                删除
+                            </button>
+
+                            <button type="button" class="btn btn-info" onclick="location.reload();">
+                                <span class="glyphicon glyphicon-refresh"></span>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <table id="table"
+                           data-toggle="table"
+                           data-url="./assets/data/test_table_mag.json"
+                           data-pagination="true"
+                           data-show-toggle="false"
+                           data-checkbox="true"
+                           class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th data-field="state" data-checkbox="true"></th>
+                            <th data-field="id">编号</th>
+                            <th data-field="name">名称</th>
+                            <th data-field="date">时间</th>
+                        </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="./assets/js/jquery/jquery-1.12.3.min.js"></script>
+<script type="text/javascript" src="./assets/plugins/select2/js/select2.full.js"></script>
+<script type="text/javascript" src="./assets/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="./assets/plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
+<script type="text/javascript"
+        src="./assets/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+<script type="text/javascript" src="./assets/js/common.js"></script>
+<script type="text/javascript">
+    //弹出框，input框字符匹配
+    $("#txt").keyup(function () {
+        if ($("#txt").val().length <= 0) {
+            $("#listCell li").css('background-color', '#fff');
+            return;
+        }
+        for (var i = 0; i < $("#listCell li").length; i++) {
+            //模糊匹配，将所有匹配项显示  
+            if ($("#listCell li").eq(i).text().substr(0, $("#txt").val().length) == $("#txt").val()) {
+                $("#listCell li").eq(i).css('background-color', '#ccc');
+            }
+        }
+    });
+    $("#listCell li").click(function () {
+        $("#txt").val($(this).text());
+    });
+    //按钮保存  
+    $("#btn_ok").on("click", function () {
+        var _text = $("#txt").val();
+        if (!_text == "") {
+            $("#list_info").append(" <li class='list-group-item'><a href='javascript:void(0);'>" + _text + "</a></li>");
+            $('#myModal').modal('hide')
+            _text = "";
+        } else {
+            return
+        }
+    })
+    //选中索引
+    $(document).on("click", "#list_info li a", function () {
+        $(this).parent().addClass("active").siblings().removeClass("active");
+        act();
+    })
+
+    function act() {
+        var text_info = $("#list_info li.active a").text();
+        // alert(text_info)
+        $("#name_info").text(text_info);
+    }
+    //索引删除
+    $(function () {
+        act();
+        $("#remove_info").on("click", function () {
+            $("#list_info li.active").remove();
+            $("#list_info li:first-child").addClass("active");
+            act();
+        })
+
+    })
+
+</script>
+
+</html>

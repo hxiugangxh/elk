@@ -1,14 +1,18 @@
 package com.ylz.log.elk.monitor.dao;
 
+import com.ylz.log.elk.monitor.bean.MutilIndexBean;
+
 import java.util.List;
 import java.util.Map;
 
 public interface MonitorDao {
-    List<String> indexList();
+    List<String> listIndex();
 
-    List<String> fieldList(String index);
+    List<String> listField(String index);
 
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String searchContent);
 
-    List<Map<String, Object>> test();
+    Object test();
+
+    List<MutilIndexBean> listMultiIndex();
 }

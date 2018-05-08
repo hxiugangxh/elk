@@ -1,5 +1,7 @@
 package com.ylz.log.elk.monitor.service;
 
+import com.ylz.log.elk.monitor.bean.MutilIndexBean;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +10,11 @@ public interface MonitorService {
 
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String searchContent);
 
-    List<String> changeIndex(String index);
+    List<String> listField(String index);
 
-    List<Map<String, Object>> test();
+    Object test();
+
+    List<String> listIndex();
+
+    List<MutilIndexBean> listMultiIndex();
 }

@@ -10,6 +10,7 @@
   <th:block th:include="common/pub_head :: base-css"></th:block>
   <!--主题色-->
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
+  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
   <link rel="stylesheet" type="text/css" th:href="@{/assets/css/log.css}"/>
 </head>
 
@@ -49,7 +50,7 @@
                 <label class="control-label no-pd"><b class="mr5 red500">*</b>索引列表</label>
                 <div class="col-xs-12">
                   <select id="index" class="js-example-basic-single span12"
-                    ONCHANGE="changeIndex(this)">
+                    onchange="listField(this)">
                     <th:block th:if="${#lists.isEmpty(esFieldmap.indexList)}">
                       <option value="">没有数据</option>
                     </th:block>
@@ -167,9 +168,9 @@
     }
   }
 
-  function changeIndex(thisObj) {
+  function listField(thisObj) {
     var index = $(thisObj).val();
-    var URL = "/monitor/changeIndex";
+    var URL = "/logmonitor/listField";
     var formData = {
       "index": index
     };
@@ -185,7 +186,7 @@
   }
 
   function queryByEs() {
-    var URL = "/monitor/queryByEs";
+    var URL = "/logmonitor/queryByEs";
 
     var index = $("#index").val();
     var field = $("#field").val();
