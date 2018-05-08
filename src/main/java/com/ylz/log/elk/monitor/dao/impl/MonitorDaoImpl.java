@@ -5,23 +5,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.index.query.MatchAllQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
-import org.springframework.data.elasticsearch.core.query.MoreLikeThisQuery;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 @Slf4j
 @Repository("monitorDao")
@@ -85,53 +85,53 @@ public class MonitorDaoImpl implements MonitorDao {
     @Override
     public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String
             searchContent) {
-
-        log.info("queryByEs--查询es数据: index = {}, page = {}, pageSize = {}", index, page, pageSize);
-
         Map<String, Object> dataMap = new HashMap<>();
 
-        NativeSearchQueryBuilder nativeSearchQueryBuilder = new NativeSearchQueryBuilder();
-        nativeSearchQueryBuilder
-                .withIndices(index)
-                .withPageable(PageRequest.of(page, pageSize));
+        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(index)
+                .setFrom(page).setSize(pageSize);
+
+        if (StringUtils.isEmpty(searchContent)) {
+            searchRequestBuilder.setQuery(matchAllQuery());
+        } else {
+            searchRequestBuilder.setQuery(queryStringQuery(searchContent));
+        }
 
         if (StringUtils.isNotEmpty(field)) {
-            nativeSearchQueryBuilder
-                    .withSourceFilter(new FetchSourceFilter(new String[]{"address"}, null));
-        }
-        if (StringUtils.isNotEmpty(searchContent)) {
-            nativeSearchQueryBuilder
-                    .withQuery(queryStringQuery(searchContent));
+            searchRequestBuilder.setFetchSource(field.split(","), null);
         }
 
-        return elasticsearchTemplate.query(nativeSearchQueryBuilder.build(), response -> {
-            SearchHits hits = response.getHits();
 
-            long total = hits.getTotalHits();
-            long totalPages = (total % pageSize == 0) ? total / pageSize : total / pageSize + 1;
-            long currentPage = page + 1;
-            if (totalPages != 0 && currentPage > totalPages) {
-                log.info("该页面无数据，处理page后再次查询");
-                currentPage = totalPages;
+        log.info("\nqueryByEs--查询es数据: index = {}, page = {}, pageSize = {}\n查询DSL: {}",
+                index, page, pageSize, searchRequestBuilder);
 
-                return this.queryByEs((int) (currentPage -1), pageSize,index, field, searchContent);
-            }
+        SearchHits hits = searchRequestBuilder
+                .setExplain(true).execute().actionGet()
+                .getHits();
 
-            List<Map<String, Object>> result = new ArrayList<>();
-            for (SearchHit hit : hits) {
-                Map<String, Object> map = new LinkedHashMap<>();
-                map.put("id", hit.getId());
-                map.putAll(hit.getSource());
+        long total = hits.getTotalHits();
+        long totalPages = (total % pageSize == 0) ? total / pageSize : total / pageSize + 1;
+        long currentPage = page + 1;
+        if (totalPages != 0 && currentPage > totalPages) {
+            log.info("该页面无数据，处理page后再次查询");
+            currentPage = totalPages;
 
-                result.add(map);
-            }
+            return this.queryByEs((int) (currentPage - 1), pageSize, index, field, searchContent);
+        }
 
-            dataMap.put("currentPage", currentPage);
-            dataMap.put("total", total);
-            dataMap.put("totalPages", totalPages);
-            dataMap.put("source", result);
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (SearchHit hit : hits) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("id", hit.getId());
+            map.putAll(hit.getSource());
 
-            return dataMap;
-        });
+            result.add(map);
+        }
+
+        dataMap.put("currentPage", currentPage);
+        dataMap.put("total", total);
+        dataMap.put("totalPages", totalPages);
+        dataMap.put("source", result);
+
+        return dataMap;
     }
 }

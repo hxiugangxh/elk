@@ -1,5 +1,6 @@
 package com.ylz.log.elk.monitor.controller;
 
+import com.ylz.log.elk.base.util.EsUtil;
 import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.springframework.beans.factory.annotation.Autowired;

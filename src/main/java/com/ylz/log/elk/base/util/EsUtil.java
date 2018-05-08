@@ -1,5 +1,6 @@
 package com.ylz.log.elk.base.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.exists.types.TypesExistsRequest;
