@@ -15,4 +15,6 @@ public interface MonitorDao {
     Object test();
 
     List<MutilIndexBean> listMultiIndex();
+
+    List<Map<String,Object>> listReflectField(String index);
 }

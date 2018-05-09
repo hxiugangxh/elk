@@ -65,6 +65,13 @@ public class MonitorController {
         return "logmonitor/data_manage";
     }
 
+    @RequestMapping("/listReflectField")
+    @ResponseBody
+    public List<Map<String, Object>> listReflectField(@RequestParam(value = "index", defaultValue = "") String index) {
+
+        return monitorService.listReflectField(index);
+    }
+
     @RequestMapping("/test")
     @ResponseBody
     public Object test() {

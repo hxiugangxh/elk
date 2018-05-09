@@ -4,11 +4,14 @@
   <script type="text/javascript" th:src="@{/assets/js/jquery/jquery-1.12.3.min.js}"></script>
   <script type="text/javascript" th:src="@{/assets/plugins/select2/js/select2.full.js}"></script>
   <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-3.3.0/js/bootstrap.min.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/paginator/bootstrap-paginator.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js}"></script>
   <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-table-1.11.0/bootstrap-table.min.js}"></script>
+  <script type="text/javascript"
+          th:src="@{/assets/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/plugins/paginator/bootstrap-paginator.js}"></script>
+  <script type="text/javascript" th:src="@{/assets/plugins/jsonview/jquery.jsonview.js}"></script>
   <script type="text/javascript" th:src="@{/assets/plugins/layer-v2.4/layer.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/common.js}"></script>
+
   <a th:href="${#httpServletRequest.getContextPath()} + '/'"
      id="contextPath"></a>
   <script>
@@ -16,23 +19,15 @@
   </script>
 </th:block>
 
-<th:block th:fragment="bootstrap">
-  <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" type="text/css"/>
-  <script th:src="@{/js/bootstrap.min.js}"></script>
-</th:block>
-
 <th:block th:fragment="base-css">
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/plugins/bootstrap-3.3.0/css/bootstrap.min.css}"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/plugins/bootstrap-3.3.0/css/bootstrap.css}"/>
   <link type="text/css" rel="stylesheet" th:href="@{/assets/plugins/select2/css/select2.css}"/>
   <link type="text/css" rel="stylesheet" th:href="@{/assets/plugins/layer-v2.4/skin/layer.css}"/>
   <link type="text/css" rel="stylesheet" th:href="@{/assets/plugins/jsonview/jquery.jsonview.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/base.css}"/>
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/iconfont.css}"/>
   <link rel="stylesheet" type="text/css" th:href="@{/assets/plugins/bootstrap-table-1.11.0/bootstrap-table.css}">
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/base.css}"/>
   <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/common.css}"/>
   <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/forms.css}"/>
-  <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js}"></script>
-
 </th:block>
 
 <th:block th:fragment="theme-blue">

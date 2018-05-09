@@ -4,7 +4,7 @@ import com.ylz.log.elk.monitor.bean.MutilIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -148,7 +148,63 @@ public class MonitorDaoImpl implements MonitorDao {
     @Override
     public Object test() {
         String index = "hello*";
-        Set<String> fieldSet = new HashSet<>();
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
+                .prepareGetMappings(index).execute()
+                .actionGet().getMappings();
+
+        Iterator<String> indexIterator = mappings.keysIt();
+
+        while (indexIterator.hasNext()) {
+            String indexKey = indexIterator.next();
+
+            System.out.println(indexKey);
+
+            Iterator<String> typeIterator = mappings.get(indexKey).keysIt();
+
+            while (typeIterator.hasNext()) {
+                String typeKey = typeIterator.next();
+                Map<String, Object> dataMap = new HashMap<>();
+
+                Collection values = elasticsearchTemplate.getMapping(indexKey, typeKey).values();
+
+                if (CollectionUtils.isNotEmpty(values)) {
+
+                    Iterator iterator = values.iterator();
+                    while (iterator.hasNext()) {
+                        Map<String, ?> obj = (Map<String, ?>) iterator.next();
+
+                        obj.forEach((key, value) -> {
+                            dataMap.put(indexKey, key);
+
+                            list.add(dataMap);
+                        });
+
+                    }
+                }
+
+
+            }
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<MutilIndexBean> listMultiIndex() {
+        String querySQL = "select * from cm_multi_index";
+
+        log.info("listMultiIndex--获取多重复合索引:\n" + querySQL);
+
+        return this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper<>(MutilIndexBean.class));
+    }
+
+    @Override
+    public List<Map<String, Object>> listReflectField(String index) {
+        log.info("listReflectField获取对应列名: index = {}", index);
+
+        List<Map<String, Object>> list = new ArrayList<>();
 
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
                 .prepareGetMappings(index).execute()
@@ -168,25 +224,25 @@ public class MonitorDaoImpl implements MonitorDao {
 
                 if (CollectionUtils.isNotEmpty(values)) {
                     Iterator iterator = values.iterator();
+
                     while (iterator.hasNext()) {
                         Map<String, ?> obj = (Map<String, ?>) iterator.next();
 
-                        fieldSet.addAll(obj.keySet());
+                        obj.keySet().forEach((key) -> {
+                            Map<String, Object> dataMap = new HashMap<>();
+
+                            dataMap.put("index", indexKey);
+                            dataMap.put("field", key);
+
+                            list.add(dataMap);
+                        });
+
                     }
                 }
             }
         }
 
-        return new ArrayList<>(fieldSet);
-    }
-
-    @Override
-    public List<MutilIndexBean> listMultiIndex() {
-        String querySQL = "select * from cm_multi_index";
-
-        log.info("listMultiIndex--获取多重复合索引:\n" + querySQL);
-
-        return this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper<>(MutilIndexBean.class));
+        return list;
     }
 
 

@@ -15,6 +15,9 @@
     .deal {
       margin-left: 30px;
     }
+    .th-inner {
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -124,11 +127,8 @@
           <table id="table" class="table table-bordered">
             <thead>
             <tr>
-              <th data-field="state" data-checkbox="true"></th>
-              <th data-field="id">ID</th>
-              <th data-field="name">复合索引</th>
-              <th data-field="name">对应Es索引</th>
-              <th data-field="date">创建时间</th>
+              <th data-field="index">索引名称</th>
+              <th data-field="field">字段列名</th>
             </tr>
             </thead>
           </table>
@@ -139,12 +139,26 @@
 </div>
 <script th:inline="javascript">
   /*<![CDATA[*/
-  $("#table").bootstrapTable({
-    url: '/assets/data/test_table_mag.json',
-    pagination: true,
-    pageSize: 10,
-    pageList: [5, 10, 15, 20]
-  });
+  function listReflectField(flag) {
+    var index = $("#name_info").html();
+
+    var opt = {
+      url: "/logmonitor/listReflectField?index=" + index,
+      pagination: true,
+      pageSize: 10,
+      pageList: [5, 10, 15, 20],
+      onLoadSuccess: function () {
+        mergeColumn("table", 0);
+      }
+    };
+
+    if (flag) {
+      $("#table").bootstrapTable(opt);
+    } else {
+      $("#table").bootstrapTable("refresh", opt);
+    }
+  }
+
   function listField() {
     var index = $("#name_info").html();
     var formData = {
@@ -170,6 +184,8 @@
     $(".manage ul li").removeClass("active");
     $(this).addClass("active");
     $("#name_info").html($(this).find("a").html());
+
+    listReflectField(false);
   });
   /*]]>*/
 </script>
@@ -197,17 +213,15 @@
     var _text = $("#txt").val();
     if (!_text == "") {
       $("#list_info").append(" <li class='list-group-item'><a href='javascript:void(0);'>" + _text + "</a></li>");
-      $('#myModal').modal('hide')
+      $('#myModal').modal('hide');
       _text = "";
-    } else {
-      return
     }
-  })
+  });
   //选中索引
   $(document).on("click", "#list_info li a", function () {
     $(this).parent().addClass("active").siblings().removeClass("active");
     act();
-  })
+  });
 
   function act() {
     var text_info = $(".manage ul li.active a").text();
@@ -226,7 +240,46 @@
     });
 
     listField();
-  })
+    listReflectField(true);
+  });
+  function mergeColumn(tbodyId, columnNum){
+    if ($("#" + tbodyId + " tbody tr").length > 0)  {
+      var tdStrCur = "";
+      var countCur = 0;
+      var countNext = 0;
+      var flag = false;
+      var objCur;
+      var objNext;
+      $("#" + tbodyId + " tr").each(function() {
+        if ($(this).find("td").eq(columnNum).text() != tdStrCur) {
+          tdStrCur = $(this).find("td").eq(columnNum).text();
+          countCur = 1;
+          flag = true;
+          objCur = $(this).find("td").eq(columnNum);
+        } else if (objCur) {
+          if ($(this).find("td").eq(columnNum).text() != "") {
+            $(this).find("td").eq(columnNum).remove();
+            countCur++;
+            flag = false;
+            objNext = objCur;
+            countNext = countCur;
+          }
+        }
+        if (flag && countCur != 1) {
+          objNext.attr("rowspan", countNext);
+        } else {
+          if (objCur) {
+            objCur.attr("rowspan", countCur);
+            objCur.attr("style", "vertical-align: middle;text-align: center");
+          }
+        }
+      });
+      if (objCur) {
+        objCur.attr("rowspan", countCur);
+        objCur.attr("style", "vertical-align: middle;text-align: center");
+      }
+    }
+  }
   /*]]>*/
 </script>
 </body>

@@ -63,4 +63,9 @@ public class MonitorServiceImpl implements MonitorService {
     public List<MutilIndexBean> listMultiIndex() {
         return monitorDao.listMultiIndex();
     }
+
+    @Override
+    public List<Map<String, Object>> listReflectField(String index) {
+        return monitorDao.listReflectField(index);
+    }
 }

@@ -17,4 +17,6 @@ public interface MonitorService {
     List<String> listIndex();
 
     List<MutilIndexBean> listMultiIndex();
+
+    List<Map<String,Object>> listReflectField(String index);
 }
