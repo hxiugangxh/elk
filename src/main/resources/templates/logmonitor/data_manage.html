@@ -46,7 +46,7 @@
                 <a href="javascript:void(0);">
                   <i class="iconfont icon-down"></i>
                 </a>
-                <span class="deal">复合索引</span>
+                <span class="deal">组合索引</span>
             </span>
             <ul class="list-group" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
               <th:block th:each="multiIndexBean : ${multiIndexList}">
@@ -93,53 +93,47 @@
                 </div>
               </div>
               <div class="modal-body " style="min-height: 450px;">
+
                 <div class="col-md-6">
-                  <div class="input-group col-md-12">
-                    <label style="margin-bottom: 5px">索引名称：</label>
+                  <div class="input-group col-md-11">
+                    <label style="margin-bottom: 5px">Elasticsearch索引：</label>
                     <input type="text" style="margin-bottom: 5px" name="" id="txt" class="form-control"/>
                   </div>
-                  <div class="col-md-12" style="padding:0;border-left: 1px solid #ddd;
+                  <div class="col-md-11" style="padding:0;border-left: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;border-radius: 3px">
-                    <select style="height: 350px;width: 281px;" id="listCell" multiple="multiple">
-                      <option class="list-group-item option-item">12141gwegwg</option>
-                      <option class="list-group-item option-item">12141gwegwg</option>
-                      <option class="list-group-item option-item">548gwegwg</option>
-                      <option class="list-group-item option-item">99999gwegwg</option>
-                      <option class="list-group-item option-item">77777gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
+                    <select style="height: 350px;width: 258px;" id="left" multiple="multiple">
+                      <th:block th:each="index : ${indexList}">
+                        <option class="list-group-item option-item"
+                                th:value="${index}"
+                                th:text="${index}"></option>
+                      </th:block>
                     </select>
                   </div>
                 </div>
 
-                <div style="position: absolute;top: 170px;left: 315px;">
-                  <div style="font-size: 22px;color: #666;cursor: pointer">≥</div>
+                <div style="position: absolute;top: 170px;left: 306px;">
+                  <a style="font-size: 22px;color: #6c6c6c;">≥</a>
                   <br/><br/><br/><br/>
-                  <div style="font-size: 22px;cursor: pointer">≤</div>
+                  <a style="font-size: 22px;color: #6c6c6c;">≤</a>
                 </div>
 
                 <div class="col-md-6">
-                  <div class="input-group col-md-12">
-                    <label style="margin-bottom: 5px">索引名称：</label>
+                  <div class="input-group col-md-11">
+                    <label style="margin-bottom: 5px">Elasticsearch索引：</label>
                     <input type="text" style="margin-bottom: 5px" name="" class="form-control"/>
                   </div>
-                  <div class="col-md-12" style="padding:0;border-left: 1px solid #ddd;
-                    border-bottom: 1px solid #666;border-radius: 3px">
-                    <select style="height: 350px;width: 281px;" multiple="multiple">
-                      <option class="list-group-item option-item">12141gwegwg</option>
-                      <option class="list-group-item option-item">12141gwegwg</option>
-                      <option class="list-group-item option-item">548gwegwg</option>
-                      <option class="list-group-item option-item">99999gwegwg</option>
-                      <option class="list-group-item option-item">77777gwegwg</option>
-                      <option class="list-group-item option-item">666666gwegwg</option>
+                  <div class="col-md-11" style="padding:0;border-left: 1px solid #ddd;
+                    border-bottom: 1px solid #ddd;border-radius: 3px">
+                    <select style="height: 350px;width: 258px;" id="right" multiple="multiple">
+                      <th:block th:each="index : ${indexList}">
+                        <option class="list-group-item option-item"
+                                th:value="${index}"
+                                th:text="${index}"></option>
+                      </th:block>
                     </select>
                   </div>
                 </div>
+
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
@@ -237,6 +231,10 @@
 
     listReflectField(false);
   });
+  // //模糊匹配，将所有匹配项显示
+  function selectOption() {
+
+  }
   /*]]>*/
 </script>
 
