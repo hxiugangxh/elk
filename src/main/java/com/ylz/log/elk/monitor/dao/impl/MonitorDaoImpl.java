@@ -1,10 +1,11 @@
 package com.ylz.log.elk.monitor.dao.impl;
 
+import com.ylz.log.elk.monitor.bean.EsIndexBean;
 import com.ylz.log.elk.monitor.bean.MutilIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.KeyValue;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
@@ -17,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
@@ -36,6 +39,13 @@ public class MonitorDaoImpl implements MonitorDao {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
+        return new NamedParameterJdbcTemplate(this.jdbcTemplate);
+    }
 
     /**
      * 获取所有的index
@@ -55,15 +65,23 @@ public class MonitorDaoImpl implements MonitorDao {
      * 通过index获取type，以type获取其所有字段
      *
      * @param index
+     * @param flag
      * @return
      */
     @Override
-    public List<String> listField(String index) {
-        log.info("listField: index = {}", index);
+    public List<String> listField(String index, String flag) {
+        log.info("listField: index = {}, flag = {}", index, flag);
+        List<String> indexList = new ArrayList<>();
         Set<String> fieldSet = new HashSet<>();
 
+        if ("1".equals(flag)) {
+            indexList = this.getRelIndex(index);
+        } else {
+            indexList.add(index);
+        }
+
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
-                .prepareGetMappings(index.split(",")).execute()
+                .prepareGetMappings(indexList.toArray(new String[]{})).execute()
                 .actionGet().getMappings();
 
         Iterator<String> indexIterator = mappings.keysIt();
@@ -90,6 +108,29 @@ public class MonitorDaoImpl implements MonitorDao {
         }
 
         return new ArrayList<>(fieldSet);
+    }
+
+    // 通过multiIndex关联得到所有的es中的index
+    public List<String> getRelIndex(String multiIndex) {
+        String querySQL = "select c.*\n" +
+                "  from cm_multi_index a\n" +
+                "  left join cm_multi_es_index_rel b on a.id = b.multi_index_id\n" +
+                "  left join cm_es_index c on c.id = b.es_index_id\n" +
+                " where a.multi_index = :multiIndex";
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("multiIndex", multiIndex);
+
+        log.info("getRelIndex--组合索引映射: \n" + querySQL + "\n参数: " + paramMap);
+
+        List<Map<String, Object>> list = this.getNamedParameterJdbcTemplate().queryForList(querySQL, paramMap);
+
+        List<String> indexList = new ArrayList<>();
+        list.forEach((map) -> {
+            indexList.add(MapUtils.getString(map, "index"));
+        });
+
+        return indexList;
     }
 
     @Override
@@ -183,8 +224,6 @@ public class MonitorDaoImpl implements MonitorDao {
 
                     }
                 }
-
-
             }
         }
 
@@ -201,13 +240,19 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public List<Map<String, Object>> listReflectField(String index) {
-        log.info("listReflectField获取对应列名: index = {}", index);
+    public List<Map<String, Object>> listReflectField(String index, String flag) {
+        log.info("listReflectField获取对应列名: index = {}, flag = {}", index, flag);
 
         List<Map<String, Object>> list = new ArrayList<>();
+        List<String> indexList = new ArrayList<>();
+        if ("1".equals(flag)) {
+            indexList = this.getRelIndex(index);
+        } else {
+            indexList.add(index);
+        }
 
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
-                .prepareGetMappings(index).execute()
+                .prepareGetMappings(indexList.toArray(new String[]{})).execute()
                 .actionGet().getMappings();
 
         Iterator<String> indexIterator = mappings.keysIt();
@@ -245,5 +290,37 @@ public class MonitorDaoImpl implements MonitorDao {
         return list;
     }
 
+    @Override
+    public boolean saveMultiIndex(String multiIndex, List<String> indexList) {
+        log.info("saveMultiIndex: index = {}, indexList = {}", multiIndex, indexList);
+        MutilIndexBean mutilIndexBean = new MutilIndexBean(multiIndex);
+        entityManager.persist(mutilIndexBean);
+
+        List<EsIndexBean> esIndexList = new EsIndexBean(indexList).getEsIndex();
+
+        esIndexList.forEach((esIndexBean) -> {
+            entityManager.persist(esIndexBean);
+        });
+
+        Integer length = esIndexList.size();
+        String insertSQL = "insert into cm_multi_es_index_rel values";
+        for (int i = 0; i < length; i++) {
+            if (i == length - 1) {
+                insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + ")";
+            } else {
+                insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + "),";
+            }
+        }
+
+        log.info("saveMultiIndex--批量保存关系: " + insertSQL);
+
+        boolean flag = false;
+        Integer count =  this.jdbcTemplate.update(insertSQL);
+        if (count > 0) {
+            flag = true;
+        }
+
+        return flag;
+    }
 
 }

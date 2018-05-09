@@ -6,6 +6,7 @@ import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ public class MonitorServiceImpl implements MonitorService {
         if (CollectionUtils.isNotEmpty(indexList)) {
             String index = "";
             index = indexList.get(0);
-            fieldList = monitorDao.listField(index);
+            fieldList = monitorDao.listField(index, "0");
         }
 
         esFieldMap.put("indexList", indexList);
@@ -45,8 +46,8 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public List<String> listField(String index) {
-        return monitorDao.listField(index);
+    public List<String> listField(String index, String flag) {
+        return monitorDao.listField(index, flag);
     }
 
     @Override
@@ -65,7 +66,14 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public List<Map<String, Object>> listReflectField(String index) {
-        return monitorDao.listReflectField(index);
+    public List<Map<String, Object>> listReflectField(String index, String flag) {
+        return monitorDao.listReflectField(index, flag);
+    }
+
+    @Override
+    @Transactional
+    public boolean saveMultiIndex(String multiIndex, List<String> indexList) {
+
+        return monitorDao.saveMultiIndex(multiIndex, indexList);
     }
 }

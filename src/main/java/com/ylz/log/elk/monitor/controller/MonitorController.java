@@ -6,16 +6,10 @@ import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.shiro.subject.support.SubjectThreadState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.lang.management.GarbageCollectorMXBean;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/logmonitor")
@@ -49,8 +43,11 @@ public class MonitorController {
 
     @RequestMapping("/listField")
     @ResponseBody
-    public List<String> listField(@RequestParam("index") String index) {
-        return monitorService.listField(index);
+    public List<String> listField(
+            @RequestParam("index") String index,
+            @RequestParam(value = "flag", defaultValue = "") String flag
+    ) {
+        return monitorService.listField(index, flag);
     }
 
     @RequestMapping("/dataManage")
@@ -67,9 +64,31 @@ public class MonitorController {
 
     @RequestMapping("/listReflectField")
     @ResponseBody
-    public List<Map<String, Object>> listReflectField(@RequestParam(value = "index", defaultValue = "") String index) {
+    public List<Map<String, Object>> listReflectField(
+            @RequestParam(value = "index", defaultValue = "") String index,
+            @RequestParam(value = "flag", defaultValue = "0") String flag
+    ) {
 
-        return monitorService.listReflectField(index);
+        return monitorService.listReflectField(index, flag);
+    }
+
+    @RequestMapping(value = "/saveMultiIndex")
+    @ResponseBody
+    public Map<String, Object> saveMultiIndex(
+            @RequestParam("multiIndex") String multiIndex,
+            @RequestParam("index") String index
+
+    ) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        System.out.println("multiIndex = " + multiIndex);
+        System.out.println("index = " + index);
+
+        boolean flag = monitorService.saveMultiIndex(multiIndex, Arrays.asList(index.split(",")));
+
+        jsonMap.put("flag", flag);
+
+        return jsonMap;
     }
 
     @RequestMapping("/test")

@@ -10,7 +10,7 @@ public interface MonitorService {
 
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String searchContent);
 
-    List<String> listField(String index);
+    List<String> listField(String index, String flag);
 
     Object test();
 
@@ -18,5 +18,7 @@ public interface MonitorService {
 
     List<MutilIndexBean> listMultiIndex();
 
-    List<Map<String,Object>> listReflectField(String index);
+    List<Map<String,Object>> listReflectField(String index, String flag);
+
+    boolean saveMultiIndex(String multiIndex, List<String> indexList);
 }

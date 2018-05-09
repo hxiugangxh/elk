@@ -19,6 +19,7 @@
     .th-inner {
       text-align: center;
     }
+
     .option-item {
       padding: 10px 15px;
     }
@@ -51,7 +52,8 @@
             <ul class="list-group" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
               <th:block th:each="multiIndexBean : ${multiIndexList}">
                 <li class="list-group-item">
-                  <a href="javascript:void(0)" class="deal" th:text="${multiIndexBean.multiIndex}"></a></li>
+                  <a href="javascript:void(0)" class="deal" th:text="${multiIndexBean.multiIndex}"
+                     th:attr="data-flag=${multiIndexBean.flag}"></a></li>
               </th:block>
             </ul>
           </div>
@@ -65,7 +67,8 @@
             <ul class="list-group" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
               <th:block th:each="index : ${indexList}">
                 <li class="list-group-item">
-                  <a href="javascript:void(0)" class="deal" th:text="${index}"></a></li>
+                  <a href="javascript:void(0)" class="deal" th:text="${index}"
+                     data-flag="0"></a></li>
               </th:block>
             </ul>
           </div>
@@ -97,7 +100,8 @@
                 <div class="col-md-6">
                   <div class="input-group col-md-11">
                     <label style="margin-bottom: 5px">Elasticsearch索引：</label>
-                    <input type="text" style="margin-bottom: 5px" name="" id="txt" class="form-control"/>
+                    <input type="text" style="margin-bottom: 5px" name="" id="txt" class="form-control"
+                           onkeyup="selectOption(this, 'left')"/>
                   </div>
                   <div class="col-md-11" style="padding:0;border-left: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;border-radius: 3px">
@@ -112,24 +116,20 @@
                 </div>
 
                 <div style="position: absolute;top: 170px;left: 306px;">
-                  <a style="font-size: 22px;color: #6c6c6c;">≥</a>
+                  <a href="javaScript:toSelRight()" style="font-size: 22px;color: #6c6c6c;">≥</a>
                   <br/><br/><br/><br/>
-                  <a style="font-size: 22px;color: #6c6c6c;">≤</a>
+                  <a href="javaScript:toSelLeft()" style="font-size: 22px;color: #6c6c6c;">≤</a>
                 </div>
 
                 <div class="col-md-6">
                   <div class="input-group col-md-11">
-                    <label style="margin-bottom: 5px">Elasticsearch索引：</label>
-                    <input type="text" style="margin-bottom: 5px" name="" class="form-control"/>
+                    <label style="margin-bottom: 5px">已选索引：</label>
+                    <input type="text" style="margin-bottom: 5px" name="" class="form-control"
+                           onkeyup="selectOption(this, 'right')"/>
                   </div>
                   <div class="col-md-11" style="padding:0;border-left: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;border-radius: 3px">
                     <select style="height: 350px;width: 258px;" id="right" multiple="multiple">
-                      <th:block th:each="index : ${indexList}">
-                        <option class="list-group-item option-item"
-                                th:value="${index}"
-                                th:text="${index}"></option>
-                      </th:block>
                     </select>
                   </div>
                 </div>
@@ -179,15 +179,19 @@
 </div>
 
 <div id="add1" style="display: none;">
-  测试<input type="text" />
+  测试<input type="text"/>
 </div>
 <script th:inline="javascript">
   /*<![CDATA[*/
-  function listReflectField(flag) {
+  function listReflectField(initFlag) {
     var index = $("#name_info").html();
+    var flag = $("#name_info").attr("data-flag");
 
+    var URL = "/logmonitor/listReflectField"
+        + "?index=" + index
+        + "&flag=" + flag;
     var opt = {
-      url: "/logmonitor/listReflectField?index=" + index,
+      url: URL,
       pagination: true,
       pageSize: 10,
       pageList: [5, 10, 15, 20],
@@ -196,7 +200,7 @@
       }
     };
 
-    if (flag) {
+    if (initFlag) {
       $("#table").bootstrapTable(opt);
     } else {
       $("#table").bootstrapTable("refresh", opt);
@@ -205,8 +209,10 @@
 
   function listField() {
     var index = $("#name_info").html();
+    var flag = $("#name_info").attr("data-flag");
     var formData = {
-      "index": index
+      "index": index,
+      "flag": flag
     };
     var URL = "/logmonitor/listField";
 
@@ -228,13 +234,64 @@
     $(".manage ul li").removeClass("active");
     $(this).addClass("active");
     $("#name_info").html($(this).find("a").html());
+    $("#name_info").attr("data-flag", $(this).find("a").attr("data-flag"));
 
     listReflectField(false);
   });
-  // //模糊匹配，将所有匹配项显示
-  function selectOption() {
 
+  // //模糊匹配，将所有匹配项显示
+  function selectOption(thisObj, target) {
+    var txt = $(thisObj).val();
+
+    $("#" + target + " option").show();
+
+    if (txt == "") {
+      return ;
+    }
+
+    for (var i = 0; i < $("#" + target + " option").length; i++) {
+      //模糊匹配，将所有匹配项显示
+      if ($("#" + target + " option").eq(i).text().substr(0, txt.length) != txt) {
+        $("#" + target + " option").eq(i).hide();
+      }
+    }
   }
+
+  $("#left").on("dblclick", "option", function () {
+    toRight(this);
+  });
+  $("#right").on("dblclick", "option", function () {
+    toLeft(this);
+  });
+
+  function toRight(thisObj) {
+    var domEle = "<option class='list-group-item option-item'" +
+      +"value='" + $(thisObj).val() + "'>"
+      + $(thisObj).html() + "</option>";
+    $("#right").html(domEle + $("#right").html());
+    $(thisObj).remove();
+  }
+
+  function toLeft(thisObj) {
+    var domEle = "<option class='list-group-item option-item'" +
+      +"value='" + $(thisObj).val() + "'>"
+      + $(thisObj).html() + "</option>";
+    $("#left").html(domEle + $("#left").html());
+    $(thisObj).remove();
+  }
+
+  function toSelRight() {
+    $("#left").find("option:selected").each(function () {
+      toRight(this);
+    });
+  }
+
+  function toSelLeft() {
+    $("#right").find("option:selected").each(function () {
+      toLeft(this);
+    });
+  }
+
   /*]]>*/
 </script>
 
@@ -266,6 +323,7 @@
     }*/
 
   });
+
   function test() {
     var layerIndex = layer.open({
       type: 1,
@@ -273,7 +331,7 @@
       area: ['450px', '340px'], //宽高
       shadeClose: true,
       content: $('#add1'),
-      btn: [ '添加', '取消' ],
+      btn: ['添加', '取消'],
       yes: function (index, layero) {
         $("#add1_form").submit();
       },
@@ -282,6 +340,7 @@
       }
     });
   }
+
   //选中索引
   $(document).on("click", "#list_info li a", function () {
     $(this).parent().addClass("active").siblings().removeClass("active");
@@ -290,8 +349,10 @@
 
   function act() {
     var text_info = $(".manage ul li.active a").text();
+    var flag = $(".manage ul li.active a").attr("data-flag");
     // alert(text_info)
     $("#name_info").text(text_info);
+    $("#name_info").attr("data-flag", flag);
   }
 
   //索引删除

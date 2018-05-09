@@ -8,7 +8,7 @@ import java.util.Map;
 public interface MonitorDao {
     List<String> listIndex();
 
-    List<String> listField(String index);
+    List<String> listField(String index, String flag);
 
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String searchContent);
 
@@ -16,5 +16,7 @@ public interface MonitorDao {
 
     List<MutilIndexBean> listMultiIndex();
 
-    List<Map<String,Object>> listReflectField(String index);
+    List<Map<String,Object>> listReflectField(String index, String flag);
+
+    boolean saveMultiIndex(String multiIndex, List<String> indexList);
 }
