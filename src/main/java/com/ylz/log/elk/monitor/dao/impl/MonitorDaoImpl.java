@@ -1,5 +1,6 @@
 package com.ylz.log.elk.monitor.dao.impl;
 
+import com.ylz.log.elk.base.util.EsUtil;
 import com.ylz.log.elk.monitor.bean.EsIndexBean;
 import com.ylz.log.elk.monitor.bean.MutilIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
@@ -42,6 +43,9 @@ public class MonitorDaoImpl implements MonitorDao {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private EsUtil esUtil;
 
     public NamedParameterJdbcTemplate getNamedParameterJdbcTemplate() {
         return new NamedParameterJdbcTemplate(this.jdbcTemplate);
@@ -116,7 +120,8 @@ public class MonitorDaoImpl implements MonitorDao {
                 "  from cm_multi_index a\n" +
                 "  left join cm_multi_es_index_rel b on a.id = b.multi_index_id\n" +
                 "  left join cm_es_index c on c.id = b.es_index_id\n" +
-                " where a.multi_index = :multiIndex";
+                " where c.index is not null\n" +
+                "  and a.multi_index = :multiIndex";
 
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("multiIndex", multiIndex);
@@ -127,7 +132,7 @@ public class MonitorDaoImpl implements MonitorDao {
 
         List<String> indexList = new ArrayList<>();
         list.forEach((map) -> {
-            indexList.add(MapUtils.getString(map, "index"));
+            indexList.add(MapUtils.getString(map, "index", ""));
         });
 
         return indexList;
@@ -241,12 +246,16 @@ public class MonitorDaoImpl implements MonitorDao {
 
     @Override
     public List<Map<String, Object>> listReflectField(String index, String flag) {
-        log.info("listReflectField获取对应列名: index = {}, flag = {}", index, flag);
+        log.info("listReflectField--获取对应列名: index = {}, flag = {}", index, flag);
 
         List<Map<String, Object>> list = new ArrayList<>();
         List<String> indexList = new ArrayList<>();
         if ("1".equals(flag)) {
             indexList = this.getRelIndex(index);
+
+            if (CollectionUtils.isEmpty(indexList)) {
+                return list;
+            }
         } else {
             indexList.add(index);
         }
@@ -314,13 +323,104 @@ public class MonitorDaoImpl implements MonitorDao {
 
         log.info("saveMultiIndex--批量保存关系: " + insertSQL);
 
-        boolean flag = false;
-        Integer count =  this.jdbcTemplate.update(insertSQL);
+        Integer count = this.jdbcTemplate.update(insertSQL);
         if (count > 0) {
-            flag = true;
+            return true;
         }
 
-        return flag;
+        return false;
+    }
+
+    @Override
+    public Map<String, Object> hasExist(String multiIndex) {
+        Map<String, Object> jsonMap = new HashMap<>();
+        String querySQL = "select count(1) from cm_multi_index where multi_index = '" + multiIndex + "'";
+
+        log.info("hasExist: " + querySQL);
+        Integer count = this.jdbcTemplate.queryForObject(querySQL, Integer.class);
+
+        if (count > 0) {
+            jsonMap.put("flag", true);
+        } else {
+            jsonMap.put("flag", false);
+        }
+
+        return jsonMap;
+    }
+
+    @Override
+    public Map<String, Object> dealNotIndex(String index, String flag) {
+        Map<String, Object> dataMap = new HashMap<>();
+        List<String> indexList = new ArrayList<>();
+
+        if ("1".equals(flag)) {
+            indexList = this.getRelIndex(index);
+        } else {
+            String errorMsg = "系统异常，请联系管理员";
+            dataMap.put("flag", false);
+            dataMap.put("errorMsg", errorMsg);
+
+            log.info("dealNotIndex: {}", errorMsg);
+        }
+
+        List<String> notExistList = new ArrayList<>();
+        indexList.forEach((indexName) -> {
+            if (!esUtil.isExistsIndex(indexName)) {
+                notExistList.add(indexName);
+            }
+        });
+
+        if (notExistList.size() > 0) {
+            String errorMsg = "错误信息：" + notExistList + " 已经不存在了";
+            dataMap.put("flag", false);
+            dataMap.put("errorMsg", errorMsg);
+            dataMap.put("indexList", indexList);
+            dataMap.put("notExistList", notExistList);
+
+            log.info("dealNotIndex: 映射索引：{}", indexList);
+            log.info("dealNotIndex: 不存在索引：{}", notExistList);
+            log.info("dealNotIndex: {}", errorMsg);
+        }
+        dataMap.put("indexList", indexList);
+
+        return dataMap;
+    }
+
+    /**
+     * 删除数据库管控的ES索引，同时删除与其关联的组合索引关联关系
+     * @param indexList
+     * @return
+     */
+    @Override
+    public boolean delMultiRelIndex(List<String> indexList) {
+        String querySQL = "select * from cm_es_index where `index` in (:indexList)";
+        String delSQL1 = "delete from cm_es_index where `index` in (:indexList)";
+        String delSQL2 = "delete from cm_multi_es_index_rel where es_index_id in (:esIndexIdList)";
+        Map<String, Object> paramMap = new HashMap<>();
+
+        paramMap.put("indexList", indexList);
+
+        log.info("delMultiRelIndex--获取索引内容:\n" + querySQL + "\n参数: " + paramMap);
+        List<Map<String, Object>> list = this.getNamedParameterJdbcTemplate().queryForList(querySQL, paramMap);
+        List<String> esIndexIdList = new ArrayList<>();
+
+        list.forEach((map) -> {
+            esIndexIdList.add(MapUtils.getString(map, "id", ""));
+        });
+
+        paramMap.put("esIndexIdList", esIndexIdList);
+
+        log.info("delMultiRelIndex--删除ES索引:\n" + delSQL1 + "\n参数: " + paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL1, paramMap);
+
+        log.info("delMultiRelIndex--删除映射关系:\n" + delSQL2 + "\n参数: " + paramMap);
+        Integer count = this.getNamedParameterJdbcTemplate().update(delSQL2, paramMap);
+
+        if (count > 0) {
+            return true;
+        }
+
+        return false;
     }
 
 }

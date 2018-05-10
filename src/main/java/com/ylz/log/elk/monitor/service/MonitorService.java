@@ -21,4 +21,10 @@ public interface MonitorService {
     List<Map<String,Object>> listReflectField(String index, String flag);
 
     boolean saveMultiIndex(String multiIndex, List<String> indexList);
+
+    Map<String,Object> hasExist(String multiIndex);
+
+    Map<String,Object> dealNotIndex(String index, String flag);
+
+    boolean delMultiRelIndex(List<String> indexList);
 }

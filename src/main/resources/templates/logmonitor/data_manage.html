@@ -11,6 +11,7 @@
   <!--主题色-->
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
   <link rel="stylesheet" type="text/css" th:href="@{/assets/css/mage.css}"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/rewrite.css}"/>
   <style>
     .deal {
       margin-left: 30px;
@@ -23,6 +24,35 @@
     .option-item {
       padding: 10px 15px;
     }
+
+    .green {
+      color: lawngreen;
+    }
+
+    .selector {
+      height: 100px;
+      top: 50%;
+      margin-top: -50px;
+      position: absolute;
+    }
+
+    .modal-div label {
+      font-size: 15px;
+      padding: 4px 5px;
+    }
+
+    .manage ul li:hover .li-close {
+      display: block;
+    }
+
+    .li-close {
+      display: none;
+      color: black;
+      float: right;
+      position: relative;
+      top: 15px;
+      right: 3px;
+    }
   </style>
 </head>
 
@@ -34,11 +64,9 @@
         <div class="box-title dec_1 theme-border-left">索引管理</div>
       </div>
       <div class="box-body">
-
         <!-- 按钮 -->
         <div class="col-md-4 mt15 manage">
-          <button type="button" class="btn btn-primary btn-add-label mb-20" data-toggle="modal"
-                  data-target="#myModal">
+          <button type="button" class="btn btn-primary btn-add-label mb-20" onclick="saveModal()">
             <span class="glyphicon glyphicon-plus"></span>
             添加索引
           </button>
@@ -49,11 +77,15 @@
                 </a>
                 <span class="deal">组合索引</span>
             </span>
-            <ul class="list-group" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
+            <ul class="list-group ul-top" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
               <th:block th:each="multiIndexBean : ${multiIndexList}">
                 <li class="list-group-item">
                   <a href="javascript:void(0)" class="deal" th:text="${multiIndexBean.multiIndex}"
-                     th:attr="data-flag=${multiIndexBean.flag}"></a></li>
+                     th:attr="data-flag=${multiIndexBean.flag}"></a>
+                  <i class="glyphicon glyphicon-remove li-close"
+                     th:attr="data-multiIdex=${multiIndexBean.multiIndex}"
+                     onclick="delMultiIndex(this)"></i>
+                </li>
               </th:block>
             </ul>
           </div>
@@ -73,11 +105,12 @@
             </ul>
           </div>
         </div>
+
         <!-- 弹框 -->
         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
              aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content" style="height: 570px; width: 650px">
+          <div class="modal-dialog" style="height: 570px; width: 650px">
+            <div class="modal-content">
               <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"
                         aria-hidden="true">&times;
@@ -87,21 +120,21 @@
                 </h4>
                 <div class="form-horizontal" style="position: absolute;top: 15px; left: 420px">
                   <div class="form-group">
-                    <div style="position: absolute;top: 11px; left: 0px"><b class="mr5 red500">*</b></div>
+                    <div style="position: absolute;top: 8px; left: 0px"><b class="mr5 red500" id="existFlag">*</b>
+                    </div>
                     <div class="block-cont col-md-12">
-                      <input type="text" class="form-control"
+                      <input type="text" class="form-control" id="multiIndex" onkeyup="throttle(hasExist)"
                              placeholder="请输入组合索引名称">
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="modal-body " style="min-height: 450px;">
-
+              <div class="modal-body" style="min-height: 450px;">
                 <div class="col-md-6">
                   <div class="input-group col-md-11">
                     <label style="margin-bottom: 5px">Elasticsearch索引：</label>
                     <input type="text" style="margin-bottom: 5px" name="" id="txt" class="form-control"
-                           onkeyup="selectOption(this, 'left')"/>
+                           onkeyup="throttle(selectOption(this, 'left'))"/>
                   </div>
                   <div class="col-md-11" style="padding:0;border-left: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;border-radius: 3px">
@@ -125,7 +158,7 @@
                   <div class="input-group col-md-11">
                     <label style="margin-bottom: 5px">已选索引：</label>
                     <input type="text" style="margin-bottom: 5px" name="" class="form-control"
-                           onkeyup="selectOption(this, 'right')"/>
+                           onkeyup="throttle(selectOption(this, 'right'))"/>
                   </div>
                   <div class="col-md-11" style="padding:0;border-left: 1px solid #ddd;
                     border-bottom: 1px solid #ddd;border-radius: 3px">
@@ -137,7 +170,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="btn_ok">保存</button>
+                <button type="button" class="btn btn-primary" onclick="saveMultiIndex()">保存</button>
               </div>
             </div>
           </div>
@@ -178,24 +211,132 @@
   </div>
 </div>
 
-<div id="add1" style="display: none;">
-  测试<input type="text"/>
+<div class="modal fade" id="indexInfoModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
+            class="sr-only">Close</span></button>
+        <h4 class="modal-title">提示信息</h4>
+      </div>
+      <div class="modal-body">
+        <p>One fine body&hellip;</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" id="delMultiRelIndex" onclick="delMultiRelIndex(this)">是</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">否</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
 </div>
 <script th:inline="javascript">
   /*<![CDATA[*/
+  function delMultiIndex(thisObj) {
+    event.stopPropagation();
+
+    var multiIndex = $(thisObj).attr("data-multiIdex");
+    layer.confirm("确定要删除索引：" + multiIndex + " 吗？",function(){
+      layer.msg('删除成功！', {icon: 1, time: 1000});
+    });
+  }
+
+  function throttle(method) {
+    clearTimeout(method.tId);
+    method.tId = setTimeout(function () {
+      method.call();
+    }, 200);
+  }
+
+  var myModalClone = $("#myModal").clone();
+  function saveModal() {
+    $("#myModal").html(myModalClone.html());
+    $('#myModal').modal('show').css({
+      width: 'auto',
+      'margin-left': 'auto'
+    });
+
+  }
+
+  function hasExist() {
+    var multiIndex = $("#multiIndex").val();
+    var formData = {
+      "multiIndex": multiIndex
+    };
+
+    var URL = "/logmonitor/hasExist";
+
+    if (multiIndex.split(" ").join("") == "") {
+      $("#existFlag").html("*");
+      $("#existFlag").attr("class", "mr5 red500");
+    } else {
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
+
+        if (flag) {
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-remove red500");
+        } else {
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+        }
+      }, "json");
+    }
+  }
+
   function listReflectField(initFlag) {
     var index = $("#name_info").html();
     var flag = $("#name_info").attr("data-flag");
 
+    // index为空，即索引不存在，无需向服务器发送请求
+    if (index == "") {
+      return;
+    }
     var URL = "/logmonitor/listReflectField"
-        + "?index=" + index
-        + "&flag=" + flag;
+      + "?index=" + index
+      + "&flag=" + flag;
+
     var opt = {
       url: URL,
       pagination: true,
       pageSize: 10,
       pageList: [5, 10, 15, 20],
       onLoadSuccess: function () {
+        mergeColumn("table", 0);
+      },
+      onLoadError: function (data) {
+        $("#table").bootstrapTable('removeAll');
+
+        var index = $("#name_info").html();
+        var flag = $("#name_info").attr("data-flag");
+        var URL = "/logmonitor/dealNotIndex";
+        var formData = {
+          "index": index,
+          "flag": flag
+        };
+
+        $.post(URL, formData, function (jsonData) {
+          var flag = jsonData.flag;
+
+          if (!flag) {
+            var content = "<div class='modal-div'>";
+            content += "<label>" + jsonData.errorMsg + "</label><br />";
+            content += "<label>映射索引：[" + jsonData.indexList + "]</label><br />";
+            content += "<label>不存在索引：[" + jsonData.notExistList + "]</label><br />";
+            content += "<label>是否删除不存在的映射索引？</label></div>";
+
+            $("#delMultiRelIndex").attr("data-index", jsonData.notExistList);
+
+            $("#indexInfoModal .modal-body").html(content);
+
+            $('#indexInfoModal').modal('show').css({
+              width: 'auto',
+              'margin-left': 'auto'
+            });
+          }
+        }, "json");
+      },
+      onPageChange: function () {
         mergeColumn("table", 0);
       }
     };
@@ -207,17 +348,24 @@
     }
   }
 
-  function listField() {
-    var index = $("#name_info").html();
-    var flag = $("#name_info").attr("data-flag");
+  function delMultiRelIndex(thisObj) {
+    var index = $(thisObj).attr("data-index");
+    var URL = "/logmonitor/delMultiRelIndex";
     var formData = {
-      "index": index,
-      "flag": flag
+      "index": index
     };
-    var URL = "/logmonitor/listField";
 
-    $.post(URL, formData, function (fieldList) {
-      console.log(fieldList);
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
+
+      if (flag) {
+        layer.msg('删除成功！', {icon: 1, time: 1000});
+
+        $("#indexInfoModal").modal("hide");
+        $(".manage li.active").click();
+      } else {
+        layer.msg('删除失败！', {icon: 2, time: 1000});
+      }
     }, "json");
   }
 
@@ -246,7 +394,7 @@
     $("#" + target + " option").show();
 
     if (txt == "") {
-      return ;
+      return;
     }
 
     for (var i = 0; i < $("#" + target + " option").length; i++) {
@@ -313,16 +461,58 @@
   $("#listCell li").click(function () {
     $("#txt").val($(this).text());
   });
-  //按钮保存
-  $("#btn_ok").on("click", function () {
-    /*var _text = $("#txt").val();
-    if (!_text == "") {
-      $("#list_info").append(" <li class='list-group-item'><a href='javascript:void(0);'>" + _text + "</a></li>");
-      $('#myModal').modal('hide');
-      _text = "";
-    }*/
 
-  });
+  function saveMultiIndex() {
+    var clazz = $("#multiIndex").val();
+    var multiIndex = $("#multiIndex").val();
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('组合索引已经存在！', {icon: 2, time: 1000});
+
+      return;
+    }
+    if (multiIndex.split(" ").join("") == "") {
+      layer.msg('组合索引不能为空！', {icon: 2, time: 1000});
+
+      return;
+    }
+
+    var index = $("#right option").map(function () {
+      return $(this).html();
+    }).get();
+
+    var URL = "/logmonitor/saveMultiIndex";
+    var formData = {
+      "multiIndex": multiIndex,
+      "index": index + ""
+    };
+
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
+
+      if (flag) {
+        layer.msg('保存成功！', {icon: 1, time: 1000});
+
+        $(".manage li").removeClass("active");
+        appendMultiIndex(multiIndex);
+        $(".manage li.active").parent().scrollTop(9999);
+        $("#myModal").modal("hide");
+        $(".manage li.active").click();
+      } else {
+        layer.msg("保存失败，" + jsonData.errorMsg, {icon: 2, time: 1000});
+      }
+    }, "json");
+  }
+
+  function appendMultiIndex(multiIndex) {
+    var domEle = "";
+    domEle += "<li class='list-group-item active'>";
+    domEle += "  <a href='javascript:void(0)' class='deal' data-flag='1'>" + multiIndex + "</a>";
+    domEle += "  <i class='glyphicon glyphicon-remove li-close' data-multiIdex='" + multiIndex + "'";
+    domEle += "     onclick='delMultiIndex(this)'></i>";
+    domEle += " </li>";
+
+    $(".manage ul:eq(0)").append(domEle);
+  }
 
   function test() {
     var layerIndex = layer.open({
@@ -330,7 +520,7 @@
       title: '新增',
       area: ['450px', '340px'], //宽高
       shadeClose: true,
-      content: $('#add1'),
+      content: "内容",
       btn: ['添加', '取消'],
       yes: function (index, layero) {
         $("#add1_form").submit();
@@ -365,7 +555,6 @@
       act();
     });
 
-    listField();
     listReflectField(true);
   });
 
@@ -408,6 +597,9 @@
     }
   }
 
+  /*$(".manage ul:eq(0) li").hover(function () {
+    $(this).find("i").show();
+  })*/
   /*]]>*/
 </script>
 </body>

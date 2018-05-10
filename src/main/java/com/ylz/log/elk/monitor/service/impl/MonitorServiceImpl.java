@@ -76,4 +76,20 @@ public class MonitorServiceImpl implements MonitorService {
 
         return monitorDao.saveMultiIndex(multiIndex, indexList);
     }
+
+    @Override
+    public Map<String, Object> hasExist(String multiIndex) {
+        return monitorDao.hasExist(multiIndex);
+    }
+
+    @Override
+    public Map<String, Object> dealNotIndex(String index, String flag) {
+        return monitorDao.dealNotIndex(index, flag);
+    }
+
+    @Override
+    @Transactional
+    public boolean delMultiRelIndex(List<String> indexList) {
+        return monitorDao.delMultiRelIndex(indexList);
+    }
 }
