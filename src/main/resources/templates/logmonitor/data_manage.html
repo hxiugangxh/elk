@@ -53,6 +53,10 @@
       top: 15px;
       right: 3px;
     }
+
+    .yellow {
+      color: yellow;
+    }
   </style>
 </head>
 
@@ -184,13 +188,12 @@
             <div class="mt15 fr">
               <button type="button" class="btn btn-info" onclick="test()">
                 <span class="glyphicon glyphicon-star"></span>
-                收藏
+                  设为默认
               </button>
               <button type="button" class="btn btn-danger" id="remove_info">
                 <span class="glyphicon glyphicon-remove"></span>
-                删除
+                  删除默认
               </button>
-
               <button type="button" class="btn btn-info" onclick="location.reload();">
                 <span class="glyphicon glyphicon-refresh"></span>
                 刷新
@@ -236,8 +239,25 @@
     event.stopPropagation();
 
     var multiIndex = $(thisObj).attr("data-multiIdex");
-    layer.confirm("确定要删除索引：" + multiIndex + " 吗？",function(){
-      layer.msg('删除成功！', {icon: 1, time: 1000});
+    layer.confirm("确定要删除索引：" + multiIndex + " 吗？", function () {
+      var URL = "/logmonitor/delMultiIndex";
+      var formData = {
+        "multiIndex": multiIndex
+      };
+
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
+
+        if (flag) {
+          $(thisObj).parents("li").remove();
+          layer.msg('删除成功！', {icon: 1, time: 1000});
+          if ($(thisObj).parents("li").attr("class").indexOf("active") != -1) {
+            $(".manage ul li").eq(0).click();
+          }
+        } else {
+          layer.msg('删除失败！', {icon: 2, time: 1000});
+        }
+      });
     });
   }
 
@@ -249,13 +269,13 @@
   }
 
   var myModalClone = $("#myModal").clone();
+
   function saveModal() {
     $("#myModal").html(myModalClone.html());
     $('#myModal').modal('show').css({
       width: 'auto',
       'margin-left': 'auto'
     });
-
   }
 
   function hasExist() {
@@ -480,6 +500,12 @@
       return $(this).html();
     }).get();
 
+    if (index.length == 0) {
+      layer.msg('已选索引不能为空！', {icon: 2, time: 1000});
+
+      return;
+    }
+
     var URL = "/logmonitor/saveMultiIndex";
     var formData = {
       "multiIndex": multiIndex,
@@ -516,17 +542,16 @@
 
   function test() {
     var layerIndex = layer.open({
-      type: 1,
       title: '新增',
       area: ['450px', '340px'], //宽高
-      shadeClose: true,
       content: "内容",
-      btn: ['添加', '取消'],
-      yes: function (index, layero) {
-        $("#add1_form").submit();
+      btn: ['保存', '取消', "测试"],
+      btn1: function (index, layero) {
+        alert("保存");
       },
-      bnt2: function (index, layero) {
+      btn2: function (index, layero) {
         layer.close(index);
+        alert("取消");
       }
     });
   }

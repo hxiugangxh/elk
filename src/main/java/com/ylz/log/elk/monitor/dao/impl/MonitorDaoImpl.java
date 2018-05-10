@@ -2,7 +2,7 @@ package com.ylz.log.elk.monitor.dao.impl;
 
 import com.ylz.log.elk.base.util.EsUtil;
 import com.ylz.log.elk.monitor.bean.EsIndexBean;
-import com.ylz.log.elk.monitor.bean.MutilIndexBean;
+import com.ylz.log.elk.monitor.bean.MultiIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -139,11 +139,22 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String flag, String field, String
             searchContent) {
         Map<String, Object> dataMap = new HashMap<>();
 
-        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(index)
+        List<String> indexList = new ArrayList<>();
+        if ("1".equals(flag)) {
+            indexList = this.getRelIndex(index);
+        } else {
+            indexList.add(index);
+        }
+
+        if (CollectionUtils.isEmpty(indexList)) {
+            return dataMap;
+        }
+
+        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(indexList.toArray(new String[] {}))
                 .setFrom(page).setSize(pageSize);
 
         if (StringUtils.isEmpty(searchContent)) {
@@ -155,7 +166,6 @@ public class MonitorDaoImpl implements MonitorDao {
         if (StringUtils.isNotEmpty(field)) {
             searchRequestBuilder.setFetchSource(field.split(","), null);
         }
-
 
         log.info("\nqueryByEs--查询es数据: index = {}, page = {}, pageSize = {}\n查询DSL: {}",
                 index, page, pageSize, searchRequestBuilder);
@@ -171,7 +181,7 @@ public class MonitorDaoImpl implements MonitorDao {
             log.info("该页面无数据，处理page后再次查询");
             currentPage = totalPages;
 
-            return this.queryByEs((int) (currentPage - 1), pageSize, index, field, searchContent);
+            return this.queryByEs((int) (currentPage - 1), pageSize, index, flag, field, searchContent);
         }
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -236,12 +246,12 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public List<MutilIndexBean> listMultiIndex() {
+    public List<MultiIndexBean> listMultiIndex() {
         String querySQL = "select * from cm_multi_index";
 
         log.info("listMultiIndex--获取多重复合索引:\n" + querySQL);
 
-        return this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper<>(MutilIndexBean.class));
+        return this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper<>(MultiIndexBean.class));
     }
 
     @Override
@@ -302,7 +312,7 @@ public class MonitorDaoImpl implements MonitorDao {
     @Override
     public boolean saveMultiIndex(String multiIndex, List<String> indexList) {
         log.info("saveMultiIndex: index = {}, indexList = {}", multiIndex, indexList);
-        MutilIndexBean mutilIndexBean = new MutilIndexBean(multiIndex);
+        MultiIndexBean mutilIndexBean = new MultiIndexBean(multiIndex);
         entityManager.persist(mutilIndexBean);
 
         List<EsIndexBean> esIndexList = new EsIndexBean(indexList).getEsIndex();
@@ -327,6 +337,8 @@ public class MonitorDaoImpl implements MonitorDao {
         if (count > 0) {
             return true;
         }
+
+        log.error("saveMultiIndex--保存失败，有效行数为0");
 
         return false;
     }
@@ -388,37 +400,92 @@ public class MonitorDaoImpl implements MonitorDao {
 
     /**
      * 删除数据库管控的ES索引，同时删除与其关联的组合索引关联关系
+     *
      * @param indexList
      * @return
      */
     @Override
     public boolean delMultiRelIndex(List<String> indexList) {
         String querySQL = "select * from cm_es_index where `index` in (:indexList)";
-        String delSQL1 = "delete from cm_es_index where `index` in (:indexList)";
-        String delSQL2 = "delete from cm_multi_es_index_rel where es_index_id in (:esIndexIdList)";
+
         Map<String, Object> paramMap = new HashMap<>();
 
         paramMap.put("indexList", indexList);
 
         log.info("delMultiRelIndex--获取索引内容:\n" + querySQL + "\n参数: " + paramMap);
         List<Map<String, Object>> list = this.getNamedParameterJdbcTemplate().queryForList(querySQL, paramMap);
+
+        String delSQL = "delete from cm_es_index where `index` in (:indexList)";
+        log.info("delMultiRelIndex--删除ES索引:\n" + delSQL + "\n参数: " + paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        paramMap.clear();
         List<String> esIndexIdList = new ArrayList<>();
 
         list.forEach((map) -> {
             esIndexIdList.add(MapUtils.getString(map, "id", ""));
         });
-
         paramMap.put("esIndexIdList", esIndexIdList);
-
-        log.info("delMultiRelIndex--删除ES索引:\n" + delSQL1 + "\n参数: " + paramMap);
-        this.getNamedParameterJdbcTemplate().update(delSQL1, paramMap);
-
-        log.info("delMultiRelIndex--删除映射关系:\n" + delSQL2 + "\n参数: " + paramMap);
-        Integer count = this.getNamedParameterJdbcTemplate().update(delSQL2, paramMap);
+        delSQL = "delete from cm_multi_es_index_rel where es_index_id in (:esIndexIdList)";
+        log.info("delMultiRelIndex--删除映射关系:\n" + delSQL + "\n参数: " + paramMap);
+        Integer count = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         if (count > 0) {
             return true;
         }
+
+        log.error("delMultiRelIndex--删除失败，有效行数为0");
+
+        return false;
+    }
+
+    @Override
+    public boolean delMultiIndex(String multiIndex) {
+        Map<String, Object> paramMap = new HashMap<>();
+
+        paramMap.put("multiIndex", multiIndex);
+        String querySQL = "SELECT * FROM cm_multi_index WHERE multi_index = :multiIndex";
+
+        log.info("delMultiIndex--获取组合索引数据:\n" + querySQL + "\n参数: " + paramMap);
+
+        List<MultiIndexBean> multiIndexList = this.getNamedParameterJdbcTemplate().query(querySQL, paramMap, new
+                BeanPropertyRowMapper(MultiIndexBean.class));
+
+        // 防止前端传递意外数据
+        if (CollectionUtils.isEmpty(multiIndexList)) {
+            log.error("delMultiIndex--没有找到组合索引数据");
+
+            return false;
+        }
+
+        MultiIndexBean multiIndexBean = multiIndexList.get(0);
+
+        String delSQL = "delete from cm_es_index\n" +
+                " where id in (select *\n" +
+                "                from (select b.id\n" +
+                "                        from cm_multi_es_index_rel a\n" +
+                "                        left join cm_es_index b on a.es_index_id = b.id\n" +
+                "                       where a.multi_index_id = :multiIndexId) t)";
+
+        paramMap.clear();
+        paramMap.put("multiIndexId", multiIndexBean.getId());
+
+        log.info("delMultiIndex--删除数据库管理的es的index值:\n" + delSQL + "\n参数: " + paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        delSQL = "delete from cm_multi_es_index_rel where multi_index_id = :multiIndexId";
+        log.info("delMultiIndex--删除组合索引与es索引的关系表:\n" + delSQL + "\n参数: " + paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        delSQL = "delete from cm_multi_index where id = :multiIndexId";
+        log.info("delMultiIndex--删除组合索引:\n" + delSQL + "\n参数: " + paramMap);
+        Integer count = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        if (count > 0) {
+            return true;
+        }
+
+        log.error("delMultiIndex--删除失败，有效行数为0");
 
         return false;
     }

@@ -56,7 +56,8 @@
                     </th:block>
                     <th:block th:if="${!#lists.isEmpty(esFieldmap.indexList)}">
                       <th:block th:each="index : ${esFieldmap.indexList}">
-                        <option th:value="${index}" th:text="${index}"></option>
+                        <option th:value="${index.index}" th:text="${index.index}"
+                          th:attr="data-flag=${index.flag}"></option>
                       </th:block>
                     </th:block>
                   </select>
@@ -189,15 +190,19 @@
     var URL = "/logmonitor/queryByEs";
 
     var index = $("#index").val();
+    var flag = $("#index option:selected").attr("data-flag");
     var field = $("#field").val();
     var searchContent = $("#searchContent").val();
 
     var formData = {
       "index":  index,
+      "flag":   flag,
       "page":   options.currentPage - 1,
       "field":  field,
       "searchContent": searchContent
     };
+
+    console.log(formData);
 
     $.post(URL, formData, function (jsonData) {
       var domEle = "";
@@ -208,7 +213,6 @@
         $("#data-line-div").html(domEle);
 
         return ;
-
       }
 
       /* 参考原始demo吧 */

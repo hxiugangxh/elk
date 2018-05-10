@@ -1,9 +1,10 @@
 package com.ylz.log.elk.monitor.service.impl;
 
-import com.ylz.log.elk.monitor.bean.MutilIndexBean;
+import com.ylz.log.elk.monitor.bean.MultiIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +24,36 @@ public class MonitorServiceImpl implements MonitorService {
     public Map<String, Object> esFieldMap() {
         Map<String, Object> esFieldMap = new HashMap<>();
 
-        List<String> indexList = monitorDao.listIndex();
+        List<Map<String, Object>> indexList = new ArrayList<>();
+
+        List<MultiIndexBean> multiIndexList = monitorDao.listMultiIndex();
+
+        List<String> esIndexList = monitorDao.listIndex();
+
+        multiIndexList.forEach(multiIndexBean -> {
+            Map<String, Object> map = new HashMap<>();
+
+            map.put("index", multiIndexBean.getMultiIndex());
+            map.put("flag", "1");
+
+            indexList.add(map);
+        });
+
+        esIndexList.forEach(str -> {
+            Map<String, Object> map = new HashMap<>();
+
+            map.put("index", str);
+            map.put("flag", "0");
+
+            indexList.add(map);
+        });
+
         List<String> fieldList = new ArrayList<>();
 
         if (CollectionUtils.isNotEmpty(indexList)) {
-            String index = "";
-            index = indexList.get(0);
-            fieldList = monitorDao.listField(index, "0");
+            String index = MapUtils.getString(indexList.get(0), "index", "");
+            String flag = MapUtils.getString(indexList.get(0), "flag", "");
+            fieldList = monitorDao.listField(index, flag);
         }
 
         esFieldMap.put("indexList", indexList);
@@ -39,10 +63,10 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String field, String
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String flag, String field, String
             searchContent) {
 
-        return monitorDao.queryByEs(page, pageSize, index, field, searchContent);
+        return monitorDao.queryByEs(page, pageSize, index, flag, field, searchContent);
     }
 
     @Override
@@ -61,7 +85,7 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public List<MutilIndexBean> listMultiIndex() {
+    public List<MultiIndexBean> listMultiIndex() {
         return monitorDao.listMultiIndex();
     }
 
@@ -91,5 +115,11 @@ public class MonitorServiceImpl implements MonitorService {
     @Transactional
     public boolean delMultiRelIndex(List<String> indexList) {
         return monitorDao.delMultiRelIndex(indexList);
+    }
+
+    @Override
+    @Transactional
+    public boolean delMultiIndex(String multiIndex) {
+        return monitorDao.delMultiIndex(multiIndex);
     }
 }

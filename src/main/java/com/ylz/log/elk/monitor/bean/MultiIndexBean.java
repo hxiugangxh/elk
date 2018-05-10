@@ -7,11 +7,11 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "cm_multi_index")
-public class MutilIndexBean {
+public class MultiIndexBean {
 
-    public MutilIndexBean() {}
+    public MultiIndexBean() {}
 
-    public MutilIndexBean(String multiIndex) {
+    public MultiIndexBean(String multiIndex) {
         this.multiIndex = multiIndex;
     }
 

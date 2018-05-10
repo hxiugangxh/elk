@@ -1,6 +1,6 @@
 package com.ylz.log.elk.monitor.controller;
 
-import com.ylz.log.elk.monitor.bean.MutilIndexBean;
+import com.ylz.log.elk.monitor.bean.MultiIndexBean;
 import com.ylz.log.elk.monitor.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,18 +38,19 @@ public class MonitorController {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam(value = "index") String index,
+            @RequestParam(value = "flag") String flag,
             @RequestParam(value = "field", defaultValue = "") String field,
             @RequestParam(value = "searchContent", defaultValue = "") String searchContent
     ) {
 
-        return monitorService.queryByEs(page, pageSize, index, field, searchContent);
+        return monitorService.queryByEs(page, pageSize, index, flag, field, searchContent);
     }
 
     @RequestMapping("/listField")
     @ResponseBody
     public List<String> listField(
             @RequestParam("index") String index,
-            @RequestParam(value = "flag", defaultValue = "") String flag
+            @RequestParam(value = "flag", defaultValue = "0") String flag
     ) {
         return monitorService.listField(index, flag);
     }
@@ -58,7 +59,7 @@ public class MonitorController {
     public String dataManage(Map<String, Object> map) {
         log.info("contorller: dataManage");
 
-        List<MutilIndexBean> multiIndexList = monitorService.listMultiIndex();
+        List<MultiIndexBean> multiIndexList = monitorService.listMultiIndex();
         List<String> indexList = monitorService.listIndex();
 
         map.put("multiIndexList", multiIndexList);
@@ -89,7 +90,6 @@ public class MonitorController {
     public Map<String, Object> saveMultiIndex(
             @RequestParam("multiIndex") String multiIndex,
             @RequestParam("index") String index
-
     ) {
         Map<String, Object> jsonMap = new HashMap<>();
 
@@ -97,11 +97,6 @@ public class MonitorController {
         try {
             flag = monitorService.saveMultiIndex(multiIndex, Arrays.asList(index.split(",")));
 
-
-            // update 返回的count为0
-            if (!flag) {
-                jsonMap.put("errorMsg", "保存成功返回值为0");
-            }
             jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
@@ -144,10 +139,29 @@ public class MonitorController {
     @ResponseBody
     public Map<String, Object> delMultiRelIndex(@RequestParam("index") String index) {
         Map<String, Object> jsonMap = new HashMap<>();
-        boolean flag = false;
-        flag = monitorService.delMultiRelIndex(Arrays.asList(index.split(",")));
+        boolean flag = monitorService.delMultiRelIndex(Arrays.asList(index.split(",")));
 
         jsonMap.put("flag", flag);
+
+        return jsonMap;
+    }
+
+    @RequestMapping("/delMultiIndex")
+    @ResponseBody
+    public Map<String, Object> delMultiIndex(@RequestParam("multiIndex") String multiIndex) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        boolean flag = false;
+        try {
+            flag = monitorService.delMultiIndex(multiIndex);
+
+            jsonMap.put("flag", flag);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            jsonMap.put("flag", flag);
+            jsonMap.put("errorMsg", e.getMessage());
+        }
 
         return jsonMap;
     }
