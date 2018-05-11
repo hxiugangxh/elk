@@ -594,6 +594,10 @@
             $(this).attr("data-collFlag", "1");
             $(this).find(".li-star").show();
             $(this).click();
+
+            var a = $(".manage li.active").offset().top;
+            var b = $(".manage li.active").parent().offset().top;
+            $(".manage li.active").parent().scrollTop(a - b);
           }
         })
       } else {
@@ -601,7 +605,7 @@
       }
 
       listReflectField(true);
-    }, "json")
+    }, "json");
   });
 
   $("#coll").on("click", function () {
