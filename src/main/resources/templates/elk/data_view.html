@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>图表统计</title>
+  <!--基础样式-->
+  <th:block th:include="common/pub_head :: default"></th:block>
+  <th:block th:include="common/pub_head :: base-css"></th:block>
+  <!--主题色-->
+  <th:block th:include="common/pub_head :: theme-blue"></th:block>
+
+  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
+</head>
+
+<body>
+<div class="wrapper-content">
+  <div class="box">
+    <div class="box-header with-border">
+      <div class="box-title dec_1 theme-border-left">图表统计</div>
+    </div>
+    <div class="box-body">
+      <div class="input-group fl col-xs-7" style="margin-top:0px; positon:relative">
+        <input type="text" class="form-control" placeholder="请输入字段名">
+        <span class="input-group-btn">
+           <button class="btn btn-info btn-search"><i class="iconfont icon-sousuo"></i>查找</button>
+        </span>
+      </div>
+      <!-- 表格 -->
+      <div class="fr mt15 mb10">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Modal_view" id="add_btn">
+          <span class="glyphicon glyphicon-plus"></span>
+          添加
+        </button>
+        <button type="button" class="btn btn-danger">
+          <span class="glyphicon glyphicon-remove"></span>
+          删除
+        </button>
+      </div>
+      <table id="table"></table>
+      <!-- 模态框 -->
+      <div class="modal fade" id="Modal_view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+           aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+              <h4 class="modal-title" id="myModalLabel">添加图表</h4>
+            </div>
+            <div class="modal-body " style="min-height: 300px;">
+              <form role="form" class="form-horizontal row">
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="firstname" class="col-sm-3 control-label">
+                      图表名称:</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control input-sm" id="firstname" placeholder="请输入名字">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="form-group">
+                    <label for="firstname" class="col-sm-3 control-label">
+                      图表类型:</label>
+                    <div class="col-sm-9">
+                      <select class="form-control input-sm" id="selectView">
+                        <option value="0" selected>饼状图</option>
+                        <option value="1">折线图</option>
+                        <option value="2">柱状图</option>
+                        <option value="3">树图</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </form>
+              <!--  -->
+              <div class="row view_show">
+                <div class="col-sm-6 bor_view">
+                  <div class="row">
+                    <h4>项目名称：日志系统</h4>
+                  </div>
+                  <form role="form" class="form-horizontal row">
+                    <div class="form-group">
+                      <label for="firstname" class="col-sm-3 control-label">
+                        x-坐标:</label>
+                      <div class="col-sm-9">
+                        <select class="form-control input-sm" id="xAxis">
+                          <option value="1">10</option>
+                          <option value="2">20</option>
+                          <option value="3">30</option>
+                          <option value="4">40</option>
+                          <option value="5">50</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="firstname" class="col-sm-3 control-label">
+                        Y-坐标:</label>
+                      <div class="col-sm-9">
+                        <select class="form-control input-sm" id="yAxis">
+                          <option value="">10</option>
+                          <option value="">20</option>
+                          <option value="">30</option>
+                          <option value="">40</option>
+                          <option value="">50</option>
+                        </select>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-sm-6">
+                  <div class="bor_view">
+                    <div id="main_pie" class="main_view show"></div>
+                    <div id="main_line" class="main_view"></div>
+                    <div id="main_bar" class="main_view"></div>
+                    <div id="main_tree" class="main_view"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+              <button type="button" class="btn btn-primary" id="btn_ok">保存</button>
+            </div>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+      </div>
+      <!-- 详情弹出框 -->
+      <div class="info_content" id="info_content" style="display: none">
+        <div class="row">
+          <div class="col-sm-6">
+            <h5>图表统计名称：电子证照的异常柱状图</h5>
+          </div>
+          <div class="col-sm-6">
+            <h5>项目名称：电子证照</h5>
+          </div>
+        </div>
+        <div class="row">
+          <div calss="info_main">
+            <div id="info_main_bar" style="width: 500px;height: 500px;margin:auto"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<th:block th:include="common/pub_head :: echart"></th:block>
+<link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
+<script>
+  /*<![CDATA[*/
+  //复选框选中不可点击添加
+  $(window).load(function () {
+    $("#table th input[type=checkbox]").on("change", function () {
+      var tf = $(this).prop("checked");
+      if (tf) {
+        $("#add_btn").attr("disabled", "disabled").removeClass("btn-primary")
+      } else {
+        $("#add_btn").removeAttr("disabled").addClass("btn-primary")
+      }
+    });
+    //点击列表弹出详情
+    $(".btn_info").on("click", function () {
+      var layerIndex = layer.open({
+        type: 1,
+        title: '图表详情',
+        area: ['100%', '100%'], //宽高
+        shadeClose: true,
+        content: $("#info_content"),
+
+        yes: function (index, layero) {
+          $("#add1_form").submit();
+        },
+        bnt2: function (index, layero) {
+          layer.close(index);
+        }
+      });
+    });
+  });
+
+  // 图表类型选择
+  $(function () {
+    $("#selectView").change(function () {
+      var s = $(this).val();
+      $('.main_view:eq(' + s + ')').addClass("show").siblings().removeClass("show");
+    })
+  })
+  // 保存按钮
+  $("#btn_ok").click(function () {
+    var name = $("#firstname").val();
+    var select_value = $("#selectView").find("option:selected").text();
+    var xAxis = $("#xAxis").find("option:selected").text();
+    var yAxis = $("#yAxis").find("option:selected").text();
+    alert("你提交的数据是：" + name + "-" + select_value + "-" + xAxis + "-" + yAxis);
+    $('#Modal_view').modal('hide')
+  })
+
+
+  $(function () {
+   /* var info_Chart_bar = echarts.init(document.getElementById('info_main_bar'));*/
+    var info_option_bar = {
+      title: {
+        text: '柱状图'
+      },
+      tooltip: {},
+      legend: {
+        data: ['记录']
+      },
+      xAxis: {
+        data: ["A", "B", "C", "D", "E", "F"]
+      },
+      yAxis: {},
+      series: [{
+        name: '记录',
+        type: 'bar',
+        data: [5, 20, 36, 10, 10, 20]
+      }]
+    };
+    // info_Chart_bar.setOption(info_option_bar);
+  })
+  /*]]>*/
+</script>
+<script>
+  /*<![CDATA[*/
+  var $table = $('#table');
+  $table.bootstrapTable({
+    classes:'table table-hover table-condensed table-responsive table-theme',
+    height: getHeight(),
+    url: path + "/echartManage/test",
+    striped: true, //隔行变色
+    pagination: true,
+    singleSelect: false,
+    sortOrder:'desc',
+    pageSize: 10,
+    pageList: [10, 20, 50, 100],
+    toolbar:'#myop',
+    columns: [{
+      checkbox: true,
+      width: 20
+    }, {
+      field: 'id',
+      title: '编号',
+      width: 20,
+      halign:'left',
+      align:'left',
+      valign:'middle',
+      editable: {
+        type: 'text',
+        title: '单位名称',
+        validate: function (v) {
+          if (!v) return '单位名称不能为空';
+        }
+      }
+    }, {
+      field: 'name',
+      title: '图表名称',
+      halign:'left',
+      align:'left',
+      valign:'middle',
+      width: 50,
+      sortable: true,
+      editable:true,
+      // formatter: operateFormatter
+    }, {
+      field: 'date',
+      title: '图表类型',
+      halign:'left',
+      align:'left',
+      valign:'middle',
+      width: 50,
+      sortable: true
+    },{
+      field: 'operate',
+      title: '操作',
+      halign:'left',
+      align:'left',
+      valign:'middle',
+      width: 150,
+      formatter: operateFormatter
+    }
+    ]
+  });
+
+  function operateFormatter(value, row, index) {
+    return [
+      '<a class="btn btn-primary btn_info" href="javascript:void(0)" title="查看详情">',
+      //'<i class="iconfont icon-207"></i>',
+      '查看详情',
+      '</a>  ',
+      '<a class="btn btn-success" href="javascript:void(0)" title="修改">',
+      //'<i class="iconfont icon-xiugai"></i>',
+      '修改',
+      '</a>  ',
+      '<a class="btn btn-danger" href="javascript:void(0)" title="删除">',
+      //'<i class="iconfont icon-shanchu"></i>',
+      '删除',
+      '</a>  '
+    ].join('');
+  }
+
+  $(window).resize(function() {
+    $table.bootstrapTable('resetView', {
+      height: getHeight()
+    });
+  });
+
+  function getHeight() {
+    return $(window).height() - $('#table').offset().top-60;
+  }
+  /*]]>*/
+</script>
+</body>
+</html>

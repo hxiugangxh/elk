@@ -1,9 +1,9 @@
-package com.ylz.log.elk.monitor.controller;
+package com.ylz.log.elk.manage.controller;
 
 import com.ylz.log.elk.base.util.LoginInfoUtil;
-import com.ylz.log.elk.monitor.bean.MultiIndexBean;
-import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
-import com.ylz.log.elk.monitor.service.MonitorService;
+import com.ylz.log.elk.manage.bean.MultiIndexBean;
+import com.ylz.log.elk.manage.bean.UserCollIndexBean;
+import com.ylz.log.elk.manage.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,20 +18,20 @@ import java.util.Map;
 
 @Slf4j
 @Controller
-@RequestMapping("/logmonitor")
-public class MonitorController {
+@RequestMapping("/indexManage")
+public class IndexManageController {
 
     @Autowired
     private MonitorService monitorService;
 
-    @RequestMapping("/index")
+    @RequestMapping("/dataSearch")
     public String index(Map<String, Object> map) {
 
         Map<String, Object> esFieldmap = monitorService.esFieldMap();
 
         map.put("esFieldmap", esFieldmap);
 
-        return "logmonitor/index";
+        return "elk/data_search";
     }
 
     @RequestMapping("/queryByEs")
@@ -67,7 +67,7 @@ public class MonitorController {
         map.put("multiIndexList", multiIndexList);
         map.put("indexList", indexList);
 
-        return "logmonitor/data_manage";
+        return "elk/data_manage";
     }
 
     /**

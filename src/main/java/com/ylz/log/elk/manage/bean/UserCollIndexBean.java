@@ -1,4 +1,4 @@
-package com.ylz.log.elk.monitor.bean;
+package com.ylz.log.elk.manage.bean;
 
 import lombok.Data;
 

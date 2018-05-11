@@ -1,10 +1,10 @@
-package com.ylz.log.elk.monitor.service.impl;
+package com.ylz.log.elk.manage.service.impl;
 
 import com.ylz.log.elk.base.util.LoginInfoUtil;
-import com.ylz.log.elk.monitor.bean.MultiIndexBean;
-import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
-import com.ylz.log.elk.monitor.dao.MonitorDao;
-import com.ylz.log.elk.monitor.service.MonitorService;
+import com.ylz.log.elk.manage.bean.MultiIndexBean;
+import com.ylz.log.elk.manage.bean.UserCollIndexBean;
+import com.ylz.log.elk.manage.dao.MonitorDao;
+import com.ylz.log.elk.manage.service.MonitorService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;

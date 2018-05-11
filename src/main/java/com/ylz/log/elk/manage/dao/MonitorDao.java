@@ -1,7 +1,7 @@
-package com.ylz.log.elk.monitor.dao;
+package com.ylz.log.elk.manage.dao;
 
-import com.ylz.log.elk.monitor.bean.MultiIndexBean;
-import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
+import com.ylz.log.elk.manage.bean.MultiIndexBean;
+import com.ylz.log.elk.manage.bean.UserCollIndexBean;
 
 import java.util.List;
 import java.util.Map;
@@ -32,5 +32,5 @@ public interface MonitorDao {
 
     UserCollIndexBean getUserCollIndexBean(Integer userId);
 
-    boolean dealCollIndex(String index, String flag, String action);
+    boolean dealCollIndex(String s, String flag, String index);
 }

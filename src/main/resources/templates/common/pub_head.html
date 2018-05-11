@@ -12,7 +12,7 @@
   <script type="text/javascript" th:src="@{/assets/plugins/layer-v2.4/layer.js}"></script>
   <script type="text/javascript" th:src="@{/assets/js/common.js}"></script>
 
-  <a th:href="${#httpServletRequest.getContextPath()} + '/'"
+  <a th:href="${#httpServletRequest.getContextPath()}"
      id="contextPath"></a>
   <script>
     var path = $("#contextPath").attr("href");
@@ -34,4 +34,12 @@
 <th:block th:fragment="theme-blue">
   <link type="text/css" rel="stylesheet" th:href="@{/assets/css/base/themecolor_blue.css}"/>
 </th:block>
+
+<th:block th:fragment="echart">
+  <script type="text/javascript" th:src="@{/assets/plugins/Echarts/echarts.js}"></script>
+  <!-- 图表配置JS -->
+  <script type="text/javascript" th:src="@{/assets/font/iconfont.js}"></script>
+</th:block>
+
+
 </html>

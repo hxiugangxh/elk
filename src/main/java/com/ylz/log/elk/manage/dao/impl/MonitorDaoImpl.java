@@ -1,11 +1,11 @@
-package com.ylz.log.elk.monitor.dao.impl;
+package com.ylz.log.elk.manage.dao.impl;
 
 import com.ylz.log.elk.base.util.EsUtil;
 import com.ylz.log.elk.base.util.LoginInfoUtil;
-import com.ylz.log.elk.monitor.bean.EsIndexBean;
-import com.ylz.log.elk.monitor.bean.MultiIndexBean;
-import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
-import com.ylz.log.elk.monitor.dao.MonitorDao;
+import com.ylz.log.elk.manage.bean.EsIndexBean;
+import com.ylz.log.elk.manage.bean.MultiIndexBean;
+import com.ylz.log.elk.manage.bean.UserCollIndexBean;
+import com.ylz.log.elk.manage.dao.MonitorDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;

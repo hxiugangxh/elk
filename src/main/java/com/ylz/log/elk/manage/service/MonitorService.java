@@ -1,7 +1,7 @@
-package com.ylz.log.elk.monitor.service;
+package com.ylz.log.elk.manage.service;
 
-import com.ylz.log.elk.monitor.bean.MultiIndexBean;
-import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
+import com.ylz.log.elk.manage.bean.MultiIndexBean;
+import com.ylz.log.elk.manage.bean.UserCollIndexBean;
 
 import java.util.List;
 import java.util.Map;

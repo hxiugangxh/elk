@@ -177,7 +177,7 @@
 
   function listField(thisObj) {
     var index = $(thisObj).val();
-    var URL = "/logmonitor/listField";
+    var URL = path + "/indexManage/listField";
     var formData = {
       "index": index
     };
@@ -193,7 +193,7 @@
   }
 
   function queryByEs() {
-    var URL = "/logmonitor/queryByEs";
+    var URL = path + "/indexManage/queryByEs";
 
     var index = $("#index").val();
     var flag = $("#index option:selected").attr("data-flag");
@@ -207,8 +207,6 @@
       "field":  field,
       "searchContent": searchContent
     };
-
-    console.log(formData);
 
     $.post(URL, formData, function (jsonData) {
       var domEle = "";
@@ -330,7 +328,7 @@
       queryByEs();
     },
     onPageChanged: function () {
-      console.log("onPageChanged");
+      // console.log("onPageChanged");
     }
   };
 

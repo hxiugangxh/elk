@@ -48,9 +48,9 @@
     .li-star {
       display: none;
       float: right;
-      position: relative;
+      position: absolute;
       top: 15px;
-      right: 0px;
+      right: 30px;
     }
 
     .li-close {
@@ -58,12 +58,13 @@
       float: right;
       position: relative;
       top: 15px;
-      right: 13px;
+      right: 0px;
     }
 
     .yellow {
       color: yellow;
     }
+
     .icon-deal {
       top: 2px;
     }
@@ -248,7 +249,7 @@
 
     var multiIndex = $(thisObj).attr("data-multiIdex");
     layer.confirm("确定要删除索引：" + multiIndex + " 吗？", function () {
-      var URL = "/logmonitor/delMultiIndex";
+      var URL = path + "/indexManage/delMultiIndex";
       var formData = {
         "multiIndex": multiIndex
       };
@@ -292,7 +293,7 @@
       "multiIndex": multiIndex
     };
 
-    var URL = "/logmonitor/hasExist";
+    var URL = path + "/indexManage/hasExist";
 
     if (multiIndex.split(" ").join("") == "") {
       $("#existFlag").html("*");
@@ -320,7 +321,7 @@
     if (index == "") {
       return;
     }
-    var URL = "/logmonitor/listReflectField"
+    var URL = path + "/indexManage/listReflectField"
       + "?index=" + index
       + "&flag=" + flag;
 
@@ -337,7 +338,7 @@
 
         var index = $("#name_info").html();
         var flag = $("#name_info").attr("data-flag");
-        var URL = "/logmonitor/dealNotIndex";
+        var URL = path + "/indexManage/dealNotIndex";
         var formData = {
           "index": index,
           "flag": flag
@@ -378,7 +379,7 @@
 
   function delMultiRelIndex(thisObj) {
     var index = $(thisObj).attr("data-index");
-    var URL = "/logmonitor/delMultiRelIndex";
+    var URL = path + "/indexManage/delMultiRelIndex";
     var formData = {
       "index": index
     };
@@ -517,7 +518,7 @@
       return;
     }
 
-    var URL = "/logmonitor/saveMultiIndex";
+    var URL = path + "/indexManage/saveMultiIndex";
     var formData = {
       "multiIndex": multiIndex,
       "index": index + ""
@@ -582,7 +583,7 @@
 
   //索引删除
   jQuery(function () {
-    var URL = "/logmonitor/getUserCollIndexBean";
+    var URL = path + "/indexManage/getUserCollIndexBean";
 
     $.post(URL, {}, function (userCollIndexBean) {
       var index = userCollIndexBean.index;
@@ -618,10 +619,10 @@
       action = "delete"
     }
 
-    var URL = "/logmonitor/dealCollIndex";
+    var URL = path + "/indexManage/dealCollIndex";
     var formData = {
-      "index":  index,
-      "flag":   flag,
+      "index": index,
+      "flag": flag,
       "action": action
     };
 
@@ -646,6 +647,7 @@
     });
 
   });
+
   // 点击默认按钮影响右边索引li
   function dealCollRelLi(index, flag) {
     $(".manage ul li .li-star").hide();
@@ -656,6 +658,7 @@
       }).find(".li-star").show();
     }
   }
+
   function dealCollFlag(flag) {
     if (flag == "1") {
       $("#coll").find("span").eq(0).addClass("yellow");
@@ -704,6 +707,7 @@
       }
     }
   }
+
   /*]]>*/
 </script>
 </body>
