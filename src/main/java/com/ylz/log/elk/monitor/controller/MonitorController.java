@@ -1,6 +1,8 @@
 package com.ylz.log.elk.monitor.controller;
 
+import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.monitor.bean.MultiIndexBean;
+import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
 import com.ylz.log.elk.monitor.service.MonitorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -160,6 +162,42 @@ public class MonitorController {
             e.printStackTrace();
 
             jsonMap.put("flag", flag);
+            jsonMap.put("errorMsg", e.getMessage());
+        }
+
+        return jsonMap;
+    }
+
+    @RequestMapping("/getUserCollIndexBean")
+    @ResponseBody
+    public UserCollIndexBean getUserCollIndexBean() {
+        UserCollIndexBean userCollIndexBean = monitorService.getUserCollIndexBean(LoginInfoUtil.getUserId());
+
+        if (userCollIndexBean == null) {
+            userCollIndexBean = new UserCollIndexBean();
+        }
+
+        return userCollIndexBean;
+    }
+
+    @RequestMapping("/dealCollIndex")
+    @ResponseBody
+    public Map<String, Object> dealCollIndex(
+            @RequestParam("index") String index,
+            @RequestParam("flag") String flag,
+            @RequestParam("action") String action
+    ) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        boolean bool = false;
+        try {
+            bool = monitorService.dealCollIndex(index, flag, action);
+
+            jsonMap.put("flag", bool);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            jsonMap.put("flag", false);
             jsonMap.put("errorMsg", e.getMessage());
         }
 

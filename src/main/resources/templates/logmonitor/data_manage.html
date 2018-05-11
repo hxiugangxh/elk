@@ -45,17 +45,27 @@
       display: block;
     }
 
-    .li-close {
+    .li-star {
       display: none;
-      color: black;
       float: right;
       position: relative;
       top: 15px;
-      right: 3px;
+      right: 0px;
+    }
+
+    .li-close {
+      display: none;
+      float: right;
+      position: relative;
+      top: 15px;
+      right: 13px;
     }
 
     .yellow {
       color: yellow;
+    }
+    .icon-deal {
+      top: 2px;
     }
   </style>
 </head>
@@ -86,6 +96,7 @@
                 <li class="list-group-item">
                   <a href="javascript:void(0)" class="deal" th:text="${multiIndexBean.multiIndex}"
                      th:attr="data-flag=${multiIndexBean.flag}"></a>
+                  <span class="glyphicon glyphicon-star li-star yellow"></span>
                   <i class="glyphicon glyphicon-remove li-close"
                      th:attr="data-multiIdex=${multiIndexBean.multiIndex}"
                      onclick="delMultiIndex(this)"></i>
@@ -104,7 +115,9 @@
               <th:block th:each="index : ${indexList}">
                 <li class="list-group-item">
                   <a href="javascript:void(0)" class="deal" th:text="${index}"
-                     data-flag="0"></a></li>
+                     data-flag="0"></a>
+                  <span class="glyphicon glyphicon-star li-star yellow"></span>
+                </li>
               </th:block>
             </ul>
           </div>
@@ -185,16 +198,12 @@
               <h4 style="margin:0">索引名称：<span id="name_info" class="bold-reset blue-color"></span></h4>
             </div>
             <div class="mt15 fr">
-              <button type="button" class="btn btn-info" onclick="test()">
-                <span class="glyphicon glyphicon-star"></span>
-                  设为默认
+              <button type="button" class="btn btn-info" id="coll">
+                <span class="glyphicon glyphicon-star icon-deal"></span>
+                <span>设为默认</span>
               </button>
-              <button type="button" class="btn btn-danger" id="remove_info">
-                <span class="glyphicon glyphicon-remove"></span>
-                  删除默认
-              </button>
-              <button type="button" class="btn btn-info" onclick="location.reload();">
-                <span class="glyphicon glyphicon-refresh"></span>
+              <button type="button" class="btn btn-success" onclick="$('.manage li.active').click();">
+                <span class="glyphicon glyphicon-refresh icon-deal"></span>
                 刷新
               </button>
             </div>
@@ -400,9 +409,12 @@
   $(document).on("click", ".manage ul li", function () {
     $(".manage ul li").removeClass("active");
     $(this).addClass("active");
+
+    var collFlag = $(this).attr("data-collFlag");
     $("#name_info").html($(this).find("a").html());
     $("#name_info").attr("data-flag", $(this).find("a").attr("data-flag"));
 
+    dealCollFlag(collFlag);
     listReflectField(false);
   });
 
@@ -564,23 +576,91 @@
   function act() {
     var text_info = $(".manage ul li.active a").text();
     var flag = $(".manage ul li.active a").attr("data-flag");
-    // alert(text_info)
     $("#name_info").text(text_info);
     $("#name_info").attr("data-flag", flag);
   }
 
   //索引删除
-  $(function () {
-    $(".manage ul li").eq(0).addClass("active");
-    act();
-    $("#remove_info").on("click", function () {
-      $("#list_info li.active").remove();
-      $("#list_info li:first-child").addClass("active");
-      act();
+  jQuery(function () {
+    var URL = "/logmonitor/getUserCollIndexBean";
+
+    $.post(URL, {}, function (userCollIndexBean) {
+      var index = userCollIndexBean.index;
+      if (index != null) {
+        var index = index;
+
+        $(".manage ul li").each(function () {
+          if ($(this).find("a").html() == index) {
+            $(this).attr("data-collFlag", "1");
+            $(this).find(".li-star").show();
+            $(this).click();
+          }
+        })
+      } else {
+        $(".manage ul li").eq(0).click();
+      }
+
+      listReflectField(true);
+    }, "json")
+  });
+
+  $("#coll").on("click", function () {
+    var that = this;
+    var index = $("#name_info").html();
+    var flag = $("#name_info").attr("data-flag");
+    var txt = $(that).find("span").eq(1).html();
+    var action = "save";
+    if (txt == "已默认") {
+      action = "delete"
+    }
+
+    var URL = "/logmonitor/dealCollIndex";
+    var formData = {
+      "index":  index,
+      "flag":   flag,
+      "action": action
+    };
+
+    $.post(URL, formData, function (jsonData) {
+      if (flag) {
+        var star = $(that).find("span").eq(0);
+        var txt = $(that).find("span").eq(1);
+        if (txt.html() == "已默认") {
+          star.removeClass("yellow");
+          txt.html("设为默认");
+
+          dealCollRelLi(index, false);
+        } else {
+          star.addClass("yellow");
+          txt.html("已默认");
+
+          dealCollRelLi(index, true);
+        }
+      } else {
+        layer.msg("设置默认值失败，请与管理员联系", {icon: 1, time: 1000});
+      }
     });
 
-    listReflectField(true);
   });
+  // 点击默认按钮影响右边索引li
+  function dealCollRelLi(index, flag) {
+    $(".manage ul li .li-star").hide();
+    $(".manage ul li").attr("data-collFlag", "0");
+    if (flag) {
+      $(".manage ul li").filter(function () {
+        return $(this).find("a").html() == index;
+      }).find(".li-star").show();
+    }
+  }
+  function dealCollFlag(flag) {
+    if (flag == "1") {
+      $("#coll").find("span").eq(0).addClass("yellow");
+      $("#coll").find("span").eq(1).html("已默认");
+    } else {
+      $("#coll").find("span").eq(0).removeClass("yellow");
+      $("#coll").find("span").eq(1).html("设为默认");
+    }
+  }
 
   function mergeColumn(tbodyId, columnNum) {
     if ($("#" + tbodyId + " tbody tr").length > 0) {
@@ -620,10 +700,6 @@
       }
     }
   }
-
-  /*$(".manage ul:eq(0) li").hover(function () {
-    $(this).find("i").show();
-  })*/
   /*]]>*/
 </script>
 </body>

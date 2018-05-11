@@ -1,6 +1,8 @@
 package com.ylz.log.elk.monitor.service.impl;
 
+import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.monitor.bean.MultiIndexBean;
+import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import com.ylz.log.elk.monitor.service.MonitorService;
 import org.apache.commons.collections.CollectionUtils;
@@ -27,26 +29,38 @@ public class MonitorServiceImpl implements MonitorService {
         List<Map<String, Object>> indexList = new ArrayList<>();
 
         List<MultiIndexBean> multiIndexList = monitorDao.listMultiIndex();
-
         List<String> esIndexList = monitorDao.listIndex();
+        UserCollIndexBean userCollIndexBean = this.getUserCollIndexBean(LoginInfoUtil.getUserId());
 
-        multiIndexList.forEach(multiIndexBean -> {
-            Map<String, Object> map = new HashMap<>();
+        if (userCollIndexBean != null) {
+            String flag = userCollIndexBean.getFlag();
 
-            map.put("index", multiIndexBean.getMultiIndex());
-            map.put("flag", "1");
+            multiIndexList.forEach(multiIndexBean -> {
+                Map<String, Object> map = new HashMap<>();
 
-            indexList.add(map);
-        });
+                map.put("index", multiIndexBean.getMultiIndex());
+                map.put("flag", "1");
 
-        esIndexList.forEach(str -> {
-            Map<String, Object> map = new HashMap<>();
+                if ("1".equals(flag) && multiIndexBean.getMultiIndex().equals(userCollIndexBean.getIndex())) {
+                    indexList.add(0, map);
+                } else {
+                    indexList.add(map);
+                }
+            });
 
-            map.put("index", str);
-            map.put("flag", "0");
+            esIndexList.forEach(str -> {
+                Map<String, Object> map = new HashMap<>();
 
-            indexList.add(map);
-        });
+                map.put("index", str);
+                map.put("flag", "0");
+
+                if ("0".equals(flag) && str.equals(userCollIndexBean.getIndex())) {
+                    indexList.add(0, map);
+                } else {
+                    indexList.add(map);
+                }
+            });
+        }
 
         List<String> fieldList = new ArrayList<>();
 
@@ -121,5 +135,16 @@ public class MonitorServiceImpl implements MonitorService {
     @Transactional
     public boolean delMultiIndex(String multiIndex) {
         return monitorDao.delMultiIndex(multiIndex);
+    }
+
+    @Override
+    public UserCollIndexBean getUserCollIndexBean(Integer userId) {
+        return monitorDao.getUserCollIndexBean(userId);
+    }
+
+    @Override
+    @Transactional
+    public boolean dealCollIndex(String index, String flag, String action) {
+        return monitorDao.dealCollIndex(index, flag, action);
     }
 }

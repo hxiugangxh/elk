@@ -56,8 +56,14 @@
                     </th:block>
                     <th:block th:if="${!#lists.isEmpty(esFieldmap.indexList)}">
                       <th:block th:each="index : ${esFieldmap.indexList}">
-                        <option th:value="${index.index}" th:text="${index.index}"
-                          th:attr="data-flag=${index.flag}"></option>
+                        <th:block th:if="${index.flag == '1'}">
+                          <option th:value="${index.index}" th:text="${index.index} + '（组合）'"
+                                  th:attr="data-flag=${index.flag}"></option>
+                        </th:block>
+                        <th:block th:if="${index.flag == '0'}">
+                          <option th:value="${index.index}" th:text="${index.index}"
+                                  th:attr="data-flag=${index.flag}"></option>
+                        </th:block>
                       </th:block>
                     </th:block>
                   </select>

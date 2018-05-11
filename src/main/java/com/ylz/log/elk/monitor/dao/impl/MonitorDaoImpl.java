@@ -1,8 +1,10 @@
 package com.ylz.log.elk.monitor.dao.impl;
 
 import com.ylz.log.elk.base.util.EsUtil;
+import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.monitor.bean.EsIndexBean;
 import com.ylz.log.elk.monitor.bean.MultiIndexBean;
+import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
 import com.ylz.log.elk.monitor.dao.MonitorDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -154,7 +156,7 @@ public class MonitorDaoImpl implements MonitorDao {
             return dataMap;
         }
 
-        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(indexList.toArray(new String[] {}))
+        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(indexList.toArray(new String[]{}))
                 .setFrom(page).setSize(pageSize);
 
         if (StringUtils.isEmpty(searchContent)) {
@@ -167,7 +169,7 @@ public class MonitorDaoImpl implements MonitorDao {
             searchRequestBuilder.setFetchSource(field.split(","), null);
         }
 
-        log.info("\nqueryByEs--查询es数据: index = {}, page = {}, pageSize = {}\n查询DSL: {}",
+        log.info("queryByEs--查询es数据: index = {}, page = {}, pageSize = {}\n查询DSL: {}",
                 index, page, pageSize, searchRequestBuilder);
 
         SearchHits hits = searchRequestBuilder
@@ -490,4 +492,48 @@ public class MonitorDaoImpl implements MonitorDao {
         return false;
     }
 
+    @Override
+    public UserCollIndexBean getUserCollIndexBean(Integer userId) {
+        String querySQL = "select * from cm_user_coll_index where user_id = '" + userId + "'";
+
+        log.info("getUserCollIndexBean: {}", querySQL);
+
+        List<UserCollIndexBean> list = this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper(UserCollIndexBean
+                .class));
+
+        return (list.size() > 0) ? list.get(0) : null;
+    }
+
+    @Override
+    public boolean dealCollIndex(String index, String flag, String action) {
+        Map<String, Object> paramMap = new HashMap<>();
+
+        paramMap.put("userId", LoginInfoUtil.getUserId());
+        String delSQL = "delete from cm_user_coll_index where user_id = :userId";
+        log.info("dealCollIndex--删除原有收藏: {}, \n参数: {}", delSQL, paramMap);
+        Integer delCount = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+        Integer saveCount = 0;
+
+        if ("save".equals(action)) {
+            String saveSQL = "insert into cm_user_coll_index values(:userId, :index, :flag)";
+
+            paramMap.put("index", index);
+            paramMap.put("flag", flag);
+
+            log.info("dealCollIndex--保存收藏: {}, \n参数: {}", saveSQL, paramMap);
+            saveCount = this.getNamedParameterJdbcTemplate().update(saveSQL, paramMap);
+
+            if (saveCount > 0) {
+                return true;
+            }
+        } else {
+            if (delCount > 0) {
+                return true;
+            }
+        }
+
+        log.error("dealCollIndex--保存失败，有效行为0");
+
+        return false;
+    }
 }

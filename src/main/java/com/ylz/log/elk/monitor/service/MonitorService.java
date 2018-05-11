@@ -1,6 +1,7 @@
 package com.ylz.log.elk.monitor.service;
 
 import com.ylz.log.elk.monitor.bean.MultiIndexBean;
+import com.ylz.log.elk.monitor.bean.UserCollIndexBean;
 
 import java.util.List;
 import java.util.Map;
@@ -30,4 +31,8 @@ public interface MonitorService {
     boolean delMultiRelIndex(List<String> indexList);
 
     boolean delMultiIndex(String multiIndex);
+
+    UserCollIndexBean getUserCollIndexBean(Integer userId);
+
+    boolean dealCollIndex(String index, String flag, String action);
 }
