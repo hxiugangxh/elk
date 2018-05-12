@@ -25,12 +25,15 @@ public class EchartManagerController {
         List<Map<String, Object>> list = new ArrayList<>();
         Map<String, Object> map = new HashMap<>();
 
-        map.put("id", "1");
-        map.put("name", "Item 012233");
-        map.put("date", "<i class='iconfont icon-slice33'></i>");
-        map.put("item", "item001-表格");
+        for (int i = 0 ; i < 47; i++) {
+            map = new HashMap<>();
 
-        list.add(map);
+            map.put("id", "1");
+            map.put("name", "Item " + i);
+            map.put("date", "<i class='iconfont icon-slice33'></i>");
+            map.put("item", "item00" + i + "-表格");
+            list.add(map);
+        }
 
         return list;
     }
