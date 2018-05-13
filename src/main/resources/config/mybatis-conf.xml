@@ -26,14 +26,15 @@
         <!--设置超时时间，它决定驱动等待一个数据库响应的时间。 系统默认值是null，设置只是为了展示出来 -->
         <setting name="defaultStatementTimeout" value="25000"/>
 
-        <setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl" />
+        <!--设置是否打印 -->
+        <!--<setting name="logImpl" value="org.apache.ibatis.logging.stdout.StdOutImpl" />-->
     </settings>
 
     <typeAliases>
         <!-- 这样定义后就可以用city来代替整个City类全路径了-->
         <!--<typeAlias alias="Student" type="com.hxg.springbootmybatis.controller.Student"/>-->
 
-        <package name="com.hxg.springbootmybatis.bean"/>
+        <package name="com.ylz.log.elk.manage.bean"/>
     </typeAliases>
 
 </configuration>

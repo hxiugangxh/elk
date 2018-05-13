@@ -32,4 +32,8 @@ pagehelper:
 
 server:
   port: 8081
+logging:
+  level:
+    com.ylz.log.elk.manage.dao.mapper: debug
+
 

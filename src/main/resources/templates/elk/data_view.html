@@ -13,6 +13,7 @@
   <style>
     .fixed-table-container {
     }
+
     html, body {
       overflow: hidden;
     }
@@ -23,13 +24,14 @@
 <div class="wrapper-content">
   <div class="box">
     <div class="box-header with-border">
-      <div class="box-title dec_1 theme-border-left">图表统计</div>
+      <div class="box-title dec_1 theme-border-left">图表统计<i class='iconfont slice33'></i></div>
     </div>
     <div class="box-body">
       <div class="input-group fl col-xs-7" style="margin-top:0px; positon:relative">
-        <input type="text" class="form-control" placeholder="请输入字段名">
+        <input type="text" class="form-control" placeholder="请输入字段名" id="echartName" />
         <span class="input-group-btn">
-           <button class="btn btn-info btn-search" onclick="test()"><i class="iconfont icon-sousuo"></i>查找</button>
+           <button class="btn btn-info btn-search" onclick="$('#table').bootstrapTable('refresh')">
+             <i class="iconfont icon-sousuo"></i>查找</button>
         </span>
       </div>
       <!-- 表格 -->
@@ -159,6 +161,7 @@
     var t = $("#table").bootstrapTable("getSelections");
     console.log(t);
   }
+
   //复选框选中不可点击添加
   $(window).load(function () {
     $("#table th input[type=checkbox]").on("change", function () {
@@ -235,22 +238,26 @@
   var $table = $('#table');
   $table.bootstrapTable({
     classes: 'table table-hover table-condensed table-bordered table-responsive',
+    contentType: "application/x-www-form-urlencoded",
     height: getHeight(),
-    url: path + "/echartManage/test",
+    method: 'post',
+    url: path + "/echartManage/pageVisualizeEchart",
     striped: true, //隔行变色
     pagination: true,
     singleSelect: false,
-    sortOrder: 'desc',
+    queryParamsType:'',
+    queryParams: queryParams,
+    sidePagination: "server",//表格分页的位置
+    pageNumber: 1,
     pageSize: 10,
     pageList: [10, 20, 50, 100],
-    toolbar: '#myop',
+    searchOnEnterKey: true,
     onLoadSuccess: function () {
       $(".bs-checkbox").css({"text-align": "center", "vertical-align": "middle"});
     },
     columns: [{
       checkbox: true,
-      width: 50,
-      halign: 'middle'
+      width: 50
     }, {
       field: 'id',
       width: 100,
@@ -259,7 +266,7 @@
       align: 'center',
       valign: 'middle'
     }, {
-      field: 'name',
+      field: 'echartName',
       title: '图表名称',
       halign: 'center',
       align: 'left',
@@ -267,7 +274,7 @@
       sortable: true
     }, {
       width: 100,
-      field: 'date',
+      field: 'type',
       title: '图表类型',
       halign: 'center',
       align: 'center',
@@ -284,6 +291,16 @@
     }
     ]
   });
+
+  function queryParams(params) {
+    var paramMap = {
+      pageSize: params.pageSize,
+      pn: params.pageNumber,
+      echartName: $('#echartName').val()
+    };
+
+    return paramMap;
+  }
 
   function operateFormatter(value, row, index) {
     return [
@@ -308,6 +325,7 @@
     });
 
   });
+
   function getHeight() {
     return $(window).height() - $("#table").offset().top - 120;
   }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ylz.log.elk.manage.dao.mapper.EchartMapper">
+
+    <select id="pageVisualizeEchart" resultType="VisualizeChartBean">
+
+        select * from cm_visualize_echart
+        <where>
+            <if test="echartName != ''">
+                <bind name="echartName" value="'%' + echartName + '%'" />
+                echart_name like #{echartName}
+            </if>
+        </where>
+    </select>
+</mapper>
