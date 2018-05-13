@@ -12,6 +12,7 @@
   <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
   <style>
     .fixed-table-container {
+      border: none;
     }
 
     html, body {
@@ -327,7 +328,7 @@
   });
 
   function getHeight() {
-    return $(window).height() - $("#table").offset().top - 120;
+    return $(window).height() - $(".modal-body").offset().top  - 195;
   }
 
   /*]]>*/
