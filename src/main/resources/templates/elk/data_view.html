@@ -18,6 +18,17 @@
     html, body {
       overflow: hidden;
     }
+
+    .bor_view {
+      height: 400px
+    }
+
+    .echart_view {
+      width: 570px;
+      height: 430px;
+      padding: 8px;
+      display: none;
+    }
   </style>
 </head>
 
@@ -29,7 +40,7 @@
     </div>
     <div class="box-body">
       <div class="input-group fl col-xs-7" style="margin-top:0px; positon:relative">
-        <input type="text" class="form-control" placeholder="请输入字段名" id="echartName" />
+        <input type="text" class="form-control" placeholder="请输入字段名" id="echartName"/>
         <span class="input-group-btn">
            <button class="btn btn-info btn-search" onclick="$('#table').bootstrapTable('refresh')">
              <i class="iconfont icon-sousuo"></i>查找</button>
@@ -54,7 +65,7 @@
 <!-- 模态框 -->
 <div class="modal fade" id="Modal_view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -88,11 +99,37 @@
         </form>
         <!--  -->
         <div class="row view_show">
-          <div class="col-sm-6 bor_view">
+          <div class="col-sm-4 bor_view">
             <div class="row">
               <h4>项目名称：日志系统</h4>
             </div>
             <form role="form" class="form-horizontal row">
+              <div class="form-group">
+                <label for="firstname" class="col-sm-3 control-label">
+                  项目名称:</label>
+                <div class="col-sm-9">
+                  <select class="form-control input-sm">
+                    <option value="1">10</option>
+                    <option value="2">20</option>
+                    <option value="3">30</option>
+                    <option value="4">40</option>
+                    <option value="5">50</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="firstname" class="col-sm-3 control-label">
+                  ES索引:</label>
+                <div class="col-sm-9">
+                  <select class="form-control input-sm">
+                    <option value="1">10</option>
+                    <option value="2">20</option>
+                    <option value="3">30</option>
+                    <option value="4">40</option>
+                    <option value="5">50</option>
+                  </select>
+                </div>
+              </div>
               <div class="form-group">
                 <label for="firstname" class="col-sm-3 control-label">
                   x-坐标:</label>
@@ -121,12 +158,11 @@
               </div>
             </form>
           </div>
-          <div class="col-sm-6">
+          <div class="col-sm-8">
             <div class="bor_view">
-              <div id="main_pie" class="main_view show"></div>
-              <div id="main_line" class="main_view"></div>
-              <div id="main_bar" class="main_view"></div>
-              <div id="main_tree" class="main_view"></div>
+              <div id="main_pie" class="echart_view show"></div>
+              <div id="main_line" class="echart_view "></div>
+              <div id="main_bar" class="echart_view"></div>
             </div>
           </div>
         </div>
@@ -156,6 +192,7 @@
 </div>
 <th:block th:include="common/pub_head :: echart"></th:block>
 <link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
+<script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 <script>
   /*<![CDATA[*/
   function test() {
@@ -246,7 +283,7 @@
     striped: true, //隔行变色
     pagination: true,
     singleSelect: false,
-    queryParamsType:'',
+    queryParamsType: '',
     queryParams: queryParams,
     sidePagination: "server",//表格分页的位置
     pageNumber: 1,
@@ -328,7 +365,7 @@
   });
 
   function getHeight() {
-    return $(window).height() - $(".modal-body").offset().top  - 195;
+    return $(window).height() - $(".modal-body").offset().top - 195;
   }
 
   /*]]>*/

@@ -3,22 +3,28 @@
 // 饼状图
 var myChart_pie = echarts.init(document.getElementById('main_pie'));
 var option_pie = {
-    title: {
-        text: '饼状图'
-    },
-    tooltip: {},
-    legend: {
-        data:['记录']
-    },
-    xAxis: {
-        data: ["A","B","C","D","E","F"]
-    },
-    yAxis: {},
-    series: [{
-        name: '记录',
-        type: 'pie',
-        data: [5, 20, 36, 10, 10, 20]
-    }]
+  title: {
+    text: '饼状图',
+    textStyle: {
+      fontSize: '30'
+    }
+  },
+  tooltip: {},
+  series: [
+    {
+      name: '记录',
+      type: 'pie',
+      center: ['50%', '50%'],
+      data: [
+        {value: 5, name: 'A'},
+        {value: 20, name: 'B'},
+        {value: 36, name: 'C'},
+        {value: 10, name: 'D'},
+        {value: 10, name: 'E'},
+        {value: 20, name: 'F'}
+      ]
+    }
+  ]
 };
 
 myChart_pie.setOption(option_pie);
@@ -27,22 +33,25 @@ myChart_pie.setOption(option_pie);
 // 折线图
 var myChart_line = echarts.init(document.getElementById('main_line'));
 var option_line = {
-    title: {
-        text: '折线图'
-    },
-    tooltip: {},
-    legend: {
-        data:['记录']
-    },
-    xAxis: {
-        data: ["A","B","C","D","E","F"]
-    },
-    yAxis: {},
-    series: [{
-        name: '记录',
-        type: 'line',
-        data: [5, 20, 36, 10, 10, 20]
-    }]
+  title: {
+    text: '折线图',
+    textStyle: {
+      fontSize: '30'
+    }
+  },
+  tooltip: {},
+  legend: {
+    data: ['记录']
+  },
+  xAxis: {
+    data: ["A", "B", "C", "D", "E", "F"]
+  },
+  yAxis: {},
+  series: [{
+    name: '记录',
+    type: 'line',
+    data: [5, 20, 36, 10, 10, 20]
+  }]
 };
 
 
@@ -51,28 +60,32 @@ myChart_line.setOption(option_line);
 // 柱状图
 var myChart_bar = echarts.init(document.getElementById('main_bar'));
 var option_bar = {
-    title: {
-        text: '柱状图'
-    },
-    tooltip: {},
-    legend: {
-        data:['记录']
-    },
-    xAxis: {
-        data: ["A","B","C","D","E","F"]
-    },
-    yAxis: {},
-    series: [{
-        name: '记录',
-        type: 'bar',
-        data: [5, 20, 36, 10, 10, 20]
-    }]
+  title: {
+    text: '柱状图',
+    textStyle: {
+      fontSize: '30'
+    }
+  },
+  tooltip: {},
+  legend: {
+    data: ['记录']
+  },
+  xAxis: {
+    data: ["A", "B", "C", "D", "E", "F"]
+  },
+  yAxis: {},
+  series: [{
+    name: '记录',
+    type: 'bar',
+    data: [5, 20, 36, 10, 10, 20]
+  }]
 };
 
 
 myChart_bar.setOption(option_bar);
 
 // 树图
+/*
 var myChart_tree = echarts.init(document.getElementById('main_tree'));
 var option_tree = {
    title : {
@@ -119,7 +132,7 @@ var option_tree = {
                     }
                 }
             },
-            
+
             data: [
                 {
                     name: '根节点',
@@ -197,4 +210,4 @@ var option_tree = {
 };
 
 
-myChart_tree.setOption(option_tree);
+myChart_tree.setOption(option_tree);*/
