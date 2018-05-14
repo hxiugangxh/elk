@@ -116,7 +116,7 @@
               </div>
               <div class="form-group">
                 <label class="col-sm-3 control-label">
-                  x-坐标:</label>
+                  汇聚列名:</label>
                 <div class="col-sm-9">
                   <select class="form-control input-sm" id="xAxis" name="xAxis">
                     <option value="">请选择...</option>
@@ -127,12 +127,15 @@
                   </select>
                 </div>
               </div>
-              <div class="form-group" style="display: none">
+              <div class="form-group">
                 <label class="col-sm-3 control-label">
-                  x-坐标:</label>
+                  查询时间:</label>
                 <div class="col-sm-9">
-                  <select class="form-control input-sm" id="yAxis" name="yAxis">
+                  <select class="form-control input-sm" name="lastDay" id="lastDay">
                     <option value="">请选择...</option>
+                    <option value="1">最近一天</option>
+                    <option value="3">最近三天</option>
+                    <option value="7">最近七天</option>
                   </select>
                 </div>
               </div>
@@ -145,11 +148,17 @@
                   </select>
                 </div>
               </div>
+              <div class="form-group">
+                <div class="col-sm-9"></div>
+                <div class="col-sm-2 col-sm-pull-1">
+                  <button type="button" class="btn btn-primary" onclick="generatEchart()">生成</button>
+                </div>
+              </div>
             </div>
             <div class="col-sm-8">
               <div class="bor_view">
-                <div id="main_line" class="echart_view " data-type="1"></div>
-                <div id="main_bar" class="echart_view show" data-type="2"></div>
+                <div id="main_line" class="echart_view show" data-type="1"></div>
+                <div id="main_bar" class="echart_view" data-type="2"></div>
                 <div id="main_pie" class="echart_view" data-type="3"></div>
               </div>
             </div>
@@ -223,6 +232,21 @@
     });
   }
 
+  function generatEchart() {
+    var index = $("#multiIndex").val();
+    var field = $("#xAxis").val();
+
+    var formData = {
+      "index": index,
+      "field": field
+    };
+    var URL = path + "/echartManage/generatEchart";
+
+    $.post(URL, formData, function (jsonData) {
+      initEchart();
+    }, "json");
+  }
+
   var myModalClone = $("#Modal_view").clone();
   var myChart_line = echarts.init(document.getElementById('main_line'));
   var myChart_bar = echarts.init(document.getElementById('main_bar'));
@@ -230,8 +254,6 @@
   function saveModal() {
     $("#Modal_view").html(myModalClone.html());
     $('#Modal_view').modal('show');
-
-    initEchart();
   }
 
   function initEchart() {
@@ -250,11 +272,10 @@
 
   function changeMultiIndex() {
     var multiIndex = $("#multiIndex").val();
+    $("#multiIndexSpan").html(multiIndex);
 
     if (multiIndex != "") {
-      $("#multiIndexSpan").html(multiIndex);
-
-      var URL = path + "/echartManage/listField";
+      var URL = path + "/echartManage/listConverField";
       var formData = {
         "index": multiIndex
       };
@@ -265,9 +286,10 @@
         }
         $("#xAxis").html(domEle);
       }, "json");
-
+    } else {
+      var domEle = "<option value=''>请选择..</option>";
+      $("#xAxis").html(domEle);
     }
-
   }
 
   /*]]>*/

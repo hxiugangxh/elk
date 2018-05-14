@@ -18,6 +18,6 @@
     <insert id="saveVisualizeEchart" parameterType="VisualizeChartBean"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into cm_visualize_echart values
-          (null, #{multiIndex}, #{echartName}, #{xAxis}, #{yAxis}, #{converMethod}, #{type})
+          (null, #{echartName}, #{type}, #{multiIndex}, #{field}, #{lastDay})
     </insert>
 </mapper>

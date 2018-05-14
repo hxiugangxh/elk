@@ -25,12 +25,12 @@ public class VisualizeChartBean {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String multiIndex;
+
     private String echartName;
-    private String xAxis;
-    private String yAxis;
-    private String converMethod;
     private Integer type;
+    private String multiIndex;
+    private String field;
+    private Integer lastDay;
 
     private String typePo;
 

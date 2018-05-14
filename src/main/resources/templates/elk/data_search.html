@@ -177,9 +177,11 @@
 
   function listField(thisObj) {
     var index = $(thisObj).val();
+    var type = $(thisObj).find("option:selected").attr("data-type");
     var URL = path + "/indexManage/listField";
     var formData = {
-      "index": index
+      "index": index,
+      "type": type
     };
 
     $.post(URL, formData, function (fieldList) {

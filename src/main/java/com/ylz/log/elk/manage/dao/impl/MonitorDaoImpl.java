@@ -100,15 +100,11 @@ public class MonitorDaoImpl implements MonitorDao {
             while (typeIterator.hasNext()) {
                 String typeKey = typeIterator.next();
 
-                Collection values = elasticsearchTemplate.getMapping(indexKey, typeKey).values();
+                Object obj = elasticsearchTemplate.getMapping(indexKey, typeKey).get("properties");
+                if (obj instanceof Map) {
+                    Map<String, Object> map = (Map<String, Object>) obj;
 
-                if (CollectionUtils.isNotEmpty(values)) {
-                    Iterator iterator = values.iterator();
-                    while (iterator.hasNext()) {
-                        Map<String, ?> obj = (Map<String, ?>) iterator.next();
-
-                        fieldSet.addAll(obj.keySet());
-                    }
+                    fieldSet.addAll(map.keySet());
                 }
             }
         }
@@ -288,26 +284,18 @@ public class MonitorDaoImpl implements MonitorDao {
             while (typeIterator.hasNext()) {
                 String typeKey = typeIterator.next();
 
-                Collection values = elasticsearchTemplate.getMapping(indexKey, typeKey).values();
+                Object obj = elasticsearchTemplate.getMapping(indexKey, typeKey).get("properties");
+                if (obj instanceof Map) {
+                    Map<String, Object> map = (Map<String, Object>) obj;
 
-                if (CollectionUtils.isNotEmpty(values)) {
-                    Iterator iterator = values.iterator();
+                    map.keySet().forEach((key) -> {
+                        Map<String, Object> dataMap = new HashMap<>();
 
-                    while (iterator.hasNext()) {
-                        Object obj = iterator.next();
+                        dataMap.put("index", indexKey);
+                        dataMap.put("field", key);
 
-                        Map<String,  Object> map = (Map<String, Object>) obj;
-
-                        map.keySet().forEach((key) -> {
-                            Map<String, Object> dataMap = new HashMap<>();
-
-                            dataMap.put("index", indexKey);
-                            dataMap.put("field", key);
-
-                            list.add(dataMap);
-                        });
-
-                    }
+                        list.add(dataMap);
+                    });
                 }
             }
         }

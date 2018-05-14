@@ -52,10 +52,15 @@ public class EchartManagerController {
         return echartService.pageVisualizeEchart(pn, pageSize, echartName);
     }
 
-    @RequestMapping("/listField")
+    /**
+     * 获取可以汇聚的列
+     * @param index
+     * @return
+     */
+    @RequestMapping("/listConverField")
     @ResponseBody
-    public List<String> listField(@RequestParam("index") String index) {
-        return monitorService.listField(index, MutilIndexEnum.PROJECT_NUM.getCode());
+    public Map<String, List<String>> listConverField(@RequestParam("index") String index) {
+        return echartService.listConverField(index);
     }
 
     @RequestMapping("/saveVisualizeEchart")
@@ -76,5 +81,23 @@ public class EchartManagerController {
         }
 
         return jsonMap;
+    }
+
+    /**
+     * 根据index、field、converMethod生成对应的echart数据
+     * @param index 索引
+     * @param field 列名
+     * @param converMethod 生产方案: 1：count统计
+     * @return
+     */
+    @RequestMapping("/generatEchart")
+    @ResponseBody
+    public Map<String, Object> generatEchart(
+            @RequestParam("index") String index,
+            @RequestParam("field") String field,
+            @RequestParam("converMethod") String converMethod
+    ) {
+
+        return echartService.generatEchart(index, field, converMethod);
     }
 }

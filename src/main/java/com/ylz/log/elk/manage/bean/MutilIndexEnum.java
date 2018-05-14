@@ -5,16 +5,16 @@ public enum MutilIndexEnum {
     // 放着 后期改造
     PROJECT_NUM("1", "项目索引");
 
-    private String code;
+    private String type;
     private String desciption;
 
-    MutilIndexEnum(String code, String desciption) {
-        this.code = code;
+    MutilIndexEnum(String type, String desciption) {
+        this.type = type;
         this.desciption = desciption;
     }
 
-    public String getCode() {
-        return code;
+    public String getType() {
+        return type;
     }
 
     public String getDesciption() {
