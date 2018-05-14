@@ -4,12 +4,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * 角色.
- * @author Angel -- 守护天使
- * @version v.0.1
- * @date 2017年10月14日
- */
 @Entity
 public class SysRole implements Serializable{
 	private static final long serialVersionUID = 1L;

@@ -1,12 +1,10 @@
 package com.ylz.log.elk.base.exception;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 自定义统一异常类
- * Updated by linds on 2017/10/16.
  */
 public class RestException extends RuntimeException {
 

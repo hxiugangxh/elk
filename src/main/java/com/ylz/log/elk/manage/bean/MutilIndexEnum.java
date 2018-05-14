@@ -1,5 +1,8 @@
 package com.ylz.log.elk.manage.bean;
 
+import lombok.Getter;
+
+@Getter
 public enum MutilIndexEnum {
     MUTIL_INDEX_ENUM("1", "组合索引/项目索引"),
     // 放着 后期改造
@@ -13,11 +16,4 @@ public enum MutilIndexEnum {
         this.desciption = desciption;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getDesciption() {
-        return desciption;
-    }
 }

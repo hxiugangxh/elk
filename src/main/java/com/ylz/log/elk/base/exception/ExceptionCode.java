@@ -1,6 +1,5 @@
 package com.ylz.log.elk.base.exception;
 
-import lombok.Data;
 import lombok.Getter;
 
 @Getter
