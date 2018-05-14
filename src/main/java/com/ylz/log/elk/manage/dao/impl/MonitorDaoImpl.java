@@ -272,6 +272,8 @@ public class MonitorDaoImpl implements MonitorDao {
             indexList.add(index);
         }
 
+        log.info("listReflectField: indexList = {}", indexList);
+
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
                 .prepareGetMappings(indexList.toArray(new String[]{})).execute()
                 .actionGet().getMappings();
@@ -292,9 +294,11 @@ public class MonitorDaoImpl implements MonitorDao {
                     Iterator iterator = values.iterator();
 
                     while (iterator.hasNext()) {
-                        Map<String, ?> obj = (Map<String, ?>) iterator.next();
+                        Object obj = iterator.next();
 
-                        obj.keySet().forEach((key) -> {
+                        Map<String,  Object> map = (Map<String, Object>) obj;
+
+                        map.keySet().forEach((key) -> {
                             Map<String, Object> dataMap = new HashMap<>();
 
                             dataMap.put("index", indexKey);
@@ -368,6 +372,7 @@ public class MonitorDaoImpl implements MonitorDao {
         List<String> indexList = new ArrayList<>();
 
         if ("1".equals(flag)) {
+            log.info("dealNotIndex: getRelIndex");
             indexList = this.getRelIndex(index);
         } else {
             String errorMsg = "系统异常，请联系管理员";
@@ -396,6 +401,7 @@ public class MonitorDaoImpl implements MonitorDao {
             log.info("dealNotIndex: {}", errorMsg);
         }
         dataMap.put("indexList", indexList);
+        dataMap.put("notExistList", notExistList);
 
         return dataMap;
     }
