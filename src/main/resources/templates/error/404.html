@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>404页面</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/common.css}" />
+</head>
+<body>
+
+<img th:src="@{/assets/img/404.png}" class="img-404">
+<div class="div-tools-500">
+    <button type="button"  onclick="clickFn()">刷新</button>
+</div>
+<script type="text/javascript" src="assets/js/jquery/jquery-1.12.3.min.js"></script>
+<script>
+        function clickFn(){
+            window.location.reload();
+        }
+</script>
+</body>
+</html>
