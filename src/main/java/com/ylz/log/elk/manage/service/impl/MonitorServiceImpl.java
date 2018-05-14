@@ -77,15 +77,15 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String flag, String field, String
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field, String
             searchContent) {
 
-        return monitorDao.queryByEs(page, pageSize, index, flag, field, searchContent);
+        return monitorDao.queryByEs(page, pageSize, index, type, field, searchContent);
     }
 
     @Override
-    public List<String> listField(String index, String flag) {
-        return monitorDao.listField(index, flag);
+    public List<String> listField(String index, String type) {
+        return monitorDao.listField(index, type);
     }
 
     @Override
@@ -104,8 +104,8 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public List<Map<String, Object>> listReflectField(String index, String flag) {
-        return monitorDao.listReflectField(index, flag);
+    public List<Map<String, Object>> listReflectField(String index, String type) {
+        return monitorDao.listReflectField(index, type);
     }
 
     @Override
@@ -121,8 +121,8 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     @Override
-    public Map<String, Object> dealNotIndex(String index, String flag) {
-        return monitorDao.dealNotIndex(index, flag);
+    public Map<String, Object> dealNotIndex(String index, String type) {
+        return monitorDao.dealNotIndex(index, type);
     }
 
     @Override
@@ -144,7 +144,7 @@ public class MonitorServiceImpl implements MonitorService {
 
     @Override
     @Transactional
-    public boolean dealCollIndex(String index, String flag, String action) {
-        return monitorDao.dealCollIndex(index, flag, action);
+    public boolean dealCollIndex(String index, String type, String action) {
+        return monitorDao.dealCollIndex(index, type, action);
     }
 }

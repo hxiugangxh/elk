@@ -40,21 +40,21 @@ public class IndexManageController {
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
             @RequestParam(value = "index") String index,
-            @RequestParam(value = "flag") String flag,
+            @RequestParam(value = "type") String type,
             @RequestParam(value = "field", defaultValue = "") String field,
             @RequestParam(value = "searchContent", defaultValue = "") String searchContent
     ) {
 
-        return monitorService.queryByEs(page, pageSize, index, flag, field, searchContent);
+        return monitorService.queryByEs(page, pageSize, index, type, field, searchContent);
     }
 
     @RequestMapping("/listField")
     @ResponseBody
     public List<String> listField(
             @RequestParam("index") String index,
-            @RequestParam(value = "flag", defaultValue = "0") String flag
+            @RequestParam(value = "type", defaultValue = "0") String type
     ) {
-        return monitorService.listField(index, flag);
+        return monitorService.listField(index, type);
     }
 
     @RequestMapping("/dataManage")
@@ -74,17 +74,17 @@ public class IndexManageController {
      * 列举所有的索引与对应的字段 Map index field
      *
      * @param index
-     * @param flag  判断是否是组合索引 1 是 0 否
+     * @param type  判断是否是组合索引 1 是 0 否
      * @return
      */
     @RequestMapping("/listReflectField")
     @ResponseBody
     public List<Map<String, Object>> listReflectField(
             @RequestParam(value = "index", defaultValue = "") String index,
-            @RequestParam(value = "flag", defaultValue = "0") String flag
+            @RequestParam(value = "type", defaultValue = "0") String type
     ) {
 
-        return monitorService.listReflectField(index, flag);
+        return monitorService.listReflectField(index, type);
     }
 
     @RequestMapping(value = "/saveMultiIndex")
@@ -100,6 +100,7 @@ public class IndexManageController {
             flag = monitorService.saveMultiIndex(multiIndex, Arrays.asList(index.split(",")));
 
             jsonMap.put("flag", flag);
+            jsonMap.put("type", "1");
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -124,17 +125,17 @@ public class IndexManageController {
      * 否，不吭声，系统异常
      *
      * @param index
-     * @param flag  判断是否是组合索引 1 是 0 否
+     * @param type  判断是否是组合索引 1 是 0 否
      * @return
      */
     @RequestMapping("/dealNotIndex")
     @ResponseBody
     public Map<String, Object> dealNotIndex(
             @RequestParam("index") String index,
-            @RequestParam("flag") String flag
+            @RequestParam("type") String type
     ) {
 
-        return monitorService.dealNotIndex(index, flag);
+        return monitorService.dealNotIndex(index, type);
     }
 
     @RequestMapping("/delMultiRelIndex")
@@ -184,16 +185,16 @@ public class IndexManageController {
     @ResponseBody
     public Map<String, Object> dealCollIndex(
             @RequestParam("index") String index,
-            @RequestParam("flag") String flag,
+            @RequestParam("type") String type,
             @RequestParam("action") String action
     ) {
         Map<String, Object> jsonMap = new HashMap<>();
 
-        boolean bool = false;
+        boolean flag = false;
         try {
-            bool = monitorService.dealCollIndex(index, flag, action);
+            flag = monitorService.dealCollIndex(index, type, action);
 
-            jsonMap.put("flag", bool);
+            jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
 

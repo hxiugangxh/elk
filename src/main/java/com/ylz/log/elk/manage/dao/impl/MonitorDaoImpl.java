@@ -71,16 +71,16 @@ public class MonitorDaoImpl implements MonitorDao {
      * 通过index获取type，以type获取其所有字段
      *
      * @param index
-     * @param flag
+     * @param type
      * @return
      */
     @Override
-    public List<String> listField(String index, String flag) {
-        log.info("listField: index = {}, flag = {}", index, flag);
+    public List<String> listField(String index, String type) {
+        log.info("listField: index = {}, type = {}", index, type);
         List<String> indexList = new ArrayList<>();
         Set<String> fieldSet = new HashSet<>();
 
-        if ("1".equals(flag)) {
+        if ("1".equals(type)) {
             indexList = this.getRelIndex(index);
         } else {
             indexList.add(index);
@@ -141,12 +141,12 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String flag, String field, String
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field, String
             searchContent) {
         Map<String, Object> dataMap = new HashMap<>();
 
         List<String> indexList = new ArrayList<>();
-        if ("1".equals(flag)) {
+        if ("1".equals(type)) {
             indexList = this.getRelIndex(index);
         } else {
             indexList.add(index);
@@ -183,7 +183,7 @@ public class MonitorDaoImpl implements MonitorDao {
             log.info("该页面无数据，处理page后再次查询");
             currentPage = totalPages;
 
-            return this.queryByEs((int) (currentPage - 1), pageSize, index, flag, field, searchContent);
+            return this.queryByEs((int) (currentPage - 1), pageSize, index, type, field, searchContent);
         }
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -257,12 +257,12 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public List<Map<String, Object>> listReflectField(String index, String flag) {
-        log.info("listReflectField--获取对应列名: index = {}, flag = {}", index, flag);
+    public List<Map<String, Object>> listReflectField(String index, String type) {
+        log.info("listReflectField--获取对应列名: index = {}, type = {}", index, type);
 
         List<Map<String, Object>> list = new ArrayList<>();
         List<String> indexList = new ArrayList<>();
-        if ("1".equals(flag)) {
+        if ("1".equals(type)) {
             indexList = this.getRelIndex(index);
 
             if (CollectionUtils.isEmpty(indexList)) {
@@ -367,11 +367,11 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public Map<String, Object> dealNotIndex(String index, String flag) {
+    public Map<String, Object> dealNotIndex(String index, String type) {
         Map<String, Object> dataMap = new HashMap<>();
         List<String> indexList = new ArrayList<>();
 
-        if ("1".equals(flag)) {
+        if ("1".equals(type)) {
             log.info("dealNotIndex: getRelIndex");
             indexList = this.getRelIndex(index);
         } else {
@@ -511,7 +511,7 @@ public class MonitorDaoImpl implements MonitorDao {
     }
 
     @Override
-    public boolean dealCollIndex(String index, String flag, String action) {
+    public boolean dealCollIndex(String index, String type, String action) {
         Map<String, Object> paramMap = new HashMap<>();
 
         paramMap.put("userId", LoginInfoUtil.getUserId());
@@ -521,10 +521,10 @@ public class MonitorDaoImpl implements MonitorDao {
         Integer saveCount = 0;
 
         if ("save".equals(action)) {
-            String saveSQL = "insert into cm_user_coll_index values(:userId, :index, :flag)";
+            String saveSQL = "insert into cm_user_coll_index values(:userId, :index, :type)";
 
             paramMap.put("index", index);
-            paramMap.put("flag", flag);
+            paramMap.put("type", type);
 
             log.info("dealCollIndex--保存收藏: {}, \n参数: {}", saveSQL, paramMap);
             saveCount = this.getNamedParameterJdbcTemplate().update(saveSQL, paramMap);

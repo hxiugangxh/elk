@@ -58,11 +58,11 @@
                       <th:block th:each="index : ${esFieldmap.indexList}">
                         <th:block th:if="${index.flag == '1'}">
                           <option th:value="${index.index}" th:text="${index.index} + '（组合）'"
-                                  th:attr="data-flag=${index.flag}"></option>
+                                  th:attr="data-type=${index.flag}"></option>
                         </th:block>
                         <th:block th:if="${index.flag == '0'}">
                           <option th:value="${index.index}" th:text="${index.index}"
-                                  th:attr="data-flag=${index.flag}"></option>
+                                  th:attr="data-type=${index.flag}"></option>
                         </th:block>
                       </th:block>
                     </th:block>
@@ -196,13 +196,13 @@
     var URL = path + "/indexManage/queryByEs";
 
     var index = $("#index").val();
-    var flag = $("#index option:selected").attr("data-flag");
+    var type = $("#index option:selected").attr("data-type");
     var field = $("#field").val();
     var searchContent = $("#searchContent").val();
 
     var formData = {
       "index":  index,
-      "flag":   flag,
+      "type":   type,
       "page":   options.currentPage - 1,
       "field":  field,
       "searchContent": searchContent

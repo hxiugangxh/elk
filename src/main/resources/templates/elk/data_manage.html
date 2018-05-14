@@ -96,7 +96,7 @@
               <th:block th:each="multiIndexBean : ${multiIndexList}">
                 <li class="list-group-item">
                   <a href="javascript:void(0)" class="deal" th:text="${multiIndexBean.multiIndex}"
-                     th:attr="data-flag=${multiIndexBean.flag}"></a>
+                     th:attr="data-type=${multiIndexBean.type}"></a>
                   <span class="glyphicon glyphicon-star li-star yellow"></span>
                   <i class="glyphicon glyphicon-remove li-close"
                      th:attr="data-multiIdex=${multiIndexBean.multiIndex}"
@@ -116,7 +116,7 @@
               <th:block th:each="index : ${indexList}">
                 <li class="list-group-item">
                   <a href="javascript:void(0)" class="deal" th:text="${index}"
-                     data-flag="0"></a>
+                     data-type="0"></a>
                   <span class="glyphicon glyphicon-star li-star yellow"></span>
                 </li>
               </th:block>
@@ -316,7 +316,7 @@
 
   function listReflectField(initFlag) {
     var index = $("#name_info").html();
-    var flag = $("#name_info").attr("data-flag");
+    var type = $("#name_info").attr("data-type");
 
     // index为空，即索引不存在，无需向服务器发送请求
     if (index == "") {
@@ -324,7 +324,7 @@
     }
     var URL = path + "/indexManage/listReflectField"
       + "?index=" + index
-      + "&flag=" + flag;
+      + "&type=" + type;
 
     var opt = {
       url: URL,
@@ -338,11 +338,11 @@
         $("#table").bootstrapTable('removeAll');
 
         var index = $("#name_info").html();
-        var flag = $("#name_info").attr("data-flag");
+        var type = $("#name_info").attr("data-type");
         var URL = path + "/indexManage/dealNotIndex";
         var formData = {
           "index": index,
-          "flag": flag
+          "type": type
         };
 
         $.post(URL, formData, function (jsonData) {
@@ -414,7 +414,7 @@
 
     var collFlag = $(this).attr("data-collFlag");
     $("#name_info").html($(this).find("a").html());
-    $("#name_info").attr("data-flag", $(this).find("a").attr("data-flag"));
+    $("#name_info").attr("data-type", $(this).find("a").attr("data-type"));
 
     dealCollFlag(collFlag);
     listReflectField(false);
@@ -527,12 +527,13 @@
 
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
+      var type = jsonData.type;
 
       if (flag) {
         layer.msg('保存成功！', {icon: 1, time: 1000});
 
         $(".manage li").removeClass("active");
-        appendMultiIndex(multiIndex);
+        appendMultiIndex(multiIndex, type);
         $(".manage li.active").parent().scrollTop(9999);
         $("#myModal").modal("hide");
         $(".manage li.active").click();
@@ -542,10 +543,10 @@
     }, "json");
   }
 
-  function appendMultiIndex(multiIndex) {
+  function appendMultiIndex(multiIndex, type) {
     var domEle = "";
     domEle += "<li class='list-group-item active'>";
-    domEle += "  <a href='javascript:void(0)' class='deal' data-flag='1'>" + multiIndex + "</a>";
+    domEle += "  <a href='javascript:void(0)' class='deal' data-type='" + type + "'>" + multiIndex + "</a>";
     domEle += "  <i class='glyphicon glyphicon-remove li-close' data-multiIdex='" + multiIndex + "'";
     domEle += "     onclick='delMultiIndex(this)'></i>";
     domEle += " </li>";
@@ -577,9 +578,9 @@
 
   function act() {
     var text_info = $(".manage ul li.active a").text();
-    var flag = $(".manage ul li.active a").attr("data-flag");
+    var flag = $(".manage ul li.active a").attr("data-type");
     $("#name_info").text(text_info);
-    $("#name_info").attr("data-flag", flag);
+    $("#name_info").attr("data-type", flag);
   }
 
   //索引删除
@@ -613,7 +614,7 @@
   $("#coll").on("click", function () {
     var that = this;
     var index = $("#name_info").html();
-    var flag = $("#name_info").attr("data-flag");
+    var type = $("#name_info").attr("data-type");
     var txt = $(that).find("span").eq(1).html();
     var action = "save";
     if (txt == "已默认") {
@@ -623,11 +624,12 @@
     var URL = path + "/indexManage/dealCollIndex";
     var formData = {
       "index": index,
-      "flag": flag,
+      "type": type,
       "action": action
     };
 
     $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
       if (flag) {
         var star = $(that).find("span").eq(0);
         var txt = $(that).find("span").eq(1);

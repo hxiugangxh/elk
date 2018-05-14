@@ -9,22 +9,22 @@ import java.util.Map;
 public interface MonitorDao {
     List<String> listIndex();
 
-    List<String> listField(String index, String flag);
+    List<String> listField(String index, String type);
 
-    Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String flag, String field, String
+    Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field, String
             searchContent);
 
     Object test();
 
     List<MultiIndexBean> listMultiIndex();
 
-    List<Map<String, Object>> listReflectField(String index, String flag);
+    List<Map<String, Object>> listReflectField(String index, String type);
 
     boolean saveMultiIndex(String multiIndex, List<String> indexList);
 
     Map<String, Object> hasExist(String multiIndex);
 
-    Map<String, Object> dealNotIndex(String index, String flag);
+    Map<String, Object> dealNotIndex(String index, String type);
 
     boolean delMultiRelIndex(List<String> indexList);
 
@@ -32,5 +32,5 @@ public interface MonitorDao {
 
     UserCollIndexBean getUserCollIndexBean(Integer userId);
 
-    boolean dealCollIndex(String s, String flag, String index);
+    boolean dealCollIndex(String s, String type, String index);
 }

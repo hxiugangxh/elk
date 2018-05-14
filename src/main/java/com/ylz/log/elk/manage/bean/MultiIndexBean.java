@@ -21,5 +21,5 @@ public class MultiIndexBean {
 
     // 挂载一个证明是组合索引的标致
     @Transient
-    private String flag = "1";
+    private String type = "1";
 }
