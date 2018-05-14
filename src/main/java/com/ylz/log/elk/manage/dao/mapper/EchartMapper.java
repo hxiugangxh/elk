@@ -11,4 +11,6 @@ import java.util.List;
 public interface EchartMapper {
 
     List<VisualizeChartBean> pageVisualizeEchart(@Param("echartName") String echartName);
+
+    int saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 }

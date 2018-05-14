@@ -35,4 +35,6 @@ public interface MonitorService {
     UserCollIndexBean getUserCollIndexBean(Integer userId);
 
     boolean dealCollIndex(String index, String type, String action);
+
+    List<String> getRelIndex(String index);
 }

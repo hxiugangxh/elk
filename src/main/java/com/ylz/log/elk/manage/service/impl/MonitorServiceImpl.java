@@ -147,4 +147,11 @@ public class MonitorServiceImpl implements MonitorService {
     public boolean dealCollIndex(String index, String type, String action) {
         return monitorDao.dealCollIndex(index, type, action);
     }
+
+    @Override
+    public List<String> getRelIndex(String index) {
+        return monitorDao.getRelIndex(index);
+    }
+
+
 }

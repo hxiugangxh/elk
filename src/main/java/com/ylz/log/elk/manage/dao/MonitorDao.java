@@ -33,4 +33,6 @@ public interface MonitorDao {
     UserCollIndexBean getUserCollIndexBean(Integer userId);
 
     boolean dealCollIndex(String s, String type, String index);
+
+    List<String> getRelIndex(String index);
 }

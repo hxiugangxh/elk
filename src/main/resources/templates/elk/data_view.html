@@ -40,7 +40,7 @@
     </div>
     <div class="box-body">
       <div class="input-group fl col-xs-7" style="margin-top:0px; positon:relative">
-        <input type="text" class="form-control" placeholder="请输入字段名" id="echartName"/>
+        <input type="text" id="echartNameQuery" class="form-control" placeholder="请输入字段名"/>
         <span class="input-group-btn">
            <button class="btn btn-info btn-search" onclick="$('#table').bootstrapTable('refresh')">
              <i class="iconfont icon-sousuo"></i>查找</button>
@@ -48,7 +48,7 @@
       </div>
       <!-- 表格 -->
       <div class="fr mt15 mb10">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#Modal_view" id="add_btn">
+        <button type="button" class="btn btn-primary" data-toggle="modal" onclick="saveModal()" id="add_btn">
           <span class="glyphicon glyphicon-plus"></span>
           添加
         </button>
@@ -71,108 +71,98 @@
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title" id="myModalLabel">添加图表</h4>
       </div>
-      <div class="modal-body " style="min-height: 300px;">
-        <form role="form" class="form-horizontal row">
+      <div class="modal-body" style="min-height: 300px;">
+        <form role="form" class="form-horizontal row" id="list_form">
           <div class="col-sm-6">
             <div class="form-group">
-              <label for="firstname" class="col-sm-3 control-label">
+              <label class="col-sm-3 control-label">
                 图表名称:</label>
               <div class="col-sm-9">
-                <input type="text" class="form-control input-sm" id="firstname" placeholder="请输入名字">
+                <input type="text" class="form-control input-sm" id="echartName" name="echartName" placeholder="请输入名字"/>
               </div>
             </div>
           </div>
           <div class="col-sm-6">
             <div class="form-group">
-              <label for="firstname" class="col-sm-3 control-label">
+              <label class="col-sm-3 control-label">
                 图表类型:</label>
               <div class="col-sm-9">
-                <select class="form-control input-sm" id="selectView">
-                  <option value="0" selected>饼状图</option>
-                  <option value="1">折线图</option>
+                <select class="form-control input-sm" id="type" name="type" onchange="changeType()">
+                  <option value="1" selected>折线图</option>
                   <option value="2">柱状图</option>
-                  <option value="3">树图</option>
+                  <option value="3">饼状图</option>
                 </select>
               </div>
             </div>
           </div>
-        </form>
-        <!--  -->
-        <div class="row view_show">
-          <div class="col-sm-4 bor_view">
-            <div class="row">
-              <h4>项目名称：日志系统</h4>
-            </div>
-            <form role="form" class="form-horizontal row">
+          <!--  -->
+          <div class="row view_show">
+            <div class="col-sm-4 bor_view">
+              <div class="row">
+                <h4>项目名称：<span id="multiIndexSpan">日志系统</span></h4>
+              </div>
               <div class="form-group">
-                <label for="firstname" class="col-sm-3 control-label">
+                <label class="col-sm-3 control-label">
                   项目名称:</label>
                 <div class="col-sm-9">
-                  <select class="form-control input-sm">
-                    <option value="1">10</option>
-                    <option value="2">20</option>
-                    <option value="3">30</option>
-                    <option value="4">40</option>
-                    <option value="5">50</option>
+                  <select class="form-control input-sm" onchange="changeMultiIndex()" name="multiIndex" id="multiIndex">
+                    <option value="">请选择项目...</option>
+                    <th:block th:each="multiIndexBean : ${multiIndexList}">
+                      <option th:value="${multiIndexBean.multiIndex}"
+                              th:text="${multiIndexBean.multiIndex}"></option>
+                    </th:block>
                   </select>
                 </div>
               </div>
               <div class="form-group">
-                <label for="firstname" class="col-sm-3 control-label">
-                  ES索引:</label>
-                <div class="col-sm-9">
-                  <select class="form-control input-sm">
-                    <option value="1">10</option>
-                    <option value="2">20</option>
-                    <option value="3">30</option>
-                    <option value="4">40</option>
-                    <option value="5">50</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="firstname" class="col-sm-3 control-label">
+                <label class="col-sm-3 control-label">
                   x-坐标:</label>
                 <div class="col-sm-9">
-                  <select class="form-control input-sm" id="xAxis">
-                    <option value="1">10</option>
-                    <option value="2">20</option>
-                    <option value="3">30</option>
-                    <option value="4">40</option>
-                    <option value="5">50</option>
+                  <select class="form-control input-sm" id="xAxis" name="xAxis">
+                    <option value="">请选择...</option>
+                    <th:block th:each="field : ${fieldList}">
+                      <option th:value="${field}"
+                              th:text="${field}"></option>
+                    </th:block>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group" style="display: none">
+                <label class="col-sm-3 control-label">
+                  x-坐标:</label>
+                <div class="col-sm-9">
+                  <select class="form-control input-sm" id="yAxis" name="yAxis">
+                    <option value="">请选择...</option>
                   </select>
                 </div>
               </div>
               <div class="form-group">
-                <label for="firstname" class="col-sm-3 control-label">
-                  Y-坐标:</label>
+                <label class="col-sm-3 control-label">
+                  汇聚方式:</label>
                 <div class="col-sm-9">
-                  <select class="form-control input-sm" id="yAxis">
-                    <option value="">10</option>
-                    <option value="">20</option>
-                    <option value="">30</option>
-                    <option value="">40</option>
-                    <option value="">50</option>
+                  <select class="form-control input-sm" id="converMethod" name="converMethod">
+                    <option value="1">count</option>
                   </select>
                 </div>
               </div>
-            </form>
-          </div>
-          <div class="col-sm-8">
-            <div class="bor_view">
-              <div id="main_pie" class="echart_view show"></div>
-              <div id="main_line" class="echart_view "></div>
-              <div id="main_bar" class="echart_view"></div>
+            </div>
+            <div class="col-sm-8">
+              <div class="bor_view">
+                <div id="main_line" class="echart_view " data-type="1"></div>
+                <div id="main_bar" class="echart_view show" data-type="2"></div>
+                <div id="main_pie" class="echart_view" data-type="3"></div>
+              </div>
             </div>
           </div>
+        </form>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-primary" onclick="saveVisualizeEchart()">保存</button>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary" id="btn_ok">保存</button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal -->
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal -->
 </div>
 <!-- 详情弹出框 -->
 <div class="info_content" id="info_content" style="display: none">
@@ -195,11 +185,95 @@
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 <script>
   /*<![CDATA[*/
-  function test() {
-    var t = $("#table").bootstrapTable("getSelections");
-    console.log(t);
+  function detailVisualizeEchart(id) {
+    alert(id);
   }
 
+  function delVisualizeEchart(id) {
+    alert(id);
+  }
+
+  function modifyVisualizeEchart(id) {
+    alert(id);
+  }
+
+  function saveVisualizeEchart() {
+    var formData = $("#list_form").serializeArray();
+    var URL = path + "/echartManage/saveVisualizeEchart";
+
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
+
+      if (flag) {
+        alert("保存成功");
+        $("#Modal_view").modal("hide");
+        $("#table").bootstrapTable("refresh");
+      } else {
+        alert("保存失败");
+      }
+    });
+  }
+  function changeType() {
+    var type = $("#type").val();
+    $(".echart_view").each(function() {
+      $(this).removeClass("show");
+      if (type == $(this).attr("data-type")) {
+        $(this).addClass("show");
+      }
+    });
+  }
+
+  var myModalClone = $("#Modal_view").clone();
+  var myChart_line = echarts.init(document.getElementById('main_line'));
+  var myChart_bar = echarts.init(document.getElementById('main_bar'));
+  var myChart_pie = echarts.init(document.getElementById('main_pie'));
+  function saveModal() {
+    $("#Modal_view").html(myModalClone.html());
+    $('#Modal_view').modal('show');
+
+    initEchart();
+  }
+
+  function initEchart() {
+    myChart_line.dispose();
+    myChart_line = echarts.init(document.getElementById('main_line'));
+    myChart_line.setOption(option_line);
+
+    myChart_bar.dispose();
+    myChart_bar = echarts.init(document.getElementById('main_bar'));
+    myChart_bar.setOption(option_bar);
+
+    myChart_pie.dispose();
+    myChart_pie = echarts.init(document.getElementById('main_pie'));
+    myChart_pie.setOption(option_pie);
+  }
+
+  function changeMultiIndex() {
+    var multiIndex = $("#multiIndex").val();
+
+    if (multiIndex != "") {
+      $("#multiIndexSpan").html(multiIndex);
+
+      var URL = path + "/echartManage/listField";
+      var formData = {
+        "index": multiIndex
+      };
+      $.post(URL, formData, function (fieldList) {
+        var domEle = "<option value=''>请选择...</option>";
+        for (var i = 0; i < fieldList.length; i++) {
+          domEle += "<option value='" + fieldList[i] + "'>" + fieldList[i] + "</option>";
+        }
+        $("#xAxis").html(domEle);
+      }, "json");
+
+    }
+
+  }
+
+  /*]]>*/
+</script>
+<script>
+  /*<![CDATA[*/
   //复选框选中不可点击添加
   $(window).load(function () {
     $("#table th input[type=checkbox]").on("change", function () {
@@ -235,7 +309,7 @@
       var s = $(this).val();
       $('.main_view:eq(' + s + ')').addClass("show").siblings().removeClass("show");
     })
-  })
+  });
   // 保存按钮
   $("#btn_ok").click(function () {
     var name = $("#firstname").val();
@@ -244,8 +318,7 @@
     var yAxis = $("#yAxis").find("option:selected").text();
     alert("你提交的数据是：" + name + "-" + select_value + "-" + xAxis + "-" + yAxis);
     $('#Modal_view').modal('hide')
-  })
-
+  });
 
   $(function () {
     /* var info_Chart_bar = echarts.init(document.getElementById('info_main_bar'));*/
@@ -312,7 +385,7 @@
       sortable: true
     }, {
       width: 100,
-      field: 'type',
+      field: 'typePo',
       title: '图表类型',
       halign: 'center',
       align: 'center',
@@ -334,23 +407,24 @@
     var paramMap = {
       pageSize: params.pageSize,
       pn: params.pageNumber,
-      echartName: $('#echartName').val()
+      echartName: $('#echartNameQuery').val()
     };
 
     return paramMap;
   }
 
   function operateFormatter(value, row, index) {
+    console.log(value, row, index);
     return [
-      '<a class="btn btn-primary btn_info" href="javascript:void(0)" title="查看详情">',
+      '<a class="btn btn-primary btn_info" href="javascript:detailVisualizeEchart(' + row.id + ')" title="查看详情">',
       //'<i class="iconfont icon-207"></i>',
       '查看详情',
       '</a>  ',
-      '<a class="btn btn-success" href="javascript:void(0)" title="修改">',
+      '<a class="btn btn-success" href="javascript:modifyVisualizeEchart(' + row.id + ')" title="修改">',
       //'<i class="iconfont icon-xiugai"></i>',
       '修改',
       '</a>  ',
-      '<a class="btn btn-danger" href="javascript:void(0)" title="删除">',
+      '<a class="btn btn-danger" href="javascript:delVisualizeEchart(' + row.id + ')" title="删除">',
       //'<i class="iconfont icon-shanchu"></i>',
       '删除',
       '</a>  '

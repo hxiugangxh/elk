@@ -9,9 +9,15 @@
         select * from cm_visualize_echart
         <where>
             <if test="echartName != ''">
-                <bind name="echartName" value="'%' + echartName + '%'" />
+                <bind name="echartName" value="'%' + echartName + '%'"/>
                 echart_name like #{echartName}
             </if>
         </where>
     </select>
+
+    <insert id="saveVisualizeEchart" parameterType="VisualizeChartBean"
+            useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into cm_visualize_echart values
+          (null, #{multiIndex}, #{echartName}, #{xAxis}, #{yAxis}, #{converMethod}, #{type})
+    </insert>
 </mapper>

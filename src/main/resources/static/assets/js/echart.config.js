@@ -1,7 +1,6 @@
 // 基于准备好的dom，初始化echarts实例
 
 // 饼状图
-var myChart_pie = echarts.init(document.getElementById('main_pie'));
 var option_pie = {
   title: {
     text: '饼状图',
@@ -27,11 +26,7 @@ var option_pie = {
   ]
 };
 
-myChart_pie.setOption(option_pie);
-
-
 // 折线图
-var myChart_line = echarts.init(document.getElementById('main_line'));
 var option_line = {
   title: {
     text: '折线图',
@@ -39,11 +34,11 @@ var option_line = {
       fontSize: '30'
     }
   },
-  tooltip: {},
-  legend: {
-    data: ['记录']
+  tooltip: {
+    trigger: 'axis'
   },
   xAxis: {
+    boundaryGap: false,
     data: ["A", "B", "C", "D", "E", "F"]
   },
   yAxis: {},
@@ -54,9 +49,6 @@ var option_line = {
   }]
 };
 
-
-myChart_line.setOption(option_line);
-
 // 柱状图
 var myChart_bar = echarts.init(document.getElementById('main_bar'));
 var option_bar = {
@@ -66,9 +58,8 @@ var option_bar = {
       fontSize: '30'
     }
   },
-  tooltip: {},
-  legend: {
-    data: ['记录']
+  tooltip: {
+    trigger: 'axis'
   },
   xAxis: {
     data: ["A", "B", "C", "D", "E", "F"]
@@ -77,6 +68,7 @@ var option_bar = {
   series: [{
     name: '记录',
     type: 'bar',
+    barMaxWidth: 30,
     data: [5, 20, 36, 10, 10, 20]
   }]
 };
