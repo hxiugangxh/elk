@@ -6,5 +6,5 @@ import lombok.Data;
 public class UserCollIndexBean {
     private Integer userId;
     private String index;
-    private String flag;
+    private String type;
 }

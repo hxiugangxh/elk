@@ -33,15 +33,15 @@ public class MonitorServiceImpl implements MonitorService {
         UserCollIndexBean userCollIndexBean = this.getUserCollIndexBean(LoginInfoUtil.getUserId());
 
         if (userCollIndexBean != null) {
-            String flag = userCollIndexBean.getFlag();
+            String type = userCollIndexBean.getType();
 
             multiIndexList.forEach(multiIndexBean -> {
                 Map<String, Object> map = new HashMap<>();
 
                 map.put("index", multiIndexBean.getMultiIndex());
-                map.put("flag", "1");
+                map.put("type", type);
 
-                if ("1".equals(flag) && multiIndexBean.getMultiIndex().equals(userCollIndexBean.getIndex())) {
+                if ("1".equals(type) && multiIndexBean.getMultiIndex().equals(userCollIndexBean.getIndex())) {
                     indexList.add(0, map);
                 } else {
                     indexList.add(map);
@@ -52,9 +52,9 @@ public class MonitorServiceImpl implements MonitorService {
                 Map<String, Object> map = new HashMap<>();
 
                 map.put("index", str);
-                map.put("flag", "0");
+                map.put("type", "0");
 
-                if ("0".equals(flag) && str.equals(userCollIndexBean.getIndex())) {
+                if ("0".equals(type) && str.equals(userCollIndexBean.getIndex())) {
                     indexList.add(0, map);
                 } else {
                     indexList.add(map);
@@ -66,8 +66,8 @@ public class MonitorServiceImpl implements MonitorService {
 
         if (CollectionUtils.isNotEmpty(indexList)) {
             String index = MapUtils.getString(indexList.get(0), "index", "");
-            String flag = MapUtils.getString(indexList.get(0), "flag", "");
-            fieldList = monitorDao.listField(index, flag);
+            String type = MapUtils.getString(indexList.get(0), "type", "");
+            fieldList = monitorDao.listField(index, type);
         }
 
         esFieldMap.put("indexList", indexList);
