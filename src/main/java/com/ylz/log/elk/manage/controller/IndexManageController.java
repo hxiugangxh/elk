@@ -3,7 +3,7 @@ package com.ylz.log.elk.manage.controller;
 import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.manage.bean.MultiIndexBean;
 import com.ylz.log.elk.manage.bean.UserCollIndexBean;
-import com.ylz.log.elk.manage.service.MonitorService;
+import com.ylz.log.elk.manage.service.IndexService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,12 +22,12 @@ import java.util.Map;
 public class IndexManageController {
 
     @Autowired
-    private MonitorService monitorService;
+    private IndexService indexService;
 
     @RequestMapping("/dataSearch")
     public String index(Map<String, Object> map) {
 
-        Map<String, Object> esFieldmap = monitorService.esFieldMap();
+        Map<String, Object> esFieldmap = indexService.esFieldMap();
 
         map.put("esFieldmap", esFieldmap);
 
@@ -45,7 +45,7 @@ public class IndexManageController {
             @RequestParam(value = "searchContent", defaultValue = "") String searchContent
     ) {
 
-        return monitorService.queryByEs(page, pageSize, index, type, field, searchContent);
+        return indexService.queryByEs(page, pageSize, index, type, field, searchContent);
     }
 
     @RequestMapping("/listField")
@@ -54,7 +54,7 @@ public class IndexManageController {
             @RequestParam("index") String index,
             @RequestParam(value = "type", defaultValue = "0") String type
     ) {
-        return monitorService.listField(index, type);
+        return indexService.listField(index, type);
     }
 
     @RequestMapping("/dataManage")
@@ -63,8 +63,8 @@ public class IndexManageController {
 
         Integer num = 1/0;
 
-        List<MultiIndexBean> multiIndexList = monitorService.listMultiIndex();
-        List<String> indexList = monitorService.listIndex();
+        List<MultiIndexBean> multiIndexList = indexService.listMultiIndex();
+        List<String> indexList = indexService.listIndex();
 
         map.put("multiIndexList", multiIndexList);
         map.put("indexList", indexList);
@@ -86,7 +86,7 @@ public class IndexManageController {
             @RequestParam(value = "type", defaultValue = "0") String type
     ) {
 
-        return monitorService.listReflectField(index, type);
+        return indexService.listReflectField(index, type);
     }
 
     @RequestMapping(value = "/saveMultiIndex")
@@ -99,7 +99,7 @@ public class IndexManageController {
 
         boolean flag = false;
         try {
-            flag = monitorService.saveMultiIndex(multiIndex, Arrays.asList(index.split(",")));
+            flag = indexService.saveMultiIndex(multiIndex, Arrays.asList(index.split(",")));
 
             jsonMap.put("flag", flag);
             jsonMap.put("type", "1");
@@ -116,7 +116,7 @@ public class IndexManageController {
     @RequestMapping("/hasExist")
     @ResponseBody
     public Map<String, Object> hasExist(@RequestParam("multiIndex") String multiIndex) {
-        Map<String, Object> jsonMap = monitorService.hasExist(multiIndex);
+        Map<String, Object> jsonMap = indexService.hasExist(multiIndex);
 
         return jsonMap;
     }
@@ -137,14 +137,14 @@ public class IndexManageController {
             @RequestParam("type") String type
     ) {
 
-        return monitorService.dealNotIndex(index, type);
+        return indexService.dealNotIndex(index, type);
     }
 
     @RequestMapping("/delMultiRelIndex")
     @ResponseBody
     public Map<String, Object> delMultiRelIndex(@RequestParam("index") String index) {
         Map<String, Object> jsonMap = new HashMap<>();
-        boolean flag = monitorService.delMultiRelIndex(Arrays.asList(index.split(",")));
+        boolean flag = indexService.delMultiRelIndex(Arrays.asList(index.split(",")));
 
         jsonMap.put("flag", flag);
 
@@ -158,7 +158,7 @@ public class IndexManageController {
 
         boolean flag = false;
         try {
-            flag = monitorService.delMultiIndex(multiIndex);
+            flag = indexService.delMultiIndex(multiIndex);
 
             jsonMap.put("flag", flag);
         } catch (Exception e) {
@@ -174,7 +174,7 @@ public class IndexManageController {
     @RequestMapping("/getUserCollIndexBean")
     @ResponseBody
     public UserCollIndexBean getUserCollIndexBean() {
-        UserCollIndexBean userCollIndexBean = monitorService.getUserCollIndexBean(LoginInfoUtil.getUserId());
+        UserCollIndexBean userCollIndexBean = indexService.getUserCollIndexBean(LoginInfoUtil.getUserId());
 
         if (userCollIndexBean == null) {
             userCollIndexBean = new UserCollIndexBean();
@@ -194,7 +194,7 @@ public class IndexManageController {
 
         boolean flag = false;
         try {
-            flag = monitorService.dealCollIndex(index, type, action);
+            flag = indexService.dealCollIndex(index, type, action);
 
             jsonMap.put("flag", flag);
         } catch (Exception e) {
@@ -211,6 +211,6 @@ public class IndexManageController {
     @ResponseBody
     public Object test() {
 
-        return monitorService.test();
+        return indexService.test();
     }
 }

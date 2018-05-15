@@ -6,7 +6,7 @@ import com.ylz.log.elk.manage.bean.UserCollIndexBean;
 import java.util.List;
 import java.util.Map;
 
-public interface MonitorDao {
+public interface IndexDao {
     List<String> listIndex();
 
     List<String> listField(String index, String type);

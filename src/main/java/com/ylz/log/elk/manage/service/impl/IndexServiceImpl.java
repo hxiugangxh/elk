@@ -3,8 +3,8 @@ package com.ylz.log.elk.manage.service.impl;
 import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.manage.bean.MultiIndexBean;
 import com.ylz.log.elk.manage.bean.UserCollIndexBean;
-import com.ylz.log.elk.manage.dao.MonitorDao;
-import com.ylz.log.elk.manage.service.MonitorService;
+import com.ylz.log.elk.manage.dao.IndexDao;
+import com.ylz.log.elk.manage.service.IndexService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Service("monitorService")
-public class MonitorServiceImpl implements MonitorService {
+@Service("indexService")
+public class IndexServiceImpl implements IndexService {
 
     @Autowired
-    private MonitorDao monitorDao;
+    private IndexDao indexDao;
 
     @Override
     public Map<String, Object> esFieldMap() {
@@ -28,8 +28,8 @@ public class MonitorServiceImpl implements MonitorService {
 
         List<Map<String, Object>> indexList = new ArrayList<>();
 
-        List<MultiIndexBean> multiIndexList = monitorDao.listMultiIndex();
-        List<String> esIndexList = monitorDao.listIndex();
+        List<MultiIndexBean> multiIndexList = indexDao.listMultiIndex();
+        List<String> esIndexList = indexDao.listIndex();
         UserCollIndexBean userCollIndexBean = this.getUserCollIndexBean(LoginInfoUtil.getUserId());
 
         if (userCollIndexBean != null) {
@@ -67,7 +67,7 @@ public class MonitorServiceImpl implements MonitorService {
         if (CollectionUtils.isNotEmpty(indexList)) {
             String index = MapUtils.getString(indexList.get(0), "index", "");
             String type = MapUtils.getString(indexList.get(0), "type", "");
-            fieldList = monitorDao.listField(index, type);
+            fieldList = indexDao.listField(index, type);
         }
 
         esFieldMap.put("indexList", indexList);
@@ -80,77 +80,77 @@ public class MonitorServiceImpl implements MonitorService {
     public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field, String
             searchContent) {
 
-        return monitorDao.queryByEs(page, pageSize, index, type, field, searchContent);
+        return indexDao.queryByEs(page, pageSize, index, type, field, searchContent);
     }
 
     @Override
     public List<String> listField(String index, String type) {
-        return monitorDao.listField(index, type);
+        return indexDao.listField(index, type);
     }
 
     @Override
     public Object test() {
-        return monitorDao.test();
+        return indexDao.test();
     }
 
     @Override
     public List<String> listIndex() {
-        return monitorDao.listIndex();
+        return indexDao.listIndex();
     }
 
     @Override
     public List<MultiIndexBean> listMultiIndex() {
-        return monitorDao.listMultiIndex();
+        return indexDao.listMultiIndex();
     }
 
     @Override
     public List<Map<String, Object>> listReflectField(String index, String type) {
-        return monitorDao.listReflectField(index, type);
+        return indexDao.listReflectField(index, type);
     }
 
     @Override
     @Transactional
     public boolean saveMultiIndex(String multiIndex, List<String> indexList) {
 
-        return monitorDao.saveMultiIndex(multiIndex, indexList);
+        return indexDao.saveMultiIndex(multiIndex, indexList);
     }
 
     @Override
     public Map<String, Object> hasExist(String multiIndex) {
-        return monitorDao.hasExist(multiIndex);
+        return indexDao.hasExist(multiIndex);
     }
 
     @Override
     public Map<String, Object> dealNotIndex(String index, String type) {
-        return monitorDao.dealNotIndex(index, type);
+        return indexDao.dealNotIndex(index, type);
     }
 
     @Override
     @Transactional
     public boolean delMultiRelIndex(List<String> indexList) {
-        return monitorDao.delMultiRelIndex(indexList);
+        return indexDao.delMultiRelIndex(indexList);
     }
 
     @Override
     @Transactional
     public boolean delMultiIndex(String multiIndex) {
-        return monitorDao.delMultiIndex(multiIndex);
+        return indexDao.delMultiIndex(multiIndex);
     }
 
     @Override
     public UserCollIndexBean getUserCollIndexBean(Integer userId) {
-        return monitorDao.getUserCollIndexBean(userId);
+        return indexDao.getUserCollIndexBean(userId);
     }
 
     @Override
     @Transactional
     public boolean dealCollIndex(String index, String type, String action) {
-        return monitorDao.dealCollIndex(index, type, action);
+        return indexDao.dealCollIndex(index, type, action);
     }
 
     @Override
     public List<String> getRelIndex(String index) {
-        return monitorDao.getRelIndex(index);
+        return indexDao.getRelIndex(index);
     }
 
 

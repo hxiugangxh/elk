@@ -1,19 +1,14 @@
 package com.ylz.log.elk.manage.controller;
 
-import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.manage.bean.MultiIndexBean;
-import com.ylz.log.elk.manage.bean.MutilIndexEnum;
-import com.ylz.log.elk.manage.bean.UserCollIndexBean;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
 import com.ylz.log.elk.manage.service.EchartService;
-import com.ylz.log.elk.manage.service.MonitorService;
+import com.ylz.log.elk.manage.service.IndexService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 @Slf4j
@@ -25,12 +20,12 @@ public class EchartManagerController {
     private EchartService echartService;
 
     @Autowired
-    private MonitorService monitorService;
+    private IndexService indexService;
 
     @RequestMapping("/dataView")
     public String dataView(Map<String, Object> map) {
 
-        List<MultiIndexBean> multiIndexList = monitorService.listMultiIndex();
+        List<MultiIndexBean> multiIndexList = indexService.listMultiIndex();
 
         map.put("multiIndexList", multiIndexList);
 

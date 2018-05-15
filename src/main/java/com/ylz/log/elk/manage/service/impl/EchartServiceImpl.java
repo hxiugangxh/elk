@@ -4,7 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
 import com.ylz.log.elk.manage.constants.Constants;
-import com.ylz.log.elk.manage.dao.MonitorDao;
+import com.ylz.log.elk.manage.dao.IndexDao;
 import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +13,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
@@ -27,10 +23,7 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.*;
-
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 
 @Slf4j
 @Service("echartService")
@@ -46,7 +39,7 @@ public class EchartServiceImpl implements EchartService {
     private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
-    private MonitorDao monitorDao;
+    private IndexDao indexDao;
 
 
     @Override
@@ -81,7 +74,7 @@ public class EchartServiceImpl implements EchartService {
     public Map<String, List<String>> listConverField(String index) {
         log.info("listField: index = {}", index);
         Map<String, List<String>> converMap = new HashMap<>();
-        List<String> indexList = monitorDao.getRelIndex(index);
+        List<String> indexList = indexDao.getRelIndex(index);
 
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
                 .prepareGetMappings(indexList.toArray(new String[]{})).execute()

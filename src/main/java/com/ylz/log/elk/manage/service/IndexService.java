@@ -6,7 +6,7 @@ import com.ylz.log.elk.manage.bean.UserCollIndexBean;
 import java.util.List;
 import java.util.Map;
 
-public interface MonitorService {
+public interface IndexService {
     Map<String, Object> esFieldMap();
 
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field, String

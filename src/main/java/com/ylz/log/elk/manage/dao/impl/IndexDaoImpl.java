@@ -5,7 +5,7 @@ import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.manage.bean.EsIndexBean;
 import com.ylz.log.elk.manage.bean.MultiIndexBean;
 import com.ylz.log.elk.manage.bean.UserCollIndexBean;
-import com.ylz.log.elk.manage.dao.MonitorDao;
+import com.ylz.log.elk.manage.dao.IndexDao;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -31,8 +31,8 @@ import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 @Slf4j
-@Repository("monitorDao")
-public class MonitorDaoImpl implements MonitorDao {
+@Repository("indexDao")
+public class IndexDaoImpl implements IndexDao {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
