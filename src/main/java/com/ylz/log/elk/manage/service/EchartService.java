@@ -10,7 +10,13 @@ public interface EchartService {
 
     boolean saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 
-    Map<String,Object> generatEchart(String index, String field, String converMethod);
+    Map<String,Object> generatEchart(String relIndex, String field, Integer lastDay);
 
     Map<String, List<String>> listConverField(String index);
+
+    boolean delVisualizeEchart(List<String> idList);
+
+    VisualizeChartBean getVisualizeEchart(Integer id);
+
+    boolean modifyVisualizeEchart(VisualizeChartBean visualizeChartBean);
 }

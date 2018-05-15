@@ -13,4 +13,10 @@ public interface EchartMapper {
     List<VisualizeChartBean> pageVisualizeEchart(@Param("echartName") String echartName);
 
     int saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
+
+    int delVisualizeEchart(@Param("idList") List<String> idList);
+
+    VisualizeChartBean getVisualizeEchart(Integer id);
+
+    boolean modifyVisualizeEchart(VisualizeChartBean visualizeChartBean);
 }

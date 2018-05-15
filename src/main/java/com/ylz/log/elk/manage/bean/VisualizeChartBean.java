@@ -30,8 +30,10 @@ public class VisualizeChartBean {
     private Integer type;
     private String multiIndex;
     private String field;
+    private String relIndex;
     private Integer lastDay;
 
+    @Transient
     private String typePo;
 
     public String getTypePo() {

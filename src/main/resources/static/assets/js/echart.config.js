@@ -8,7 +8,9 @@ var option_pie = {
       fontSize: '30'
     }
   },
-  tooltip: {},
+  tooltip: {
+    formatter: "{a} <br/>{b} : {c} ({d}%)"
+  },
   series: [
     {
       name: '记录',
@@ -39,7 +41,14 @@ var option_line = {
   },
   xAxis: {
     boundaryGap: false,
-    data: ["A", "B", "C", "D", "E", "F"]
+    data: ["A", "B", "C", "D", "E", "F"],
+    axisLabel : {
+      show : true,
+      formatter:function(val) {
+        return val.split(" ").join("\n")
+      }
+    }
+
   },
   yAxis: {},
   series: [{
@@ -74,7 +83,7 @@ var option_bar = {
 };
 
 
-myChart_bar.setOption(option_bar);
+// myChart_bar.setOption(option_bar);
 
 // 树图
 /*

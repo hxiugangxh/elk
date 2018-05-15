@@ -9,15 +9,28 @@ import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.aggregations.Aggregation;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.*;
+
+import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 
 @Slf4j
 @Service("echartService")
@@ -34,6 +47,7 @@ public class EchartServiceImpl implements EchartService {
 
     @Autowired
     private MonitorDao monitorDao;
+
 
     @Override
     public Map<String, Object> pageVisualizeEchart(Integer pn, Integer pageSize, String echartName) {
@@ -85,7 +99,7 @@ public class EchartServiceImpl implements EchartService {
 
                 Object obj = elasticsearchTemplate.getMapping(indexKey, typeKey).get("properties");
                 if (obj instanceof Map) {
-                    Map<String, Object> map = (Map<String, Object>) obj;
+                    Map<String, Object> map = (LinkedHashMap<String, Object>) obj;
 
                     for (String key : map.keySet()) {
                         String type = MapUtils.getString((Map) map.get(key), "type", "");
@@ -126,9 +140,91 @@ public class EchartServiceImpl implements EchartService {
     }
 
     @Override
-    public Map<String, Object> generatEchart(String index, String field, String converMethod) {
+    public Map<String, Object> generatEchart(String relIndex, String field, Integer lastDay) {
+        Map<String, Object> dataMap = new HashMap<>();
+
+        List<String> xAxisDataList = new ArrayList<>();
+        List<Long> seriesDataList = new ArrayList<>();
+        List<Map<String, Object>> pieSeriesDataList = new ArrayList<>();
+
+        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(Integer.MAX_VALUE);
+
+        SearchResponse searchResponse = this.client.prepareSearch(relIndex.split(","))
+                .addAggregation(termsAgg)
+                .execute().actionGet();
+
+        Aggregations aggregations = searchResponse.getAggregations();
+
+        Object obj = aggregations.get(field);
+        if (obj instanceof LongTerms) {
+            LongTerms teamAgg = (LongTerms) aggregations.get(field);
+            Iterator<LongTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
+            while (teamBucketIt.hasNext()) {
+                LongTerms.Bucket bucket = teamBucketIt.next();
+                String key = bucket.getKeyAsString() + "";
+                long count = bucket.getDocCount();
+
+                xAxisDataList.add(key);
+                seriesDataList.add(count);
+
+                Map<String, Object> map = new HashMap<>();
+
+                map.put("name", key);
+                map.put("value", count);
+
+                pieSeriesDataList.add(map);
+            }
+        } else if (obj instanceof StringTerms) {
+            StringTerms teamAgg = (StringTerms) aggregations.get(field);
+            Iterator<StringTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
+            while (teamBucketIt.hasNext()) {
+                StringTerms.Bucket bucket = teamBucketIt.next();
+                String key = bucket.getKey() + "";
+                long count = bucket.getDocCount();
+
+                xAxisDataList.add(key);
+                seriesDataList.add(count);
+
+                Map<String, Object> map = new HashMap<>();
+
+                map.put("name", key);
+                map.put("value", count);
+
+                pieSeriesDataList.add(map);
+            }
+        }
 
 
-        return new HashMap<>();
+        dataMap.put("xAxisDataList", xAxisDataList);
+        dataMap.put("seriesDataList", seriesDataList);
+        dataMap.put("pieSeriesDataList", pieSeriesDataList);
+
+        return dataMap;
+    }
+
+    @Override
+    @Transactional
+    public boolean delVisualizeEchart(List<String> idList) {
+
+        int count = echartMapper.delVisualizeEchart(idList);
+
+        if (count > 0) {
+            return true;
+        }
+
+        log.error("saveVisualizeEchart: 保存失败，有效行为0");
+
+        return false;
+    }
+
+    @Override
+    public VisualizeChartBean getVisualizeEchart(Integer id) {
+        return echartMapper.getVisualizeEchart(id);
+    }
+
+    @Override
+    @Transactional
+    public boolean modifyVisualizeEchart(VisualizeChartBean visualizeChartBean) {
+        return echartMapper.modifyVisualizeEchart(visualizeChartBean);
     }
 }

@@ -11,14 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -54,6 +50,7 @@ public class EchartManagerController {
 
     /**
      * 获取可以汇聚的列
+     *
      * @param index
      * @return
      */
@@ -63,7 +60,7 @@ public class EchartManagerController {
         return echartService.listConverField(index);
     }
 
-    @RequestMapping("/saveVisualizeEchart")
+    @RequestMapping(value = "/saveVisualizeEchart", method = RequestMethod.POST)
     @ResponseBody
     public Map<String, Object> saveVisualizeEchart(VisualizeChartBean visualizeChartBean) {
         Map<String, Object> jsonMap = new HashMap<>();
@@ -84,20 +81,89 @@ public class EchartManagerController {
     }
 
     /**
-     * 根据index、field、converMethod生成对应的echart数据
-     * @param index 索引
-     * @param field 列名
-     * @param converMethod 生产方案: 1：count统计
+     * @param relIndex 索引
+     * @param field    列名
+     * @param lastDay  默认查询最近lastDay
      * @return
      */
     @RequestMapping("/generatEchart")
     @ResponseBody
     public Map<String, Object> generatEchart(
-            @RequestParam("index") String index,
+            @RequestParam("relIndex") String relIndex,
             @RequestParam("field") String field,
-            @RequestParam("converMethod") String converMethod
+            @RequestParam(value = "lastDay", defaultValue = "") Integer lastDay
     ) {
 
-        return echartService.generatEchart(index, field, converMethod);
+        return echartService.generatEchart(relIndex, field, lastDay);
+    }
+
+    @RequestMapping(value = "/delVisualizeEchart", method = RequestMethod.DELETE)
+    @ResponseBody
+    public Map<String, Object> delVisualizeEchart(@RequestParam("id") String id) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        boolean flag = false;
+        try {
+            flag = echartService.delVisualizeEchart(Arrays.asList(id.split(",")));
+
+            jsonMap.put("flag", flag);
+        } catch (Exception e) {
+            e.printStackTrace();
+            flag = false;
+
+            jsonMap.put("flag", flag);
+        }
+
+        return jsonMap;
+    }
+
+    @RequestMapping(value = "/detailVisualizeEchart/{id}")
+    @ResponseBody
+    public Map<String, Object> detailVisualizeEchart(@PathVariable("id") Integer id) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        VisualizeChartBean visualizeChartBean = echartService.getVisualizeEchart(id);
+        Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean.getRelIndex(),
+                visualizeChartBean.getField(), visualizeChartBean.getLastDay());
+
+        jsonMap.put("visualizeChartBean", visualizeChartBean);
+        jsonMap.put("echartMap", echartMap);
+
+        return jsonMap;
+    }
+
+    @RequestMapping(value = "/editVisualizeEchart/{id}")
+    @ResponseBody
+    public Map<String, Object> editVisualizeEchart(@PathVariable("id") Integer id) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        VisualizeChartBean visualizeChartBean = echartService.getVisualizeEchart(id);
+        Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean.getRelIndex(),
+                visualizeChartBean.getField(), visualizeChartBean.getLastDay());
+
+        jsonMap.put("visualizeChartBean", visualizeChartBean);
+        jsonMap.put("echartMap", echartMap);
+
+        return jsonMap;
+    }
+
+    @RequestMapping(value = "/modifyVisualizeEchart/{id}", method =  RequestMethod.PUT)
+    @ResponseBody
+    public Map<String, Object> modifyVisualizeEchart(VisualizeChartBean visualizeChartBean) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        boolean flag = false;
+        try {
+            flag = echartService.modifyVisualizeEchart(visualizeChartBean);
+
+            jsonMap.put("flag", flag);
+        } catch (Exception e) {
+            e.printStackTrace();
+            flag = false;
+
+            jsonMap.put("flag", flag);
+        }
+
+        return jsonMap;
     }
 }
