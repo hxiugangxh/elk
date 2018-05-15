@@ -80,7 +80,7 @@ $(window).resize(function() {
 });
 
 function getHeight() {
-	return $(window).height() - $('#table').offset().top-200;
+	return $(window).height() - $('#table').offset().top- 130;
 }
 window.operateEvents = {
 	'click .lookinfo': function(e, value, row, index) {
