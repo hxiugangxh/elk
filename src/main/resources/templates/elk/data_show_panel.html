@@ -154,8 +154,7 @@
 <script>
   /*<![CDATA[*/
   jQuery(function () {
-    pageSelectEchart();
-    initEchart();
+
   });
   /*]]>*/
 </script>
@@ -216,7 +215,7 @@
       var domEle = "";
       for (var i = 0; i < list.length; i++) {
         domEle += "<tr>";
-        domEle += "<td><input type='checkbox' data-index='" + list[i].id + "'></td>"
+        domEle += "<td><input type='checkbox' value='" + list[i].id + "'></td>"
         for (var j = 0; j < keyArr.length; j++) {
           domEle += "<td>" + list[i][keyArr[j]] + "</td>";
         }
@@ -234,36 +233,107 @@
   var myModalClone = $("#Modal_view").clone();
 
   function addVisualizePanelEchart() {
-    /* $("#Modal_view").html(myModalClone.html());*/
+    $("#Modal_view").html(myModalClone.html());
+    pageSelectEchart();
+    initEchart();
     $('#Modal_view').modal('show');
 
     $(".modal-btn").hide();
     $("#saveBtn").show();
   }
 
+  var echartArr = [];
+  var flag = 0;
   function initEchart() {
-    var echartArr = [];
-    $(".echart_view").each(function () {
+    $(".echart_view").each(function (index, domEle) {
       var echart = echarts.init($(this).get(0));
-      echart.setOption(optionLine);
+      echart.setOption({});
       echartArr.push(echart);
+      $(domEle).attr("data-flag", flag);
+      $(domEle).attr("data-sort", index);
     });
-
   }
 
-  $(".table_show input[type=checkbox]").change(function () {
-    var index = $(this).attr("data-index");
-    var parentObj = $(this).parents("tr");
-    var tf = $(this).prop("checked");
-    var obj = $(".view_index").eq(index).children(".main_view")
-    if (obj.is(":hidden")) {
-      obj.show();
-      parentObj.addClass("trB");
+  function getEchartView() {
+    var index = [];
+    $(".echart_view").each(function (i, domEle) {
+      if ($(this).attr("data-flag") == flag) {
+        index.push(i);
+      }
+    });
+
+    if (index.length > 0) {
+      return $(".echart_view").eq(index[0]);
     } else {
-      obj.hide();
-      parentObj.removeClass("trB");
+      // 进入下一轮循环
+      flag = (flag + 1) % 2;
+      return $(".echart_view").eq(0);
     }
-  })
+
+    return null;
+  }
+
+  function detailVisualizeEchart(id) {
+    var URL = path + "/echartManage/detailVisualizeEchart/" + id;
+    var formData = {};
+
+    var echartDom = getEchartView();
+    if (echartDom != null) {
+      $.post(URL, formData, function (jsonData) {
+        var type = jsonData.visualizeChartBean.type;
+
+        var index = $(echartDom).attr("data-sort");
+        $(echartDom).attr("data-flag", "1");
+        $(echartDom).attr("data-id", jsonData.visualizeChartBean.id);
+        echartArr[index].dispose();
+        echartArr[index] = echarts.init($(echartDom).get(0));
+        if (type == "1") {
+          optionLine.xAxis.data = jsonData.echartMap.xAxisDataList;
+          optionLine.title.text = jsonData.visualizeChartBean.multiIndex;
+          optionLine.series[0].name = jsonData.visualizeChartBean.field;
+          optionLine.series[0].data = jsonData.echartMap.seriesDataList;
+
+          echartArr[index].setOption(optionLine);
+        } else if (type == "2") {
+          optionBar.xAxis.data = jsonData.echartMap.xAxisDataList;
+          optionBar.title.text = jsonData.visualizeChartBean.multiIndex;
+          optionBar.series[0].name = jsonData.visualizeChartBean.field;
+          optionBar.series[0].data = jsonData.echartMap.seriesDataList;
+
+          echartArr[index].setOption(optionBar);
+        } else if (type == "3") {
+          optionPie.title.text = jsonData.visualizeChartBean.multiIndex;
+          optionPie.series[0].name = jsonData.visualizeChartBean.field;
+          optionPie.series[0].data = jsonData.echartMap.pieSeriesDataList;
+
+          echartArr[index].setOption(optionPie);
+        }
+
+      });
+    }
+  }
+
+  $(document).on("click", ".table_show input[type=checkbox]", function () {
+    var selectedFlag = $(this).prop("checked");
+    var id = $(this).val();
+
+    if (selectedFlag) {
+      detailVisualizeEchart(id);
+    } else {
+      var index = 0;
+      $(".echart_view").each(function(i, domEle) {
+        if ($(domEle).attr("data-id") == id) {
+          index = i;
+        }
+      });
+
+      echartArr[index].dispose();
+      echartArr[index] = echarts.init($(".echart_view").eq(index).get(0));
+      echartArr[index].setOption({});
+      $(".echart_view").eq(index).attr("data-flag", flag);
+      $(".echart_view").eq(index).attr("data-id", -1);
+    }
+  });
   /*]]>*/
 </script>
 
