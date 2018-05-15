@@ -11,19 +11,19 @@
 
   <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
   <style>
-    .fixed-table-container {
-      border: none;
-    }
-
     .bor_view {
       height: 400px
     }
 
+    .table_show th,tr {
+      text-align: center;
+    }
+
     .echart_view {
-      width: 570px;
-      height: 430px;
+      border: 1px solid #ddd;
+      width: 434px;
+      height: 190px;
       padding: 8px;
-      display: none;
     }
   </style>
 </head>
@@ -80,53 +80,38 @@
             </div>
           </div>
           <div class="row">
-            <div class="mb10 red-tip">请选择面板要显示的图表(每选择一个，便会在下方显示出对应的图表统计图)</div>
-            <table border="1" class="table_show">
-              <thead>
-              <tr>
-                <th></th>
-                <th>图表名称</th>
-                <th>所属项目</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr>
-                <td>
-                  <input type="checkbox" data-index="0">
-                </td>
-                <td>电子证照日志异常柱状图</td>
-                <td>电子证照</td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="checkbox" data-index="1">
-                </td>
-                <td>电子证照日志异常柱状图</td>
-                <td>电子证照</td>
-              </tr>
-              <tr>
-                <td>
-                  <input type="checkbox" data-index="2">
-                </td>
-                <td>其他</td>
-                <td>其他</td>
-              </tr>
-              </tbody>
-            </table>
+            <div class="mb10 red-tip">
+              请选择面板要显示的图表(每选择一个，便会在下方显示出对应的图表统计图)--默认每页4条
+              <div id="pagination-ele" style="position: absolute;top: 2px;right: 10px;"></div>
+            </div>
+            <div style="height: 135px;border: 1px solid #ddd;border-radius: 4px">
+              <table border="1" class="table_show" id="tableShow">
+                <thead>
+                <tr>
+                  <th style="width: 50px"></th>
+                  <th data-field="echartName">图表名称</th>
+                  <th data-field="multiIndex">所属项目</th>
+                  <th data-field="typePo" style="width: 100px;">图表类型</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
           </div>
           <!-- 图表显示 -->
-          <div class="row bor_view">
-            <div class="view_index">
-              <div id="main_pie" class="main_view"></div>
+          <div class="row">
+            <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <div class="echart_view"></div>
             </div>
-            <div class="view_index">
-              <div id="main_line" class="main_view"></div>
+            <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <div class="echart_view"></div>
             </div>
-            <div class="view_index">
-              <div id="main_bar" class="main_view"></div>
+            <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <div class="echart_view"></div>
             </div>
-            <div class="view_index">
-              <div id="main_tree" class="main_view"></div>
+            <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <div class="echart_view"></div>
             </div>
           </div>
         </form>
@@ -168,22 +153,103 @@
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 <script>
   /*<![CDATA[*/
+  jQuery(function () {
+    pageSelectEchart();
+    initEchart();
+  });
+  /*]]>*/
+</script>
+<script>
+  /*<![CDATA[*/
+  var options = {
+    containerClass: "pagination",
+    currentPage: 1,
+    numberOfPages: 6,
+    totalPages: 5,
+    prev: "上一页",
+    next: "下一页",
+    itemTexts: function (type, page, current) {
+      switch (type) {
+        case "first":
+          return "首页";
+        case "prev":
+          return "上一页";
+        case "next":
+          return "下一页";
+        case "last":
+          return "尾页";
+        case "page":
+          return page;
+      }
+    },
+    pageUrl: function (type, page) {
+      return null;
+    },
+    onPageClicked: function (event, originalEvent, type, page) {
+      options.currentPage = page;
+      pageSelectEchart();
+    },
+    onPageChanged: function () {
+      // console.log("onPageChanged");
+    }
+  };
+  $("#pagination-ele").bootstrapPaginator(options);
+
+  function pageSelectEchart() {
+    var URL = path + "/echartManage/pageSelectEchart";
+    var echartName = $("#echartName").val();
+    var formData = {
+      "pn": options.currentPage,
+      "echartName": echartName
+    };
+
+    $.post(URL, formData, function (jsonData) {
+      options.totalPages = jsonData.totalPages;
+      options.currentPage = jsonData.currentPage;
+
+      var list = jsonData.source;
+      var domEle = "";
+      var keyArr = $("#tableShow").find("th").map(function () {
+        return $(this).attr("data-field")
+      }).get();
+
+      var domEle = "";
+      for (var i = 0; i < list.length; i++) {
+        domEle += "<tr>";
+        domEle += "<td><input type='checkbox' data-index='" + list[i].id + "'></td>"
+        for (var j = 0; j < keyArr.length; j++) {
+          domEle += "<td>" + list[i][keyArr[j]] + "</td>";
+        }
+        domEle += "</tr>";
+      }
+
+      $("#tableShow").find("tbody").html(domEle);
+    }, "json");
+  }
+
+  /*]]>*/
+</script>
+<script>
+  /*<![CDATA[*/
   var myModalClone = $("#Modal_view").clone();
 
   function addVisualizePanelEchart() {
-   /* $("#Modal_view").html(myModalClone.html());*/
+    /* $("#Modal_view").html(myModalClone.html());*/
     $('#Modal_view').modal('show');
 
     $(".modal-btn").hide();
     $("#saveBtn").show();
   }
 
-  var myChart_line = echarts.init(document.getElementById('main_line'));
-  var myChart_bar = echarts.init(document.getElementById('main_bar'));
-  var myChart_pie = echarts.init(document.getElementById('main_pie'));
-  myChart_line.setOption(option_line);
-  myChart_bar.setOption(option_bar);
-  myChart_pie.setOption(option_pie);
+  function initEchart() {
+    var echartArr = [];
+    $(".echart_view").each(function () {
+      var echart = echarts.init($(this).get(0));
+      echart.setOption(optionLine);
+      echartArr.push(echart);
+    });
+
+  }
 
   $(".table_show input[type=checkbox]").change(function () {
     var index = $(this).attr("data-index");
@@ -200,6 +266,7 @@
   })
   /*]]>*/
 </script>
+
 <script>
   /*<![CDATA[*/
   var $table = $('#table');
@@ -284,6 +351,86 @@
     return $(window).height() - 160;
   }
 
+  /*]]>*/
+</script>
+<script>
+  /*<![CDATA[*/
+  var optionLine = {
+    title: {
+      text: '折线图'
+    },
+    grid: {
+      y: 30,
+      y2: 30
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    xAxis: {
+      boundaryGap: false,
+      data: ["A", "B", "C", "D", "E", "F"],
+      axisLabel: {
+        show: true,
+        formatter: function (val) {
+          return val.split(" ").join("\n")
+        }
+      }
+
+    },
+    yAxis: {},
+    series: [{
+      name: '记录',
+      type: 'line',
+      data: [5, 20, 36, 10, 10, 20]
+    }]
+  };
+  var optionBar = {
+    title: {
+      text: '柱状图'
+    },
+    grid: {
+      x: 30,
+      x2: 30,
+      y: 40,
+      y2: 30
+    },
+    tooltip: {
+      trigger: 'axis'
+    },
+    xAxis: {
+      data: ["A", "B", "C", "D", "E", "F"]
+    },
+    yAxis: {},
+    series: [{
+      name: '记录',
+      type: 'bar',
+      barMaxWidth: 30,
+      data: [5, 20, 36, 10, 10, 20]
+    }]
+  };
+  var optionPie = {
+    title: {
+      text: '饼状图'
+    },
+    tooltip: {
+      formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    series: [
+      {
+        name: '记录',
+        type: 'pie',
+        center: ['50%', '50%'],
+        data: [
+          {value: 5, name: 'A'},
+          {value: 20, name: 'B'},
+          {value: 36, name: 'C'},
+          {value: 10, name: 'D'},
+          {value: 10, name: 'E'},
+          {value: 20, name: 'F'}
+        ]
+      }
+    ]
+  };
   /*]]>*/
 </script>
 </body>

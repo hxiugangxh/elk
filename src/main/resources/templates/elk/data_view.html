@@ -118,7 +118,7 @@
               </div>
               <div class="form-group">
                 <label class="col-sm-3 control-label">
-                  汇聚列名:</label>
+                  统计依据:</label>
                 <div class="col-sm-9">
                   <select class="form-control input-sm" id="field" name="field">
                     <option value="">请选择...</option>
@@ -528,15 +528,23 @@
       valign: 'middle',
       sortable: true
     }, {
-      width: 130,
-      field: 'field',
-      title: '汇聚列名',
+      width: 150,
+      field: 'multiIndex',
+      title: '项目名称',
       halign: 'center',
       align: 'center',
       valign: 'middle',
       sortable: true
     }, {
-      width: 250,
+      width: 130,
+      field: 'field',
+      title: '统计依据',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      width: 150,
       field: 'relIndex',
       title: '关联ES索引',
       halign: 'center',
@@ -552,7 +560,7 @@
       valign: 'middle',
       sortable: true
     }, {
-      width: 300,
+      width: 250,
       field: 'operate',
       title: '操作',
       halign: 'center',

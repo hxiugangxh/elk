@@ -5,7 +5,7 @@ var option_pie = {
   title: {
     text: '饼状图',
     textStyle: {
-      fontSize: '30'
+      fontSize: '25'
     }
   },
   tooltip: {
@@ -33,7 +33,7 @@ var option_line = {
   title: {
     text: '折线图',
     textStyle: {
-      fontSize: '30'
+      fontSize: '25'
     }
   },
   tooltip: {
@@ -63,7 +63,7 @@ var option_bar = {
   title: {
     text: '柱状图',
     textStyle: {
-      fontSize: '30'
+      fontSize: '25'
     }
   },
   tooltip: {

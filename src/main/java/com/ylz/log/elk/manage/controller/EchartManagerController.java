@@ -184,4 +184,16 @@ public class EchartManagerController {
 
         return echartService.pageVisualizePanelEchart(pn, pageSize, panelName, sortName, sortOrder);
     }
+
+    @RequestMapping("/pageSelectEchart")
+    @ResponseBody
+    public Map<String, Object> pageSelectEchart(
+            @RequestParam("pn") Integer pn,
+            @RequestParam(value = "pageSize", defaultValue = "4") Integer pageSize,
+            @RequestParam(value = "echartName", defaultValue = "") String echartName
+    ) {
+
+        return echartService.pageSelectEchart(pn, pageSize, echartName);
+
+    }
 }

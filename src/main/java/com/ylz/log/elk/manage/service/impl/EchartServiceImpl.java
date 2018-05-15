@@ -237,4 +237,20 @@ public class EchartServiceImpl implements EchartService {
 
         return dataMap;
     }
+
+    @Override
+    public Map<String, Object> pageSelectEchart(Integer pn, Integer pageSize, String echartName) {
+        Map<String, Object> dataMap = new HashMap<>();
+
+        PageHelper.startPage(pn, pageSize);
+        List<VisualizeChartBean> list = echartMapper.pageVisualizeEchart(echartName, "", "");
+
+        PageInfo pageInfo = new PageInfo(list);
+
+        dataMap.put("currentPage", pn);
+        dataMap.put("totalPages", pageInfo.getPages());
+        dataMap.put("source", list);
+
+        return dataMap;
+    }
 }

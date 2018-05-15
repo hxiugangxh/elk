@@ -23,4 +23,6 @@ public interface EchartService {
 
     Map<String, Object> pageVisualizePanelEchart(Integer pn, Integer pageSize, String panelName, String sortName,
                                                  String sortOrder);
+
+    Map<String,Object> pageSelectEchart(Integer pn, Integer pageSize, String echartName);
 }
