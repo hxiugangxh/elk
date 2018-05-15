@@ -73,7 +73,7 @@
       </div>
       <div class="modal-body" style="min-height: 300px;">
         <form role="form" class="form-horizontal row" id="list_form">
-          <input type="hidden" name="id" id="id" />
+          <input type="hidden" name="id" id="id"/>
           <div class="col-sm-6">
             <div class="form-group">
               <label class="col-sm-3 control-label">
@@ -106,7 +106,8 @@
                 <label class="col-sm-3 control-label">
                   项目名称:</label>
                 <div class="col-sm-9">
-                  <select class="form-control input-sm" onchange="changeMultiIndex('')" name="multiIndex" id="multiIndex">
+                  <select class="form-control input-sm" onchange="changeMultiIndex('')" name="multiIndex"
+                          id="multiIndex">
                     <option value="">请选择项目...</option>
                     <th:block th:each="multiIndexBean : ${multiIndexList}">
                       <option th:value="${multiIndexBean.multiIndex}"
@@ -167,8 +168,10 @@
         </form>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-          <button type="button" class="btn btn-primary modal-btn" id="saveBtn" onclick="saveVisualizeEchart()">保存</button>
-          <button type="button" class="btn btn-primary modal-btn" id="modifyBtn" onclick="modifyVisualizeEchart()">修改</button>
+          <button type="button" class="btn btn-primary modal-btn" id="saveBtn" onclick="saveVisualizeEchart()">保存
+          </button>
+          <button type="button" class="btn btn-primary modal-btn" id="modifyBtn" onclick="modifyVisualizeEchart()">修改
+          </button>
         </div>
       </div>
     </div>
@@ -197,6 +200,7 @@
 <script>
   /*<![CDATA[*/
   var infoEchart = echarts.init(document.getElementById('info_main_bar'));
+
   function detailVisualizeEchart(id) {
     infoEchart.dispose();
     infoEchart = echarts.init(document.getElementById('info_main_bar'));
@@ -255,16 +259,16 @@
     if (id.length == 0) {
       layer.alert("尚未选择，不能执行该操作！");
 
-      return ;
+      return;
     }
 
     delVisualizeEchart(id + "");
   }
 
   function delVisualizeEchart(id) {
-    var URL = path +"/echartManage/delVisualizeEchart";
+    var URL = path + "/echartManage/delVisualizeEchart";
 
-    var formData= {
+    var formData = {
       "id": id,
       "_method": "DELETE"
     };
@@ -293,7 +297,7 @@
     formData.push({"name": "_method", "value": "PUT"});
     formData.push({"name": "relIndex", "value": relIndex});
 
-    $.post(URL, formData, function(jsonData) {
+    $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
 
       if (flag) {
@@ -310,7 +314,7 @@
     var URL = path + "/echartManage/editVisualizeEchart/" + id;
     var formData = {};
 
-    $.post(URL, formData, function(jsonData) {
+    $.post(URL, formData, function (jsonData) {
       $("#id").val(jsonData.visualizeChartBean.id);
       $("#echartName").val(jsonData.visualizeChartBean.echartName);
 
@@ -349,20 +353,20 @@
     if (echartName == "") {
       layer.alert("图表名称不能为空");
 
-      return ;
+      return;
     }
 
 
     if ($("#multiIndex").val() == "") {
       layer.alert("请选择项目名称");
 
-      return ;
+      return;
     }
 
     if ($("#field").val() == "") {
       layer.alert("请选择汇聚列名");
 
-      return ;
+      return;
     }
     var formData = $("#list_form").serializeArray();
     formData.push({"name": "relIndex", "value": relIndex});
@@ -380,9 +384,10 @@
       }
     });
   }
+
   function changeType() {
     var type = $("#type").val();
-    $(".echart_view").each(function() {
+    $(".echart_view").each(function () {
       $(this).removeClass("show");
       if (type == $(this).attr("data-type")) {
         $(this).addClass("show");
@@ -398,13 +403,13 @@
     if ($("#multiIndex").val() == "") {
       layer.alert("请选择项目名称");
 
-      return ;
+      return;
     }
 
     if ($("#field").val() == "") {
       layer.alert("请选择汇聚列名");
 
-      return ;
+      return;
     }
 
     var formData = {
@@ -434,6 +439,7 @@
   var myChart_line = echarts.init(document.getElementById('main_line'));
   var myChart_bar = echarts.init(document.getElementById('main_bar'));
   var myChart_pie = echarts.init(document.getElementById('main_pie'));
+
   function addVisualizeEchart() {
     $("#Modal_view").html(myModalClone.html());
     $('#Modal_view').modal('show');
@@ -467,7 +473,7 @@
       };
       $.post(URL, formData, function (fieldList) {
         var domEle = "<option value=''>请选择...</option>";
-        $.each(fieldList, function(key, value) {
+        $.each(fieldList, function (key, value) {
           domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + key + "</option>";
         });
         $("#field").html(domEle);
@@ -482,78 +488,6 @@
     }
   }
 
-  /*]]>*/
-</script>
-<script>
-  /*<![CDATA[*/
-  //复选框选中不可点击添加
-  $(window).load(function () {
-    $("#table th input[type=checkbox]").on("change", function () {
-      var tf = $(this).prop("checked");
-      if (tf) {
-        $("#add_btn").attr("disabled", "disabled").removeClass("btn-primary")
-      } else {
-        $("#add_btn").removeAttr("disabled").addClass("btn-primary")
-      }
-    });
-    //点击列表弹出详情
-    $(".btn_info").on("click", function () {
-      var layerIndex = layer.open({
-        type: 1,
-        title: '图表详情',
-        area: ['100%', '100%'], //宽高
-        shadeClose: true,
-        content: $("#info_content"),
-
-        yes: function (index, layero) {
-          $("#add1_form").submit();
-        },
-        bnt2: function (index, layero) {
-          layer.close(index);
-        }
-      });
-    });
-  });
-
-  // 图表类型选择
-  $(function () {
-    $("#selectView").change(function () {
-      var s = $(this).val();
-      $('.main_view:eq(' + s + ')').addClass("show").siblings().removeClass("show");
-    })
-  });
-  // 保存按钮
-  $("#btn_ok").click(function () {
-    var name = $("#firstname").val();
-    var select_value = $("#selectView").find("option:selected").text();
-    var xAxis = $("#xAxis").find("option:selected").text();
-    var yAxis = $("#yAxis").find("option:selected").text();
-    alert("你提交的数据是：" + name + "-" + select_value + "-" + xAxis + "-" + yAxis);
-    $('#Modal_view').modal('hide');
-  });
-
-  $(function () {
-    /* var info_Chart_bar = echarts.init(document.getElementById('info_main_bar'));*/
-    var info_option_bar = {
-      title: {
-        text: '柱状图'
-      },
-      tooltip: {},
-      legend: {
-        data: ['记录']
-      },
-      xAxis: {
-        data: ["A", "B", "C", "D", "E", "F"]
-      },
-      yAxis: {},
-      series: [{
-        name: '记录',
-        type: 'bar',
-        data: [5, 20, 36, 10, 10, 20]
-      }]
-    };
-    // info_Chart_bar.setOption(info_option_bar);
-  })
   /*]]>*/
 </script>
 <script>
@@ -592,7 +526,22 @@
       field: 'echartName',
       title: '图表名称',
       halign: 'center',
-      align: 'left',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      width: 130,
+      field: 'field',
+      title: '汇聚列名',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      field: 'relIndex',
+      title: '关联ES索引',
+      halign: 'center',
+      align: 'center',
       valign: 'middle',
       sortable: true
     }, {

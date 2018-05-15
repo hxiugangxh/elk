@@ -166,4 +166,10 @@ public class EchartManagerController {
 
         return jsonMap;
     }
+
+    @RequestMapping("/dataShowPanel")
+    public String dataPanel() {
+
+        return "elk/data_show_pannel";
+    }
 }
