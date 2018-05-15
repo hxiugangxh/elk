@@ -35,12 +35,15 @@ public class EchartManagerController {
     @RequestMapping("/pageVisualizeEchart")
     @ResponseBody
     public Map<String, Object> pageVisualizeEchart(
-            @RequestParam(value = "pn") Integer pn,
-            @RequestParam(value = "pageSize") Integer pageSize,
-            @RequestParam(value = "echartName", defaultValue = "") String echartName
+            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "echartName", defaultValue = "") String echartName,
+            @RequestParam(value = "sortName", defaultValue = "") String sortName,
+            @RequestParam(value = "sortOrder", defaultValue = "") String sortOrder
+
     ) {
 
-        return echartService.pageVisualizeEchart(pn, pageSize, echartName);
+        return echartService.pageVisualizeEchart(pn, pageSize, echartName, sortName, sortOrder);
     }
 
     /**
@@ -163,8 +166,8 @@ public class EchartManagerController {
     }
 
     @RequestMapping("/dataShowPanel")
-    public String dataPanel() {
+    public String dataShowPanel() {
 
-        return "elk/data_show_pannel";
+        return "elk/data_show_panel";
     }
 }

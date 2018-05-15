@@ -2,61 +2,58 @@ var $table = $('#table');
 $table.bootstrapTable({
 	classes:'table table-hover table-condensed table-responsive table-theme',
 	height: getHeight(),
-	url: './assets/data/test_table.json',
+	url: '/echartManage/pageVisualizeEchart',
 	striped: true, //隔行变色
 	pagination: true,
 	singleSelect: false,
+  sidePagination: "server",//表格分页的位置
 	sortOrder:'desc',
 	pageSize: 10,
 	pageList: [10, 20, 50, 100],
 	toolbar:'#myop',
 	columns: [{
-		// field: 'state',
-		checkbox: true,
-		width: 20
-	}, {
-		field: 'id',
-		title: '编号',
-		width: 20,
-		halign:'left',
-        align:'left',
-        valign:'middle',
-		editable: {
-			type: 'text',
-			title: '单位名称',
-			validate: function (v) {
-				if (!v) return '单位名称不能为空';
-			}
-		}
-	}, {
-		field: 'name',
-		title: '图表名称',
-		halign:'left',
-        align:'left',
-        valign:'middle',
-		width: 50,
-		sortable: true,
-		editable:true,
-		// formatter: operateFormatter
-	}, {
-		field: 'date',
-		title: '图表类型',
-		halign:'left',
-        align:'left',
-        valign:'middle',
-		width: 50,
-		sortable: true
-	},{
-		field: 'operate',
-		title: '操作',
-		halign:'left',
-        align:'left',
-        valign:'middle',
-		width: 150,
-		// events: operateEvents,
-		formatter: operateFormatter
-	}
-	]
+    checkbox: true,
+    width: 50
+  }, {
+    field: 'id',
+    width: 100,
+    title: '编号',
+    halign: 'center',
+    align: 'center',
+    valign: 'middle'
+  }, {
+    field: 'echartName',
+    title: '图表名称',
+    halign: 'center',
+    align: 'center',
+    valign: 'middle',
+    sortable: true
+  }, {
+    width: 130,
+    field: 'field',
+    title: '汇聚列名',
+    halign: 'center',
+    align: 'center',
+    valign: 'middle',
+    sortable: true
+  }, {
+    width: 100,
+    field: 'typePo',
+    title: '图表类型',
+    halign: 'center',
+    align: 'center',
+    valign: 'middle',
+    sortable: true
+  }, {
+    width: 300,
+    field: 'operate',
+    title: '操作',
+    halign: 'center',
+    align: 'center',
+    valign: 'middle',
+    formatter: operateFormatter
+  }
+  ]
 });
 
 function operateFormatter(value, row, index) {

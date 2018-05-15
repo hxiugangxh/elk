@@ -6,7 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface EchartService {
-    Map<String, Object> pageVisualizeEchart(Integer pn, Integer pageSize, String echartName);
+    Map<String, Object> pageVisualizeEchart(Integer pn, Integer pageSize, String echartName, String sortName, String
+            sortOrder);
 
     boolean saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 

@@ -12,6 +12,9 @@
                 echart_name like #{echartName}
             </if>
         </where>
+        <if test="sortName != '' and sortOrder != ''">
+            order by ${sortName} ${sortOrder}
+        </if>
     </select>
 
     <insert id="saveVisualizeEchart" parameterType="VisualizeChartBean"

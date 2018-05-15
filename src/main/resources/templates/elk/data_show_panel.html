@@ -15,10 +15,6 @@
       border: none;
     }
 
-    html, body {
-      overflow: hidden;
-    }
-
     .bor_view {
       height: 400px
     }
@@ -497,7 +493,6 @@
     classes: 'table table-hover table-condensed table-bordered table-responsive',
     contentType: "application/x-www-form-urlencoded",
     height: getHeight(),
-    method: 'post',
     url: path + "/echartManage/pageVisualizeEchart",
     striped: true, //隔行变色
     pagination: true,
@@ -508,7 +503,6 @@
     pageNumber: 1,
     pageSize: 10,
     pageList: [10, 20, 50, 100],
-    searchOnEnterKey: true,
     onLoadSuccess: function () {
       $(".bs-checkbox").css({"text-align": "center", "vertical-align": "middle"});
     },
@@ -566,10 +560,14 @@
 
   function queryParams(params) {
     var paramMap = {
-      pageSize: params.pageSize,
-      pn: params.pageNumber,
-      echartName: $('#echartNameQuery').val()
+      "pageSize": params.pageSize,
+      "pn": params.pageNumber,
+      "echartName": $('#echartNameQuery').val(),
+      "sortName": params.sortName,
+      "sortOrder": params.sortOrder
     };
+
+    console.log(params);
 
     return paramMap;
   }
@@ -591,7 +589,7 @@
   });
 
   function getHeight() {
-    return $(window).height() - $(".modal-body").offset().top - 195;
+    return $(window).height() - 195;
   }
 
   /*]]>*/

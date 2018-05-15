@@ -43,9 +43,10 @@ public class EchartServiceImpl implements EchartService {
 
 
     @Override
-    public Map<String, Object> pageVisualizeEchart(Integer pn, Integer pageSize, String echartName) {
+    public Map<String, Object> pageVisualizeEchart(
+            Integer pn, Integer pageSize, String echartName, String sortName, String sortOrder) {
         PageHelper.startPage(pn, pageSize);
-        List<VisualizeChartBean> list = echartMapper.pageVisualizeEchart(echartName);
+        List<VisualizeChartBean> list = echartMapper.pageVisualizeEchart(echartName, sortName, sortOrder);
 
         PageInfo pageInfo = new PageInfo(list);
 
