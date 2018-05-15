@@ -61,8 +61,6 @@ public class IndexManageController {
     public String dataManage(Map<String, Object> map) {
         log.info("contorller: dataManage");
 
-        Integer num = 1/0;
-
         List<MultiIndexBean> multiIndexList = indexService.listMultiIndex();
         List<String> indexList = indexService.listIndex();
 

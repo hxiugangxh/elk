@@ -170,4 +170,18 @@ public class EchartManagerController {
 
         return "elk/data_show_panel";
     }
+
+    @RequestMapping("/pageVisualizePanelEchart")
+    @ResponseBody
+    public Map<String, Object> pageVisualizePanelEchart(
+            @RequestParam(value = "pn", defaultValue = "1") Integer pn,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+            @RequestParam(value = "panelName", defaultValue = "") String panelName,
+            @RequestParam(value = "sortName", defaultValue = "") String sortName,
+            @RequestParam(value = "sortOrder", defaultValue = "") String sortOrder
+
+    ) {
+
+        return echartService.pageVisualizePanelEchart(pn, pageSize, panelName, sortName, sortOrder);
+    }
 }

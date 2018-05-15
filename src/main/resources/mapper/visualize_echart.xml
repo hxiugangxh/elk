@@ -40,4 +40,18 @@
           field = #{field}, rel_index = #{relIndex}, last_day = #{lastDay}
           where id = #{id}
     </update>
+
+    <select id="pageVisualizePanelEchart" resultType="VisualizePanelEchartBean">
+        select * from cm_visualize_panel_echart
+        <where>
+            <if test="panelName != ''">
+                <bind name="panelName" value="'%' + panelName + '%'"/>
+                panel_name like #{panelName}
+            </if>
+        </where>
+        <if test="sortName != '' and sortOrder != ''">
+            order by ${sortName} ${sortOrder}
+        </if>
+    </select>
+
 </mapper>

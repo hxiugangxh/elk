@@ -3,6 +3,7 @@ package com.ylz.log.elk.manage.service.impl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
+import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
 import com.ylz.log.elk.manage.constants.Constants;
 import com.ylz.log.elk.manage.dao.IndexDao;
 import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
@@ -220,5 +221,20 @@ public class EchartServiceImpl implements EchartService {
     @Transactional
     public boolean modifyVisualizeEchart(VisualizeChartBean visualizeChartBean) {
         return echartMapper.modifyVisualizeEchart(visualizeChartBean);
+    }
+
+    @Override
+    public Map<String, Object> pageVisualizePanelEchart(Integer pn, Integer pageSize, String panelName, String
+            sortName, String sortOrder) {
+        PageHelper.startPage(pn, pageSize);
+        List<VisualizePanelEchartBean> list = echartMapper.pageVisualizePanelEchart(panelName, sortName, sortOrder);
+
+        PageInfo pageInfo = new PageInfo(list);
+
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("total", pageInfo.getTotal());
+        dataMap.put("rows", pageInfo.getList());
+
+        return dataMap;
     }
 }

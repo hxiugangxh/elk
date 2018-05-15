@@ -11,7 +11,7 @@ public interface EchartService {
 
     boolean saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 
-    Map<String,Object> generatEchart(String relIndex, String field, Integer lastDay);
+    Map<String, Object> generatEchart(String relIndex, String field, Integer lastDay);
 
     Map<String, List<String>> listConverField(String index);
 
@@ -20,4 +20,7 @@ public interface EchartService {
     VisualizeChartBean getVisualizeEchart(Integer id);
 
     boolean modifyVisualizeEchart(VisualizeChartBean visualizeChartBean);
+
+    Map<String, Object> pageVisualizePanelEchart(Integer pn, Integer pageSize, String panelName, String sortName,
+                                                 String sortOrder);
 }

@@ -40,7 +40,7 @@
     </div>
     <div class="box-body">
       <div class="input-group fl col-xs-7" style="margin-top:0px; positon:relative">
-        <input type="text" id="echartNameQuery" class="form-control" placeholder="请输入字段名"/>
+        <input type="text" id="echartNameQuery" class="form-control" placeholder="请输入图标名称"/>
         <span class="input-group-btn">
            <button class="btn btn-info btn-search" onclick="$('#table').bootstrapTable('refresh')">
              <i class="iconfont icon-sousuo"></i>查找</button>
@@ -177,7 +177,6 @@
     </div>
   </div><!-- /.modal-content -->
 </div><!-- /.modal -->
-</div>
 <!-- 详情弹出框 -->
 <div class="info_content" id="info_content" style="display: none">
   <div class="row">
@@ -588,10 +587,6 @@
       "<a class='btn btn-danger' href=\"javascript:delVisualizeEchart('" + row.id + "')\" title='删除'>删除</a>"
     ].join('');
   }
-
-  $table.bootstrapTable('resetView', {
-    height: getHeight()
-  });
 
   $(window).resize(function () {
     $table.bootstrapTable('resetView', {

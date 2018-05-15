@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>图表统计</title>
+  <!--基础样式-->
+  <th:block th:include="common/pub_head :: default"></th:block>
+  <th:block th:include="common/pub_head :: base-css"></th:block>
+  <!--主题色-->
+  <th:block th:include="common/pub_head :: theme-blue"></th:block>
+
+  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
+  <style>
+    .fixed-table-container {
+      border: none;
+    }
+
+    .bor_view {
+      height: 400px
+    }
+
+    .echart_view {
+      width: 570px;
+      height: 430px;
+      padding: 8px;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrapper-content">
+  <div class="box">
+    <div class="box-header with-border">
+      <div class="box-title dec_1 theme-border-left">图表统计<i class='iconfont slice33'></i></div>
+    </div>
+    <div class="box-body">
+      <div class="input-group fl col-xs-7" style="margin-top:0px; positon:relative">
+        <input type="text" id="echartNameQuery" class="form-control" placeholder="请输入面板名称"/>
+        <span class="input-group-btn">
+           <button class="btn btn-info btn-search" onclick="$('#table').bootstrapTable('refresh')">
+             <i class="iconfont icon-sousuo"></i>查找</button>
+        </span>
+      </div>
+      <!-- 表格 -->
+      <div class="fr mt15 mb10">
+        <button type="button" class="btn btn-primary" data-toggle="modal" onclick="addVisualizePanelEchart()"
+                id="add_btn">
+          <span class="glyphicon glyphicon-plus"></span>
+          添加
+        </button>
+        <button type="button" class="btn btn-danger" onclick="batchDelVisualizeEchart()">
+          <span class="glyphicon glyphicon-remove"></span>
+          删除
+        </button>
+      </div>
+      <table id="table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- 模态框 -->
+<div class="modal fade" id="Modal_view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h5 class="modal-title" id="myModalLabel">添加面板</h5>
+      </div>
+      <div class="modal-body " style="min-height: 300px;">
+        <form role="form" class="form-horizontal row">
+          <div class="row">
+            <div class="form-group">
+              <label for="firstname" class="col-sm-3 control-label">
+                面板名称:</label>
+              <div class="col-sm-7">
+                <input type="text" class="form-control input-sm" id="firstname" placeholder="请输入名字">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mb10 red-tip">请选择面板要显示的图表(每选择一个，便会在下方显示出对应的图表统计图)</div>
+            <table border="1" class="table_show">
+              <thead>
+              <tr>
+                <th></th>
+                <th>图表名称</th>
+                <th>所属项目</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td>
+                  <input type="checkbox" data-index="0">
+                </td>
+                <td>电子证照日志异常柱状图</td>
+                <td>电子证照</td>
+              </tr>
+              <tr>
+                <td>
+                  <input type="checkbox" data-index="1">
+                </td>
+                <td>电子证照日志异常柱状图</td>
+                <td>电子证照</td>
+              </tr>
+              <tr>
+                <td>
+                  <input type="checkbox" data-index="2">
+                </td>
+                <td>其他</td>
+                <td>其他</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- 图表显示 -->
+          <div class="row bor_view">
+            <div class="view_index">
+              <div id="main_pie" class="main_view"></div>
+            </div>
+            <div class="view_index">
+              <div id="main_line" class="main_view"></div>
+            </div>
+            <div class="view_index">
+              <div id="main_bar" class="main_view"></div>
+            </div>
+            <div class="view_index">
+              <div id="main_tree" class="main_view"></div>
+            </div>
+          </div>
+        </form>
+        <!--  -->
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="btn_ok">保存</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal -->
+</div><!-- /.modal -->
+<!-- 详情弹出框 -->
+<div class="info_content" id="info_content" style="display: none">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="info_block">
+        <p class="info_text">统计图表名称：</p>
+        <div id="show_info_line" class="show_info"></div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="info_block">
+        <p class="info_text">统计图表名称：</p>
+        <div id="show_info_pie" class="show_info"></div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="info_block">
+        <p class="info_text">统计图表名称：</p>
+        <div id="show_info_bar" class="show_info"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<th:block th:include="common/pub_head :: echart"></th:block>
+<link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
+<script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
+<script>
+  /*<![CDATA[*/
+  var myModalClone = $("#Modal_view").clone();
+
+  function addVisualizePanelEchart() {
+   /* $("#Modal_view").html(myModalClone.html());*/
+    $('#Modal_view').modal('show');
+
+    $(".modal-btn").hide();
+    $("#saveBtn").show();
+  }
+
+  var myChart_line = echarts.init(document.getElementById('main_line'));
+  var myChart_bar = echarts.init(document.getElementById('main_bar'));
+  var myChart_pie = echarts.init(document.getElementById('main_pie'));
+  myChart_line.setOption(option_line);
+  myChart_bar.setOption(option_bar);
+  myChart_pie.setOption(option_pie);
+
+  $(".table_show input[type=checkbox]").change(function () {
+    var index = $(this).attr("data-index");
+    var parentObj = $(this).parents("tr");
+    var tf = $(this).prop("checked");
+    var obj = $(".view_index").eq(index).children(".main_view")
+    if (obj.is(":hidden")) {
+      obj.show();
+      parentObj.addClass("trB");
+    } else {
+      obj.hide();
+      parentObj.removeClass("trB");
+    }
+  })
+  /*]]>*/
+</script>
+<script>
+  /*<![CDATA[*/
+  var $table = $('#table');
+  $table.bootstrapTable({
+    classes: 'table table-hover table-condensed table-bordered table-responsive',
+    contentType: "application/x-www-form-urlencoded",
+    height: getHeight(),
+    url: path + "/echartManage/pageVisualizePanelEchart",
+    striped: true, //隔行变色
+    pagination: true,
+    singleSelect: false,
+    queryParamsType: '',
+    queryParams: queryParams,
+    sidePagination: "server",//表格分页的位置
+    pageNumber: 1,
+    pageSize: 10,
+    pageList: [10, 20, 50, 100],
+    onLoadSuccess: function () {
+      $(".bs-checkbox").css({"text-align": "center", "vertical-align": "middle"});
+    },
+    columns: [{
+      checkbox: true,
+      width: 50
+    }, {
+      field: 'id',
+      width: 100,
+      title: '编号',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle'
+    }, {
+      field: 'panelName',
+      title: '图表名称',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      width: 300,
+      field: 'operate',
+      title: '操作',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      formatter: operateFormatter
+    }
+    ]
+  });
+
+  function queryParams(params) {
+    var sortName = (params.sortName) ? params.sortName.replace(/([A-Z])/g, "_$1").toLowerCase() : "";
+    if (sortName == "type_po") {
+      sortName = "type";
+    }
+    var paramMap = {
+      "pageSize": params.pageSize,
+      "pn": params.pageNumber,
+      "echartName": $('#echartNameQuery').val(),
+      "sortName": sortName,
+      "sortOrder": params.sortOrder
+    };
+
+    return paramMap;
+  }
+
+  function operateFormatter(value, row, index) {
+    return [
+      "<a class='btn btn-primary' href=\"javascript:detailVisualizeEchart('" + row.id + "')\" " +
+      "title='查看详情'>查看详情</a>",
+      "<a class='btn btn-success' href=\"javascript:editVisualizeEchart('" + row.id + "')\" title='修改'>修改</a>",
+      "<a class='btn btn-danger' href=\"javascript:delVisualizeEchart('" + row.id + "')\" title='删除'>删除</a>"
+    ].join('');
+  }
+
+  $(window).resize(function () {
+    $table.bootstrapTable('resetView', {
+      height: getHeight()
+    });
+  });
+
+  function getHeight() {
+    return $(window).height() - 160;
+  }
+
+  /*]]>*/
+</script>
+</body>
+</html>
