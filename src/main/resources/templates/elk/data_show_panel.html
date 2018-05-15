@@ -191,306 +191,12 @@
   </div>
 </div>
 <th:block th:include="common/pub_head :: echart"></th:block>
-<link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
-<script>
-  /*<![CDATA[*/
-  var infoEchart = echarts.init(document.getElementById('info_main_bar'));
-
-  function detailVisualizeEchart(id) {
-    infoEchart.dispose();
-    infoEchart = echarts.init(document.getElementById('info_main_bar'));
-
-    var URL = path + "/echartManage/detailVisualizeEchart/" + id;
-    var formData = {};
-
-    $.post(URL, formData, function (jsonData) {
-      var type = jsonData.visualizeChartBean.type;
-
-      $("#infoEchartName").html(jsonData.visualizeChartBean.echartName);
-      $("#infoMultiIndex").html(jsonData.visualizeChartBean.multiIndex);
-      if (type == "1") {
-        option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_line.series[0].name = jsonData.visualizeChartBean.field;
-        option_line.series[0].data = jsonData.echartMap.seriesDataList;
-
-        infoEchart.setOption(option_line);
-      } else if (type == "2") {
-        option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_bar.series[0].name = jsonData.visualizeChartBean.field;
-        option_bar.series[0].data = jsonData.echartMap.seriesDataList;
-
-        infoEchart.setOption(option_bar);
-      } else if (type == "3") {
-        option_pie.series[0].name = jsonData.visualizeChartBean.field;
-        option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
-
-        infoEchart.setOption(option_pie);
-      }
-
-      var layerIndex = layer.open({
-        type: 1,
-        title: '图表详情',
-        area: ['100%', '100%'], //宽高
-        shadeClose: true,
-        content: $("#info_content")
-      });
-
-      window.onkeyup = function (ev) {
-        var key = ev.keyCode || ev.which;
-        if (key == 27) { //按下Escape
-          layer.close(layerIndex); //关闭信息框
-        }
-      }
-    });
-  }
-
-  function batchDelVisualizeEchart() {
-    var selections = $("#table").bootstrapTable("getSelections");
-    var id = [];
-    for (var i = 0; i < selections.length; i++) {
-      id.push(selections[i].id);
-    }
-
-    if (id.length == 0) {
-      layer.alert("尚未选择，不能执行该操作！");
-
-      return;
-    }
-
-    delVisualizeEchart(id + "");
-  }
-
-  function delVisualizeEchart(id) {
-    var URL = path + "/echartManage/delVisualizeEchart";
-
-    var formData = {
-      "id": id,
-      "_method": "DELETE"
-    };
-    layer.confirm("确定要删除数据吗？", function () {
-      $.post(URL, formData, function (jsonData) {
-        var flag = jsonData.flag;
-
-        if (flag) {
-          layer.msg('删除成功！', {icon: 1, time: 1000});
-          $("#Modal_view").modal("hide");
-          $("#table").bootstrapTable("refresh");
-        } else {
-          layer.msg('删除失败！', {icon: 2, time: 1000});
-        }
-
-        $("#add_btn").removeAttr("disabled");
-        $("#add_btn").attr("class", "btn btn-primary");
-      }, "json");
-    });
-  }
-
-  function modifyVisualizeEchart(id) {
-    var formData = $("#list_form").serializeArray();
-    var URL = path + "/echartManage/modifyVisualizeEchart/" + $("#id").val();
-    var relIndex = $("#field").find("option:selected").attr("data-relIndex");
-    formData.push({"name": "_method", "value": "PUT"});
-    formData.push({"name": "relIndex", "value": relIndex});
-
-    $.post(URL, formData, function (jsonData) {
-      var flag = jsonData.flag;
-
-      if (flag) {
-        layer.msg('修改成功！', {icon: 1, time: 1000});
-        $("#Modal_view").modal("hide");
-        $("#table").bootstrapTable("refresh");
-      } else {
-        layer.msg('修改失败！', {icon: 2, time: 1000});
-      }
-    }, "json");
-  }
-
-  function editVisualizeEchart(id) {
-    var URL = path + "/echartManage/editVisualizeEchart/" + id;
-    var formData = {};
-
-    $.post(URL, formData, function (jsonData) {
-      $("#id").val(jsonData.visualizeChartBean.id);
-      $("#echartName").val(jsonData.visualizeChartBean.echartName);
-
-      $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
-      changeMultiIndex(jsonData.visualizeChartBean.field);
-      var type = jsonData.visualizeChartBean.type;
-
-      $("#type").val(type);
-      changeType();
-      if (type == "1") {
-        option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_line.series[0].name = jsonData.visualizeChartBean.field;
-        option_line.series[0].data = jsonData.echartMap.seriesDataList;
-      } else if (type == "2") {
-        option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_bar.series[0].name = jsonData.visualizeChartBean.field;
-        option_bar.series[0].data = jsonData.echartMap.seriesDataList;
-      } else if (type == "3") {
-        option_pie.series[0].name = jsonData.visualizeChartBean.field;
-        option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
-      }
-
-      initEchart();
-
-      $(".modal-btn").hide();
-      $("#modifyBtn").show();
-      $('#Modal_view').modal('show');
-    }, "json");
-  }
-
-  function saveVisualizeEchart() {
-    var echartName = $("#echartName").val();
-    var relIndex = $("#field").find("option:selected").attr("data-relIndex");
-    var field = $("#field").val();
-
-    if (echartName == "") {
-      layer.alert("图表名称不能为空");
-
-      return;
-    }
-
-
-    if ($("#multiIndex").val() == "") {
-      layer.alert("请选择项目名称");
-
-      return;
-    }
-
-    if ($("#field").val() == "") {
-      layer.alert("请选择汇聚列名");
-
-      return;
-    }
-    var formData = $("#list_form").serializeArray();
-    formData.push({"name": "relIndex", "value": relIndex});
-    var URL = path + "/echartManage/saveVisualizeEchart";
-
-    $.post(URL, formData, function (jsonData) {
-      var flag = jsonData.flag;
-
-      if (flag) {
-        layer.msg('保存成功！', {icon: 1, time: 1000});
-        $("#Modal_view").modal("hide");
-        $("#table").bootstrapTable("refresh");
-      } else {
-        layer.msg('保存失败！', {icon: 2, time: 1000});
-      }
-    });
-  }
-
-  function changeType() {
-    var type = $("#type").val();
-    $(".echart_view").each(function () {
-      $(this).removeClass("show");
-      if (type == $(this).attr("data-type")) {
-        $(this).addClass("show");
-      }
-    });
-  }
-
-  function generatEchart() {
-    var relIndex = $("#field").find("option:selected").attr("data-relIndex");
-    var field = $("#field").val();
-    var lastDay = $("#lastDay").val();
-
-    if ($("#multiIndex").val() == "") {
-      layer.alert("请选择项目名称");
-
-      return;
-    }
-
-    if ($("#field").val() == "") {
-      layer.alert("请选择汇聚列名");
-
-      return;
-    }
-
-    var formData = {
-      "relIndex": relIndex,
-      "field": field,
-      "lastDay": lastDay
-    };
-    var URL = path + "/echartManage/generatEchart";
-
-    $.post(URL, formData, function (jsonData) {
-      option_line.xAxis.data = jsonData.xAxisDataList;
-      option_line.series[0].name = field;
-      option_line.series[0].data = jsonData.seriesDataList;
-
-      option_bar.xAxis.data = jsonData.xAxisDataList;
-      option_bar.series[0].name = field;
-      option_bar.series[0].data = jsonData.seriesDataList;
-
-      option_pie.series[0].name = field;
-      option_pie.series[0].data = jsonData.pieSeriesDataList;
-
-      initEchart();
-    }, "json");
-  }
-
-  var myModalClone = $("#Modal_view").clone();
-  var myChart_line = echarts.init(document.getElementById('main_line'));
-  var myChart_bar = echarts.init(document.getElementById('main_bar'));
-  var myChart_pie = echarts.init(document.getElementById('main_pie'));
-
-  function addVisualizeEchart() {
-    $("#Modal_view").html(myModalClone.html());
-    $('#Modal_view').modal('show');
-
-    $(".modal-btn").hide();
-    $("#saveBtn").show();
-  }
-
-  function initEchart() {
-    myChart_line.dispose();
-    myChart_line = echarts.init(document.getElementById('main_line'));
-    myChart_line.setOption(option_line);
-
-    myChart_bar.dispose();
-    myChart_bar = echarts.init(document.getElementById('main_bar'));
-    myChart_bar.setOption(option_bar);
-
-    myChart_pie.dispose();
-    myChart_pie = echarts.init(document.getElementById('main_pie'));
-    myChart_pie.setOption(option_pie);
-  }
-
-  function changeMultiIndex(field) {
-    var multiIndex = $("#multiIndex").val();
-    $("#multiIndexSpan").html(multiIndex);
-
-    if (multiIndex != "") {
-      var URL = path + "/echartManage/listConverField";
-      var formData = {
-        "index": multiIndex
-      };
-      $.post(URL, formData, function (fieldList) {
-        var domEle = "<option value=''>请选择...</option>";
-        $.each(fieldList, function (key, value) {
-          domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + key + "</option>";
-        });
-        $("#field").html(domEle);
-
-        if (field != "") {
-          $("#field").val(field);
-        }
-      }, "json");
-    } else {
-      var domEle = "<option value=''>请选择..</option>";
-      $("#field").html(domEle);
-    }
-  }
-
-  /*]]>*/
-</script>
 <script>
   /*<![CDATA[*/
   var $table = $('#table');
   $table.bootstrapTable({
-    classes: 'table table-hover table-condensed table-bordered table-responsive',
+    classes: 'table table-hover table-condensed table-bordered',
     contentType: "application/x-www-form-urlencoded",
     height: getHeight(),
     url: path + "/echartManage/pageVisualizeEchart",
@@ -504,7 +210,7 @@
     pageSize: 10,
     pageList: [10, 20, 50, 100],
     onLoadSuccess: function () {
-      $(".bs-checkbox").css({"text-align": "center", "vertical-align": "middle"});
+
     },
     columns: [{
       checkbox: true,
@@ -559,15 +265,17 @@
   });
 
   function queryParams(params) {
+    var sortName = (params.sortName) ? params.sortName.replace(/([A-Z])/g, "_$1").toLowerCase() : "";
+    if (sortName == "type_po") {
+      sortName = "type";
+    }
     var paramMap = {
       "pageSize": params.pageSize,
       "pn": params.pageNumber,
       "echartName": $('#echartNameQuery').val(),
-      "sortName": params.sortName,
+      "sortName": sortName,
       "sortOrder": params.sortOrder
     };
-
-    console.log(params);
 
     return paramMap;
   }
@@ -581,11 +289,14 @@
     ].join('');
   }
 
-  $(window).resize(function () {
+  $table.bootstrapTable('resetView', {
+    height: getHeight()
+  });
+
+  $(window).resize(function() {
     $table.bootstrapTable('resetView', {
       height: getHeight()
     });
-
   });
 
   function getHeight() {
