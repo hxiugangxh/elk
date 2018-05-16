@@ -247,7 +247,7 @@ public class EchartServiceImpl implements EchartService {
 
         PageInfo pageInfo = new PageInfo(list);
 
-        dataMap.put("currentPage", pn);
+        dataMap.put("currentPage", (pn < pageInfo.getPages()) ? pn : pageInfo.getPages());
         dataMap.put("totalPages", pageInfo.getPages());
         dataMap.put("source", list);
 
