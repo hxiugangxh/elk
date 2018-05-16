@@ -194,7 +194,10 @@
 
     var URL = path + "/echartManage/hasExistPanelName";
 
-    if (panelName.split(" ").join("") == "") {
+    if (hisPanelName == panelName) {
+      $("#existFlag").html("");
+      $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+    } else if (panelName.split(" ").join("") == "") {
       $("#existFlag").html("*");
       $("#existFlag").attr("class", "mr5 red500");
     } else {
@@ -287,6 +290,7 @@
     }, "json");
   }
 
+  var hisPanelName = "";
   function editVisualizePanelEchart(id) {
     var URL = path + "/echartManage/editVisualizePanelEchart/" + id;
     $.post(URL, {}, function (jsonData) {
@@ -317,6 +321,10 @@
 
       $("#id").val(jsonData.visualizePanelEchartBean.id);
       $("#panelName").val(jsonData.visualizePanelEchartBean.panelName);
+      hisPanelName = jsonData.visualizePanelEchartBean.panelName;
+      $("#existFlag").html("");
+      $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+
       $('#Modal_view').modal('show');
 
       $(".modal-btn").hide();
@@ -507,6 +515,7 @@
   var myModalClone = $("#Modal_view").clone();
 
   function addVisualizePanelEchart() {
+    hisPanelName = "";
     $("#Modal_view").html(myModalClone.html());
 
     selectArr = $(".echart_view").map(function () {

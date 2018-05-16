@@ -208,7 +208,10 @@
 
     var URL = path + "/echartManage/hasExistEchartName";
 
-    if (echartName.split(" ").join("") == "") {
+    if (hisEchartName == echartName) {
+      $("#existFlag").html("");
+      $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+    } else if (echartName.split(" ").join("") == "") {
       $("#existFlag").html("*");
       $("#existFlag").attr("class", "mr5 red500");
     } else {
@@ -373,6 +376,7 @@
     }, "json");
   }
 
+  var hisEchartName = "";
   function editVisualizeEchart(id) {
     var URL = path + "/echartManage/editVisualizeEchart/" + id;
     var formData = {};
@@ -380,6 +384,10 @@
     $.post(URL, formData, function (jsonData) {
       $("#id").val(jsonData.visualizeChartBean.id);
       $("#echartName").val(jsonData.visualizeChartBean.echartName);
+
+      hisEchartName = jsonData.visualizeChartBean.echartName;
+      $("#existFlag").html("");
+      $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
 
       $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
       changeMultiIndex(jsonData.visualizeChartBean.field);
@@ -509,6 +517,8 @@
   var myChart_pie = echarts.init(document.getElementById('main_pie'));
 
   function addVisualizeEchart() {
+    hisEchartName = "";
+
     $("#Modal_view").html(myModalClone.html());
     $('#Modal_view').modal('show');
 
