@@ -12,6 +12,7 @@ import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
@@ -29,6 +30,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import java.lang.reflect.Array;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -152,12 +155,12 @@ public class EchartServiceImpl implements EchartService {
 
         TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(Integer.MAX_VALUE);
 
-        log.info("generatEchart:\n{}", this.client.prepareSearch(relIndex.split(","))
-                .addAggregation(termsAgg));
+        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","))
+                .addAggregation(termsAgg);
 
-        SearchResponse searchResponse = this.client.prepareSearch(relIndex.split(","))
-                .addAggregation(termsAgg)
-                .execute().actionGet();
+        log.info("generatEchart:\n index = {}, DSL = {}", relIndex.split(","), searchRequestBuilder);
+
+        SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
 
         Aggregations aggregations = searchResponse.getAggregations();
 
@@ -167,7 +170,9 @@ public class EchartServiceImpl implements EchartService {
             Iterator<LongTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
             while (teamBucketIt.hasNext()) {
                 LongTerms.Bucket bucket = teamBucketIt.next();
-                String key = bucket.getKeyAsString() + "";
+                DateFormat df= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                String key = df.format(new Date(bucket.getKeyAsNumber().longValue()));
                 long count = bucket.getDocCount();
 
                 xAxisDataList.add(key);
