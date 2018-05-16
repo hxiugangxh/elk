@@ -165,14 +165,12 @@ public class EchartServiceImpl implements EchartService {
         Aggregations aggregations = searchResponse.getAggregations();
 
         Object obj = aggregations.get(field);
-        if (obj instanceof LongTerms) {
-            LongTerms teamAgg = (LongTerms) aggregations.get(field);
-            Iterator<LongTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
+        if (obj instanceof StringTerms) {
+            StringTerms teamAgg = (StringTerms) aggregations.get(field);
+            Iterator<StringTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
             while (teamBucketIt.hasNext()) {
-                LongTerms.Bucket bucket = teamBucketIt.next();
-                DateFormat df= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                String key = df.format(new Date(bucket.getKeyAsNumber().longValue()));
+                StringTerms.Bucket bucket = teamBucketIt.next();
+                String key = bucket.getKey() + "";
                 long count = bucket.getDocCount();
 
                 xAxisDataList.add(key);
@@ -185,12 +183,17 @@ public class EchartServiceImpl implements EchartService {
 
                 pieSeriesDataList.add(map);
             }
-        } else if (obj instanceof StringTerms) {
-            StringTerms teamAgg = (StringTerms) aggregations.get(field);
-            Iterator<StringTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
+        } else if (obj instanceof LongTerms) {
+            LongTerms teamAgg = (LongTerms) aggregations.get(field);
+            Iterator<LongTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
             while (teamBucketIt.hasNext()) {
-                StringTerms.Bucket bucket = teamBucketIt.next();
+                LongTerms.Bucket bucket = teamBucketIt.next();
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
                 String key = bucket.getKey() + "";
+                if (StringUtils.isNotEmpty(bucket.getKeyAsString())) {
+                    key = df.format(new Date(Long.parseLong(bucket.getKey() + "")));
+                }
                 long count = bucket.getDocCount();
 
                 xAxisDataList.add(key);
