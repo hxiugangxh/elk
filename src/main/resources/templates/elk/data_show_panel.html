@@ -25,6 +25,15 @@
       height: 190px;
       padding: 8px;
     }
+
+    .echart-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 999;
+      cursor: pointer;
+      color: #d2d2d2;
+    }
   </style>
 </head>
 
@@ -102,15 +111,19 @@
           <!-- 图表显示 -->
           <div class="row">
             <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <i class="glyphicon glyphicon-remove echart-close"></i>
               <div class="echart_view"></div>
             </div>
             <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <i class="glyphicon glyphicon-remove echart-close"></i>
               <div class="echart_view"></div>
             </div>
             <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <i class="glyphicon glyphicon-remove echart-close"></i>
               <div class="echart_view"></div>
             </div>
             <div class="col-md-6" style="padding: 0px;margin: 0px">
+              <i class="glyphicon glyphicon-remove echart-close"></i>
               <div class="echart_view"></div>
             </div>
           </div>
@@ -163,7 +176,7 @@
   var options = {
     containerClass: "pagination",
     currentPage: 1,
-    numberOfPages: 6,
+    numberOfPages: 5,
     totalPages: 5,
     prev: "上一页",
     next: "下一页",
@@ -215,7 +228,13 @@
       var domEle = "";
       for (var i = 0; i < list.length; i++) {
         domEle += "<tr>";
-        domEle += "<td><input type='checkbox' value='" + list[i].id + "'></td>"
+        var checked = "";
+        for (var j = 0; j < selectArr.length; j++) {
+          if (selectArr[j] == list[i].id) {
+            checked = "checked";
+          }
+        }
+        domEle += "<td><input type='checkbox' " + checked + " value='" + list[i].id + "'></td>";
         for (var j = 0; j < keyArr.length; j++) {
           domEle += "<td>" + list[i][keyArr[j]] + "</td>";
         }
@@ -223,8 +242,36 @@
       }
 
       $("#tableShow").find("tbody").html(domEle);
+
+      $("#pagination-ele").bootstrapPaginator(options);
     }, "json");
   }
+
+  $(document).on("click", ".echart-close", function() {
+    var $echartDom = $(this).next();
+    var index = $echartDom.attr("data-sort");
+    var id = $echartDom.attr("data-id");
+    var option = echartArr[index].getOption();
+    if (option.title && option.title.length > 0) {
+      var flag = true;
+      selectArr[index] = -1;
+
+      $("#tableShow input[type=checkbox]").each(function() {
+        if ($(this).val() == id) {
+          $(this).click();
+          flag = false;
+        }
+      });
+
+      if (flag) {
+        echartArr[index].dispose();
+        echartArr[index] = echarts.init($echartDom.get(0));
+        echartArr[index].setOption({});
+        $echartDom.attr("data-flag", flag);
+        $echartDom.attr("data-id", -1);
+      }
+    }
+  });
 
   /*]]>*/
 </script>
@@ -234,6 +281,7 @@
 
   function addVisualizePanelEchart() {
     $("#Modal_view").html(myModalClone.html());
+
     pageSelectEchart();
     initEchart();
     $('#Modal_view').modal('show');
@@ -254,7 +302,7 @@
     });
   }
 
-  function getEchartView() {
+  function getEchartDom() {
     var index = [];
     $(".echart_view").each(function (i, domEle) {
       if ($(this).attr("data-flag") == flag) {
@@ -277,42 +325,57 @@
     var URL = path + "/echartManage/detailVisualizeEchart/" + id;
     var formData = {};
 
-    var echartDom = getEchartView();
+    var echartDom = getEchartDom();
     if (echartDom != null) {
       $.post(URL, formData, function (jsonData) {
         var type = jsonData.visualizeChartBean.type;
 
         var index = $(echartDom).attr("data-sort");
-        $(echartDom).attr("data-flag", "1");
+        $(echartDom).attr("data-flag", (flag + 1) % 2);
         $(echartDom).attr("data-id", jsonData.visualizeChartBean.id);
+        selectArr[index] = jsonData.visualizeChartBean.id;
         echartArr[index].dispose();
         echartArr[index] = echarts.init($(echartDom).get(0));
         if (type == "1") {
           optionLine.xAxis.data = jsonData.echartMap.xAxisDataList;
-          optionLine.title.text = jsonData.visualizeChartBean.multiIndex;
+          optionLine.title.text = jsonData.visualizeChartBean.echartName;
           optionLine.series[0].name = jsonData.visualizeChartBean.field;
           optionLine.series[0].data = jsonData.echartMap.seriesDataList;
 
           echartArr[index].setOption(optionLine);
         } else if (type == "2") {
           optionBar.xAxis.data = jsonData.echartMap.xAxisDataList;
-          optionBar.title.text = jsonData.visualizeChartBean.multiIndex;
+          optionBar.title.text = jsonData.visualizeChartBean.echartName;
           optionBar.series[0].name = jsonData.visualizeChartBean.field;
           optionBar.series[0].data = jsonData.echartMap.seriesDataList;
 
           echartArr[index].setOption(optionBar);
         } else if (type == "3") {
-          optionPie.title.text = jsonData.visualizeChartBean.multiIndex;
+          var title = jsonData.visualizeChartBean.echartName;
+          var length = title.length;
+          var relTile = "";
+          var arr = title.split("");
+          for (var i = 0; i < length; i++) {
+            if (i != 0 && i % 4 == 0) {
+              relTile += arr[i] + "\n"
+            } else {
+              relTile += arr[i];
+            }
+          }
+          optionPie.title.text = relTile;
           optionPie.series[0].name = jsonData.visualizeChartBean.field;
           optionPie.series[0].data = jsonData.echartMap.pieSeriesDataList;
 
           echartArr[index].setOption(optionPie);
         }
-
       });
     }
   }
 
+  // 选中数据 根据echart_view初始化
+  var selectArr = $(".echart_view").map(function() {
+    return -1;
+  }).get();
   $(document).on("click", ".table_show input[type=checkbox]", function () {
     var selectedFlag = $(this).prop("checked");
     var id = $(this).val();
@@ -332,6 +395,8 @@
       echartArr[index].setOption({});
       $(".echart_view").eq(index).attr("data-flag", flag);
       $(".echart_view").eq(index).attr("data-id", -1);
+      var index = $(".echart_view").eq(index).attr("data-sort");
+      selectArr[index] = -1;
     }
   });
   /*]]>*/
@@ -480,7 +545,10 @@
   };
   var optionPie = {
     title: {
-      text: '饼状图'
+      text: '饼状图',
+      textStyle: {
+        align: 'left'
+      }
     },
     tooltip: {
       formatter: "{a} <br/>{b} : {c} ({d}%)"
