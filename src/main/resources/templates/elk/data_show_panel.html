@@ -83,6 +83,7 @@
       </div>
       <div class="modal-body " style="min-height: 300px;">
         <form role="form" class="form-horizontal row">
+          <input type="hidden" id="id"/>
           <div class="row">
             <div class="form-group">
               <label class="col-sm-2 control-label">
@@ -143,12 +144,14 @@
             </div>
           </div>
         </form>
-        <!--  -->
-
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary" onclick="saveVisualizePanelEchart()">保存</button>
+        <button type="button" class="btn btn-primary modal-btn" id="saveBtn" onclick="saveVisualizePanelEchart()">保存
+        </button>
+        <button type="button" class="btn btn-primary modal-btn" id="modifyBtn" onclick="modifyVisualizePanelEchart()">
+          修改
+        </button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal -->
@@ -181,6 +184,49 @@
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 <script>
   /*<![CDATA[*/
+  function modifyVisualizePanelEchart() {
+    var panelName = $("#panelName").val();
+
+    var id = $("#id").val();
+
+    var formData = {
+      "id": id,
+      "panelName": panelName,
+      "echartId": selectArr + ""
+    };
+
+    var selectFlag = true;
+    for (var i = 0; i < selectArr.length; i++) {
+      if (selectArr[i] > -1) {
+        selectFlag = false;
+      }
+    }
+    if (panelName == "") {
+      layer.alert("面板名称不能为空");
+
+      return;
+    }
+    if (selectFlag) {
+      layer.alert("请选择图表");
+
+      return;
+    }
+
+    var URL = path + "/echartManage/modifyVisualizePanelEchart";
+
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
+
+      if (flag) {
+        $('#Modal_view').modal('hide');
+        $("#table").bootstrapTable("refresh");
+        layer.msg('修改成功！', {icon: 1, time: 1000});
+      } else {
+        layer.msg('修改失败！', {icon: 2, time: 1000});
+      }
+    }, "json");
+  }
+
   function editVisualizePanelEchart(id) {
     var URL = path + "/echartManage/editVisualizePanelEchart/" + id;
     $.post(URL, {}, function (jsonData) {
@@ -190,7 +236,7 @@
       }).get();
 
       var panelRelEchartList = jsonData.panelRelEchartList;
-      for (var i = 0 ;i < panelRelEchartList.length; i++) {
+      for (var i = 0; i < panelRelEchartList.length; i++) {
         selectArr[panelRelEchartList[i].sort] = panelRelEchartList[i].echartId;
       }
 
@@ -198,23 +244,27 @@
       initEchart();
       options.currentPage = 1;
 
-      for (var i = 0 ;i < panelRelEchartList.length; i++) {
+      for (var i = 0; i < panelRelEchartList.length; i++) {
         selectArr[panelRelEchartList[i].sort] = panelRelEchartList[i].echartId;
       }
       pageSelectEchart();
 
-      for (var i = 0 ;i < selectArr.length; i++) {
+      for (var i = 0; i < selectArr.length; i++) {
         if (selectArr[i] > -1) {
           detailVisualizeEchart(selectArr[i], i);
         }
       }
 
+      $("#id").val(jsonData.visualizePanelEchartBean.id);
+      $("#panelName").val(jsonData.visualizePanelEchartBean.panelName);
       $('#Modal_view').modal('show');
 
       $(".modal-btn").hide();
-      $("#saveBtn").show();
+      $("#modifyBtn").show();
+      $("#myModalLabel").html("修改面板");
     }, "json");
   }
+
   function delVisualizePanelEchart(id) {
     var URL = path + "/echartManage/delVisualizePanelEchart/" + id;
     $.post(URL, {}, function (jsonData) {
@@ -224,10 +274,11 @@
         $("#table").bootstrapTable("refresh");
         layer.msg('删除成功！', {icon: 1, time: 1000});
       } else {
-        layer.msg('删除失败！', {icon: 1, time: 1000});
+        layer.msg('删除失败！', {icon: 2, time: 1000});
       }
     }, "json");
   }
+
   function saveVisualizePanelEchart() {
     var panelName = $("#panelName").val();
 
@@ -245,14 +296,13 @@
     if (panelName == "") {
       layer.alert("面板名称不能为空");
 
-      return ;
+      return;
     }
     if (selectFlag) {
       layer.alert("请选择图表");
 
-      return ;
+      return;
     }
-
 
     var URL = path + "/echartManage/saveVisualizePanelEchart";
 
@@ -393,6 +443,7 @@
 
     $(".modal-btn").hide();
     $("#saveBtn").show();
+    $("#myModalLabel").html("添加面板");
   }
 
   var echartArr = [];

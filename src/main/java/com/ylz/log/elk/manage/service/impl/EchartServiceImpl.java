@@ -11,6 +11,7 @@ import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
@@ -48,9 +49,6 @@ public class EchartServiceImpl implements EchartService {
 
     @Autowired
     private EntityManager entityManager;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Override
     public Map<String, Object> pageVisualizeEchart(
@@ -272,21 +270,8 @@ public class EchartServiceImpl implements EchartService {
         if (visualizePanelEchartBean.getId() > 0) {
             List<String> list = echartIdList.stream().filter(
                     echartId -> !echartId.equals("-1")).collect(Collectors.toList());
-            int length = list.size();
 
-            // insert into table values(1),(2)
-            String insertSQL = "insert into cm_visualize_panel_rel_echart values";
-            for (int i = 0; i < length; i++) {
-                if (i == length - 1) {
-                    insertSQL += "(" + visualizePanelEchartBean.getId() + ", " + list.get(i) + ", " + i + ")";
-                } else {
-                    insertSQL += "(" + visualizePanelEchartBean.getId() + ", " + list.get(i) + ", " + i + "), ";
-                }
-            }
-
-            log.info("saveVisualizePanelEchart--保存面板与图表关系: {}", insertSQL);
-
-            int count = this.jdbcTemplate.update(insertSQL);
+            int count = echartMapper.savePanelRelEchart(visualizePanelEchartBean.getId(), list);
 
             if (count > 0) {
                 return true;
@@ -299,10 +284,12 @@ public class EchartServiceImpl implements EchartService {
     }
 
     @Override
+    @Transactional
     public boolean delVisualizePanelEchart(Integer id) {
         int count = echartMapper.delVisualizePanelEchart(id);
 
-        System.out.println("有效行数: " + count);
+        count = (count > 0) ? echartMapper.delVisualizePanelRelEchart(id) : count;
+
         if (count > 0) {
             return true;
         }
@@ -323,5 +310,34 @@ public class EchartServiceImpl implements EchartService {
         dataMap.put("panelRelEchartList", panelRelEchartList);
 
         return dataMap;
+    }
+
+    /**
+     * 删除在保存
+     *
+     * @param visualizePanelEchartBean
+     * @param echartIdList
+     * @return
+     */
+    @Override
+    @Transactional
+    public boolean modifyVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean,
+                                              List<String> echartIdList) {
+        // 修改
+        int count = echartMapper.modifyVisualizePanelEchart(visualizePanelEchartBean);
+
+        // 删除已有关系
+        count = (count > 0) ? echartMapper.delVisualizePanelRelEchart(visualizePanelEchartBean.getId()) : count;
+        // 保存新定义关系
+        count = (count > 0) ? echartMapper.savePanelRelEchart(visualizePanelEchartBean.getId(), echartIdList) : count;
+
+        if (count > 0) {
+
+            return true;
+        }
+
+        log.error("delVisualizePanelEchart: 删除失败，有效行为0");
+
+        return false;
     }
 }

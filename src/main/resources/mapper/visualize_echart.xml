@@ -56,6 +56,9 @@
 
     <delete id="delVisualizePanelEchart">
         delete from cm_visualize_panel_echart where id = #{id};
+    </delete>
+
+    <delete id="delVisualizePanelRelEchart">
         delete from cm_visualize_panel_rel_echart where panel_id = #{id};
     </delete>
 
@@ -66,5 +69,16 @@
     <select id="listPanelRelEchart" resultType="VisualizePanelRelEchartBean">
         select * from cm_visualize_panel_rel_echart where panel_id = #{id}
     </select>
+
+    <insert id="savePanelRelEchart">
+        insert into cm_visualize_panel_rel_echart values
+        <foreach collection="echartIdList" index="index" item="echartId" separator=",">
+            (#{panel}, #{echartId}, #{index})
+        </foreach>
+    </insert>
+
+    <update id="modifyVisualizePanelEchart">
+      update cm_visualize_panel_echart set panel_name = #{panelName} where id = #{id}
+    </update>
 
 </mapper>

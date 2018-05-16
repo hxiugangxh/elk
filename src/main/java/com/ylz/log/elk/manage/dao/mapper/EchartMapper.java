@@ -5,7 +5,6 @@ import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelRelEchartBean;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -31,7 +30,14 @@ public interface EchartMapper {
 
     int delVisualizePanelEchart(@Param("id") Integer id);
 
+    int delVisualizePanelRelEchart(@Param("id") Integer id);
+
     VisualizePanelEchartBean getVisualizePanel(@Param("id") Integer id);
 
     List<VisualizePanelRelEchartBean> listPanelRelEchart(Integer id);
+
+    int savePanelRelEchart(@Param("panel") Integer panel, @Param("echartIdList") List<String> echartIdList);
+
+    int modifyVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean);
+
 }

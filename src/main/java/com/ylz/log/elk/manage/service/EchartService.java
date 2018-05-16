@@ -32,4 +32,6 @@ public interface EchartService {
     boolean delVisualizePanelEchart(Integer id);
 
     Map<String,Object> editVisualizePanelEchart(Integer id);
+
+    boolean modifyVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean, List<String> echartIdList);
 }
