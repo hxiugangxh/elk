@@ -21,10 +21,13 @@ import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("echartService")
@@ -42,6 +45,11 @@ public class EchartServiceImpl implements EchartService {
     @Autowired
     private IndexDao indexDao;
 
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public Map<String, Object> pageVisualizeEchart(
@@ -252,5 +260,41 @@ public class EchartServiceImpl implements EchartService {
         dataMap.put("source", list);
 
         return dataMap;
+    }
+
+    @Override
+    @Transactional
+    public boolean saveVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean,
+                                            List<String> echartIdList) {
+        entityManager.persist(visualizePanelEchartBean);
+
+        if (visualizePanelEchartBean.getId() > 0) {
+
+            List<String> list = echartIdList.stream().filter(
+                    echartId -> !echartId.equals("-1")).collect(Collectors.toList());
+            int length = list.size();
+
+            // insert into table values(1),(2)
+            String insertSQL = "insert into cm_visualize_panel_rel_echart values";
+            for (int i = 0; i < length; i++) {
+                if (i == length - 1) {
+                    insertSQL += "(" + visualizePanelEchartBean.getId() + ", " + list.get(i) + ", " + i + ")";
+                } else {
+                    insertSQL += "(" + visualizePanelEchartBean.getId() + ", " + list.get(i) + ", " + i + "), ";
+                }
+            }
+
+            log.info("saveVisualizePanelEchart--保存面板与图表关系: {}", insertSQL);
+
+            int count = this.jdbcTemplate.update(insertSQL);
+
+            if (count > 0) {
+                return true;
+            }
+        }
+
+        log.error("saveVisualizeEchart: 保存失败，有效行为0");
+
+        return false;
     }
 }

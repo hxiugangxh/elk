@@ -15,7 +15,6 @@ public interface EchartMapper {
             @Param("echartName") String echartName,
             @Param("sortName") String sortName,
             @Param("sortOrder") String sortOrder);
-
     int saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 
     int delVisualizeEchart(@Param("idList") List<String> idList);

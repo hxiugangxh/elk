@@ -1,6 +1,7 @@
 package com.ylz.log.elk.manage.service;
 
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
+import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
 
 import java.util.List;
 import java.util.Map;
@@ -25,4 +26,6 @@ public interface EchartService {
                                                  String sortOrder);
 
     Map<String,Object> pageSelectEchart(Integer pn, Integer pageSize, String echartName);
+
+    boolean saveVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean, List<String> echartIdList);
 }

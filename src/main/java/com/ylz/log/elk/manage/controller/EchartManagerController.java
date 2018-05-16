@@ -2,6 +2,7 @@ package com.ylz.log.elk.manage.controller;
 
 import com.ylz.log.elk.manage.bean.MultiIndexBean;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
+import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
 import com.ylz.log.elk.manage.service.EchartService;
 import com.ylz.log.elk.manage.service.IndexService;
 import lombok.extern.slf4j.Slf4j;
@@ -145,7 +146,7 @@ public class EchartManagerController {
         return jsonMap;
     }
 
-    @RequestMapping(value = "/modifyVisualizeEchart/{id}", method =  RequestMethod.PUT)
+    @RequestMapping(value = "/modifyVisualizeEchart/{id}", method = RequestMethod.PUT)
     @ResponseBody
     public Map<String, Object> modifyVisualizeEchart(VisualizeChartBean visualizeChartBean) {
         Map<String, Object> jsonMap = new HashMap<>();
@@ -185,6 +186,14 @@ public class EchartManagerController {
         return echartService.pageVisualizePanelEchart(pn, pageSize, panelName, sortName, sortOrder);
     }
 
+    /**
+     * 添加面板页面，查询图表方法
+     *
+     * @param pn
+     * @param pageSize
+     * @param echartName
+     * @return
+     */
     @RequestMapping("/pageSelectEchart")
     @ResponseBody
     public Map<String, Object> pageSelectEchart(
@@ -195,5 +204,30 @@ public class EchartManagerController {
 
         return echartService.pageSelectEchart(pn, pageSize, echartName);
 
+    }
+
+    @RequestMapping("/saveVisualizePanelEchart")
+    @ResponseBody
+    public Map<String, Object> saveVisualizePanelEchart(
+            VisualizePanelEchartBean visualizePanelEchartBean,
+            @RequestParam("echartId") String echartId
+    ) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        log.info("{}, {}", visualizePanelEchartBean, echartId);
+
+        boolean flag = false;
+        try {
+            flag = echartService.saveVisualizePanelEchart(visualizePanelEchartBean, Arrays.asList(echartId.split(",")));
+
+            jsonMap.put("flag", flag);
+        } catch (Exception e) {
+            e.printStackTrace();
+            flag = false;
+
+            jsonMap.put("flag", flag);
+        }
+
+        return jsonMap;
     }
 }

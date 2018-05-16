@@ -11,7 +11,6 @@ public class VisualizePanelEchartBean {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private Integer echartId;
     private String panelName;
 
 }

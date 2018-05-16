@@ -98,7 +98,7 @@
               <label class="col-sm-2 control-label">
                 面板名称:</label>
               <div class="col-sm-3">
-                <input type="text" class="form-control input-sm" placeholder="请输入面板名字"/>
+                <input type="text" class="form-control input-sm" id="panelName" placeholder="请输入面板名字"/>
                 <span class="mr5 red500" style="position: absolute;top: 10px;right: 0px">*</span>
               </div>
             </div>
@@ -148,7 +148,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-        <button type="button" class="btn btn-primary" id="btn_ok">保存</button>
+        <button type="button" class="btn btn-primary" onclick="saveVisualizePanelEchart()">保存</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal -->
@@ -179,6 +179,32 @@
 <th:block th:include="common/pub_head :: echart"></th:block>
 <link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
+<script>
+  /*<![CDATA[*/
+  function saveVisualizePanelEchart() {
+    var panelName = $("#panelName").val();
+    var formData = {
+      "panelName": panelName,
+      "echartId": selectArr + ""
+    };
+
+    var URL = path + "/echartManage/saveVisualizePanelEchart";
+
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
+
+      if (flag) {
+        $('#Modal_view').modal('hide');
+        $("#table").bootstrapTable("refresh");
+        layer.msg('保存成功！', {icon: 1, time: 1000});
+      } else {
+        layer.msg('保存失败！', {icon: 2, time: 1000});
+      }
+    }, "json");
+  }
+
+  /*]]>*/
+</script>
 <script>
   /*<![CDATA[*/
   var options = {
@@ -316,22 +342,29 @@
   }
 
   function getEchartDom() {
-    var index = [];
+    var nullIndexArr = [];
+    var indexArr = [];
     $(".echart_view").each(function (i, domEle) {
+      var sortIndex = $(this).attr("data-sort");
+      var options = echartArr[sortIndex].getOption();
+      if (!options.title) {
+        nullIndexArr.push(i);
+      }
       if ($(this).attr("data-flag") == flag) {
-        index.push(i);
+        indexArr.push(i);
       }
     });
 
-    if (index.length > 0) {
-      return $(".echart_view").eq(index[0]);
-    } else {
-      // 进入下一轮循环
-      flag = (flag + 1) % 2;
-      return $(".echart_view").eq(0);
+    if (nullIndexArr.length > 0) {
+      return $(".echart_view").eq(nullIndexArr[0]);
     }
 
-    return null;
+    if (indexArr.length > 0) {
+      return $(".echart_view").eq(indexArr[0]);
+    }
+    // 进入下一轮循环
+    flag = (flag + 1) % 2;
+    return $(".echart_view").eq(0);
   }
 
   function detailVisualizeEchart(id) {
@@ -507,7 +540,7 @@
     },
     grid: {
       y: 30,
-      y2: 30
+      y2: 35
     },
     tooltip: {
       trigger: 'axis'
