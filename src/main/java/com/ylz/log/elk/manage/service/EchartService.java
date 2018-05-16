@@ -29,7 +29,7 @@ public interface EchartService {
 
     boolean saveVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean, List<String> echartIdList);
 
-    boolean delVisualizePanelEchart(Integer id);
+    boolean delVisualizePanelEchart(List<String> idList);
 
     Map<String,Object> editVisualizePanelEchart(Integer id);
 

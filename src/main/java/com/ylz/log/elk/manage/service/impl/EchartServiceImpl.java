@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -150,6 +151,9 @@ public class EchartServiceImpl implements EchartService {
         List<Map<String, Object>> pieSeriesDataList = new ArrayList<>();
 
         TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(Integer.MAX_VALUE);
+
+        log.info("generatEchart:\n{}", this.client.prepareSearch(relIndex.split(","))
+                .addAggregation(termsAgg));
 
         SearchResponse searchResponse = this.client.prepareSearch(relIndex.split(","))
                 .addAggregation(termsAgg)
@@ -285,10 +289,10 @@ public class EchartServiceImpl implements EchartService {
 
     @Override
     @Transactional
-    public boolean delVisualizePanelEchart(Integer id) {
-        int count = echartMapper.delVisualizePanelEchart(id);
+    public boolean delVisualizePanelEchart(List<String> idList) {
+        int count = echartMapper.delVisualizePanelEchart(idList);
 
-        count = (count > 0) ? echartMapper.delVisualizePanelRelEchart(id) : count;
+        count = (count > 0) ? echartMapper.delVisualizePanelRelEchart(idList) : count;
 
         if (count > 0) {
             return true;
@@ -327,7 +331,8 @@ public class EchartServiceImpl implements EchartService {
         int count = echartMapper.modifyVisualizePanelEchart(visualizePanelEchartBean);
 
         // 删除已有关系
-        count = (count > 0) ? echartMapper.delVisualizePanelRelEchart(visualizePanelEchartBean.getId()) : count;
+        count = (count > 0) ? echartMapper.delVisualizePanelRelEchart(
+                Arrays.asList(visualizePanelEchartBean.getId() + "")) : count;
         // 保存新定义关系
         count = (count > 0) ? echartMapper.savePanelRelEchart(visualizePanelEchartBean.getId(), echartIdList) : count;
 

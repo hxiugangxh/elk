@@ -28,9 +28,9 @@ public interface EchartMapper {
             @Param("sortName") String sortName,
             @Param("sortOrder") String sortOrder);
 
-    int delVisualizePanelEchart(@Param("id") Integer id);
+    int delVisualizePanelEchart(@Param("idList") List<String> idList);
 
-    int delVisualizePanelRelEchart(@Param("id") Integer id);
+    int delVisualizePanelRelEchart(@Param("idList") List<String> id);
 
     VisualizePanelEchartBean getVisualizePanel(@Param("id") Integer id);
 

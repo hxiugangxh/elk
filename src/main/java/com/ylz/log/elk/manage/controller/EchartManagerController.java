@@ -230,14 +230,14 @@ public class EchartManagerController {
         return jsonMap;
     }
 
-    @RequestMapping("/delVisualizePanelEchart/{id}")
+    @RequestMapping("/delVisualizePanelEchart")
     @ResponseBody
-    public Map<String, Object> delVisualizePanelEchart(@PathVariable("id") Integer id) {
+    public Map<String, Object> delVisualizePanelEchart(@RequestParam("id") String id) {
         Map<String, Object> jsonMap = new HashMap<>();
 
         boolean flag = false;
         try {
-            flag = echartService.delVisualizePanelEchart(id);
+            flag = echartService.delVisualizePanelEchart(Arrays.asList(id.split(",")));
 
             jsonMap.put("flag", flag);
         } catch (Exception e) {

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>图表统计</title>
+  <title>显示面板</title>
   <!--基础样式-->
   <th:block th:include="common/pub_head :: default"></th:block>
   <th:block th:include="common/pub_head :: base-css"></th:block>
@@ -45,13 +45,13 @@
 <div class="wrapper-content">
   <div class="box">
     <div class="box-header with-border">
-      <div class="box-title dec_1 theme-border-left">图表统计<i class='iconfont slice33'></i></div>
+      <div class="box-title dec_1 theme-border-left">显示面板<i class='iconfont slice33'></i></div>
     </div>
     <div class="box-body">
       <div class="input-group fl col-xs-7" style="margin-top:0px; positon:relative">
         <input type="text" id="echartNameQuery" class="form-control" placeholder="请输入面板名称"/>
         <span class="input-group-btn">
-           <button class="btn btn-info btn-search">
+           <button class="btn btn-info btn-search" onclick="$('#table').bootstrapTable('refresh')">
              <i class="iconfont icon-sousuo"></i>查找</button>
         </span>
       </div>
@@ -62,7 +62,7 @@
           <span class="glyphicon glyphicon-plus"></span>
           添加
         </button>
-        <button type="button" class="btn btn-danger" onclick="batchDelVisualizeEchart()">
+        <button type="button" class="btn btn-danger" onclick="batchDelVisualizePanelEchart()">
           <span class="glyphicon glyphicon-remove"></span>
           删除
         </button>
@@ -184,6 +184,21 @@
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 <script>
   /*<![CDATA[*/
+  function batchDelVisualizePanelEchart() {
+    var selections = $("#table").bootstrapTable("getSelections");
+    var id = [];
+    for (var i = 0; i < selections.length; i++) {
+      id.push(selections[i].id);
+    }
+
+    if (id.length == 0) {
+      layer.alert("尚未选择，不能执行该操作！");
+
+      return;
+    }
+
+    delVisualizePanelEchart(id + "");
+  }
   function modifyVisualizePanelEchart() {
     var panelName = $("#panelName").val();
 
@@ -266,17 +281,23 @@
   }
 
   function delVisualizePanelEchart(id) {
-    var URL = path + "/echartManage/delVisualizePanelEchart/" + id;
-    $.post(URL, {}, function (jsonData) {
-      var flag = jsonData.flag;
-      if (flag) {
-        $('#Modal_view').modal('hide');
-        $("#table").bootstrapTable("refresh");
-        layer.msg('删除成功！', {icon: 1, time: 1000});
-      } else {
-        layer.msg('删除失败！', {icon: 2, time: 1000});
-      }
-    }, "json");
+    var URL = path + "/echartManage/delVisualizePanelEchart";
+    var formData = {
+      "id": id
+    };
+
+    layer.confirm("确定要删除数据吗？", function () {
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
+        if (flag) {
+          $('#Modal_view').modal('hide');
+          $("#table").bootstrapTable("refresh");
+          layer.msg('删除成功！', {icon: 1, time: 1000});
+        } else {
+          layer.msg('删除失败！', {icon: 2, time: 1000});
+        }
+      }, "json");
+    });
   }
 
   function saveVisualizePanelEchart() {
@@ -639,8 +660,6 @@
 
   function operateFormatter(value, row, index) {
     return [
-      "<a class='btn btn-primary' href=\"javascript:detailVisualizePanelEchart('" + row.id + "')\" " +
-      "title='查看详情'>查看详情</a>",
       "<a class='btn btn-success' href=\"javascript:editVisualizePanelEchart('" + row.id + "')\" title='修改'>修改</a>",
       "<a class='btn btn-danger' href=\"javascript:delVisualizePanelEchart('" + row.id + "')\" title='删除'>删除</a>"
     ].join('');
