@@ -28,4 +28,8 @@ public interface EchartService {
     Map<String,Object> pageSelectEchart(Integer pn, Integer pageSize, String echartName);
 
     boolean saveVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean, List<String> echartIdList);
+
+    boolean delVisualizePanelEchart(Integer id);
+
+    Map<String,Object> editVisualizePanelEchart(Integer id);
 }

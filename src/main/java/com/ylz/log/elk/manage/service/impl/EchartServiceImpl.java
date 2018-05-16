@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
+import com.ylz.log.elk.manage.bean.VisualizePanelRelEchartBean;
 import com.ylz.log.elk.manage.constants.Constants;
 import com.ylz.log.elk.manage.dao.IndexDao;
 import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
@@ -269,7 +270,6 @@ public class EchartServiceImpl implements EchartService {
         entityManager.persist(visualizePanelEchartBean);
 
         if (visualizePanelEchartBean.getId() > 0) {
-
             List<String> list = echartIdList.stream().filter(
                     echartId -> !echartId.equals("-1")).collect(Collectors.toList());
             int length = list.size();
@@ -293,8 +293,35 @@ public class EchartServiceImpl implements EchartService {
             }
         }
 
-        log.error("saveVisualizeEchart: 保存失败，有效行为0");
+        log.error("saveVisualizePanelEchart: 保存失败，有效行为0");
 
         return false;
+    }
+
+    @Override
+    public boolean delVisualizePanelEchart(Integer id) {
+        int count = echartMapper.delVisualizePanelEchart(id);
+
+        System.out.println("有效行数: " + count);
+        if (count > 0) {
+            return true;
+        }
+
+        log.error("delVisualizePanelEchart: 删除失败，有效行为0");
+
+        return false;
+    }
+
+    @Override
+    public Map<String, Object> editVisualizePanelEchart(Integer id) {
+        Map<String, Object> dataMap = new HashMap<>();
+
+        VisualizePanelEchartBean visualizePanelEchartBean = echartMapper.getVisualizePanel(id);
+        List<VisualizePanelRelEchartBean> panelRelEchartList = echartMapper.listPanelRelEchart(id);
+
+        dataMap.put("visualizePanelEchartBean", visualizePanelEchartBean);
+        dataMap.put("panelRelEchartList", panelRelEchartList);
+
+        return dataMap;
     }
 }

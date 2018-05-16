@@ -214,8 +214,6 @@ public class EchartManagerController {
     ) {
         Map<String, Object> jsonMap = new HashMap<>();
 
-        log.info("{}, {}", visualizePanelEchartBean, echartId);
-
         boolean flag = false;
         try {
             flag = echartService.saveVisualizePanelEchart(visualizePanelEchartBean, Arrays.asList(echartId.split(",")));
@@ -230,4 +228,32 @@ public class EchartManagerController {
 
         return jsonMap;
     }
+
+    @RequestMapping("/delVisualizePanelEchart/{id}")
+    @ResponseBody
+    public Map<String, Object> delVisualizePanelEchart(@PathVariable("id") Integer id) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        boolean flag = false;
+        try {
+            flag = echartService.delVisualizePanelEchart(id);
+
+            jsonMap.put("flag", flag);
+        } catch (Exception e) {
+            e.printStackTrace();
+            flag = false;
+
+            jsonMap.put("flag", flag);
+        }
+
+        return jsonMap;
+    }
+
+    @RequestMapping("/editVisualizePanelEchart/{id}")
+    @ResponseBody
+    public Map<String, Object> editVisualizePanelEchart(@PathVariable("id") Integer id) {
+
+        return echartService.editVisualizePanelEchart(id);
+    }
+
 }

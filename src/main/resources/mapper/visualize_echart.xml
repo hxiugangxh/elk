@@ -54,4 +54,17 @@
         </if>
     </select>
 
+    <delete id="delVisualizePanelEchart">
+        delete from cm_visualize_panel_echart where id = #{id};
+        delete from cm_visualize_panel_rel_echart where panel_id = #{id};
+    </delete>
+
+    <select id="getVisualizePanel" resultType="VisualizePanelEchartBean">
+        select * from cm_visualize_panel_echart where id = #{id}
+    </select>
+
+    <select id="listPanelRelEchart" resultType="VisualizePanelRelEchartBean">
+        select * from cm_visualize_panel_rel_echart where panel_id = #{id}
+    </select>
+
 </mapper>
