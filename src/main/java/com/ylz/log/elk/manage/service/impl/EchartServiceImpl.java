@@ -110,6 +110,9 @@ public class EchartServiceImpl implements EchartService {
                     for (String key : map.keySet()) {
                         String type = MapUtils.getString((Map) map.get(key), "type", "");
 
+                        if (type.equals("date")) {
+                            key += ".date";
+                        }
                         if (Constants.converList.contains(type)) {
                             if (converMap.containsKey(key)) {
                                 List<String> list = converMap.get(key);
@@ -148,6 +151,11 @@ public class EchartServiceImpl implements EchartService {
     @Override
     public Map<String, Object> generatEchart(String relIndex, String field, Integer lastDay) {
         Map<String, Object> dataMap = new HashMap<>();
+        boolean dateFlag = false;
+        if (field.contains(".date")) {
+            dateFlag = true;
+            field = field.replaceAll("\\.date", "");
+        }
 
         List<String> xAxisDataList = new ArrayList<>();
         List<Long> seriesDataList = new ArrayList<>();
@@ -191,7 +199,7 @@ public class EchartServiceImpl implements EchartService {
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 String key = bucket.getKey() + "";
-                if (StringUtils.isNotEmpty(bucket.getKeyAsString())) {
+                if (dateFlag) {
                     key = df.format(new Date(Long.parseLong(bucket.getKey() + "")));
                 }
                 long count = bucket.getDocCount();
