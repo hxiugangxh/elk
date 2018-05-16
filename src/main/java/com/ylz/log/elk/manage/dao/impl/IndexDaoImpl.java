@@ -339,19 +339,19 @@ public class IndexDaoImpl implements IndexDao {
 
     @Override
     public Map<String, Object> hasExist(String multiIndex) {
-        Map<String, Object> jsonMap = new HashMap<>();
+        Map<String, Object> dataMap = new HashMap<>();
         String querySQL = "select count(1) from cm_multi_index where multi_index = '" + multiIndex + "'";
 
         log.info("hasExist: " + querySQL);
         Integer count = this.jdbcTemplate.queryForObject(querySQL, Integer.class);
 
         if (count > 0) {
-            jsonMap.put("flag", true);
+            dataMap.put("flag", true);
         } else {
-            jsonMap.put("flag", false);
+            dataMap.put("flag", false);
         }
 
-        return jsonMap;
+        return dataMap;
     }
 
     @Override

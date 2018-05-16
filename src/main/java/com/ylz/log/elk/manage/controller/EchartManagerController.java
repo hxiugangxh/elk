@@ -280,4 +280,16 @@ public class EchartManagerController {
 
         return jsonMap;
     }
+
+    @RequestMapping("/hasExistPanelName")
+    @ResponseBody
+    public Map<String, Object> hasExistPanelName(@RequestParam("panelName") String panelName) {
+        return echartService.hasExistPanelName(panelName);
+    }
+
+    @RequestMapping("/hasExistEchartName")
+    @ResponseBody
+    public Map<String, Object> hasExistEchartName(@RequestParam("echartName") String echartName) {
+        return echartService.hasExistEchartName(echartName);
+    }
 }

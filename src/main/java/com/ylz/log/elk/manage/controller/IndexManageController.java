@@ -114,9 +114,8 @@ public class IndexManageController {
     @RequestMapping("/hasExist")
     @ResponseBody
     public Map<String, Object> hasExist(@RequestParam("multiIndex") String multiIndex) {
-        Map<String, Object> jsonMap = indexService.hasExist(multiIndex);
 
-        return jsonMap;
+        return indexService.hasExist(multiIndex);
     }
 
     /**

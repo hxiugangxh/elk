@@ -82,6 +82,7 @@
         <h5 class="modal-title" id="myModalLabel">添加面板</h5>
       </div>
       <div class="modal-body " style="min-height: 300px;">
+
         <form role="form" class="form-horizontal row">
           <input type="hidden" id="id"/>
           <div class="row">
@@ -89,9 +90,9 @@
               <label class="col-sm-2 control-label">
                 图表名称:</label>
               <div class="col-sm-4">
-                <input type="text" class="form-control input-sm" id="echartName" placeholder="请输入图表名称">
+                <input type="text" class="form-control input-sm" id="echartName" placeholder="请输入图表名称" />
               </div>
-              <div class="col-sm-1" style="padding-left: 0px;">
+              <div class="col-sm-1" style="padding-left: 0px">
                 <button type="button" onclick="pageSelectEchart();"
                         class="btn btn-primary" style="margin-top: -1px;line-height: 1.3">查找
                 </button>
@@ -99,8 +100,9 @@
               <label class="col-sm-2 control-label">
                 面板名称:</label>
               <div class="col-sm-3">
-                <input type="text" class="form-control input-sm" id="panelName" placeholder="请输入面板名称"/>
-                <span class="mr5 red500" style="position: absolute;top: 10px;right: 0px">*</span>
+                <input type="text" class="form-control input-sm" id="panelName"
+                       onkeyup="throttle(hasExistPanelName)" placeholder="请输入面板名称"/>
+                <div style="position: absolute;top: 8px; right: -3px"><b class="mr5 red500" id="existFlag">*</b></div>
               </div>
             </div>
           </div>
@@ -184,6 +186,37 @@
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 <script>
   /*<![CDATA[*/
+  function hasExistPanelName() {
+    var panelName = $("#panelName").val();
+    var formData = {
+      "panelName": panelName
+    };
+
+    var URL = path + "/echartManage/hasExistPanelName";
+
+    if (panelName.split(" ").join("") == "") {
+      $("#existFlag").html("*");
+      $("#existFlag").attr("class", "mr5 red500");
+    } else {
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
+
+        if (flag) {
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-remove red500");
+        } else {
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+        }
+      }, "json");
+    }
+  }
+  function throttle(method) {
+    clearTimeout(method.tId);
+    method.tId = setTimeout(function () {
+      method.call();
+    }, 200);
+  }
   function batchDelVisualizePanelEchart() {
     var selections = $("#table").bootstrapTable("getSelections");
     var id = [];
@@ -199,8 +232,20 @@
 
     delVisualizePanelEchart(id + "");
   }
+
   function modifyVisualizePanelEchart() {
+    var clazz = $("#existFlag").attr("class");
     var panelName = $("#panelName").val();
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
+
+      return;
+    }
+    if (panelName.split(" ").join("") == "") {
+      layer.msg('面板名称不能为空！', {icon: 2, time: 1000});
+
+      return;
+    }
 
     var id = $("#id").val();
 
@@ -301,7 +346,18 @@
   }
 
   function saveVisualizePanelEchart() {
+    var clazz = $("#existFlag").attr("class");
     var panelName = $("#panelName").val();
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
+
+      return;
+    }
+    if (panelName.split(" ").join("") == "") {
+      layer.msg('面板名称不能为空！', {icon: 2, time: 1000});
+
+      return;
+    }
 
     var formData = {
       "panelName": panelName,
@@ -682,7 +738,7 @@
   var optionLine = {
     title: {
       text: '折线图',
-      textStyle:{
+      textStyle: {
         fontSize: 12
       },
       x: 'center'
@@ -715,7 +771,7 @@
   var optionBar = {
     title: {
       text: '柱状图',
-      textStyle:{
+      textStyle: {
         align: 'center',
         fontSize: 12
       },

@@ -496,7 +496,7 @@
   });
 
   function saveMultiIndex() {
-    var clazz = $("#multiIndex").val();
+    var clazz = $("#existFlag").attr("class");
     var multiIndex = $("#multiIndex").val();
     if (clazz.indexOf("red500") != -1) {
       layer.msg('组合索引已经存在！', {icon: 2, time: 1000});

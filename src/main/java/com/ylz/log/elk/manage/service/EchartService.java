@@ -34,4 +34,8 @@ public interface EchartService {
     Map<String,Object> editVisualizePanelEchart(Integer id);
 
     boolean modifyVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean, List<String> echartIdList);
+
+    Map<String,Object> hasExistPanelName(String panelName);
+
+    Map<String,Object> hasExistEchartName(String echartName);
 }

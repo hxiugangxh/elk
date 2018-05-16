@@ -361,4 +361,32 @@ public class EchartServiceImpl implements EchartService {
 
         return false;
     }
+
+    @Override
+    public Map<String, Object> hasExistPanelName(String panelName) {
+        Map<String, Object> dataMap = new HashMap<>();
+        int count = echartMapper.hasExistPanelName(panelName);
+
+        if (count > 0) {
+            dataMap.put("flag", true);
+        } else {
+            dataMap.put("flag", false);
+        }
+
+        return dataMap;
+    }
+
+    @Override
+    public Map<String, Object> hasExistEchartName(String echartName) {
+        Map<String, Object> dataMap = new HashMap<>();
+        int count = echartMapper.hasExistEchartName(echartName);
+
+        if (count > 0) {
+            dataMap.put("flag", true);
+        } else {
+            dataMap.put("flag", false);
+        }
+
+        return dataMap;
+    }
 }

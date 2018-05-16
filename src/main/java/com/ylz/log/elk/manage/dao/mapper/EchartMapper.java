@@ -40,4 +40,7 @@ public interface EchartMapper {
 
     int modifyVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean);
 
+    int hasExistPanelName(@Param("panelName") String panelName);
+
+    int hasExistEchartName(@Param("echartName") String echartName);
 }

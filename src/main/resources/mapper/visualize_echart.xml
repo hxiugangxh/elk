@@ -87,4 +87,12 @@
       update cm_visualize_panel_echart set panel_name = #{panelName} where id = #{id}
     </update>
 
+    <select id="hasExistPanelName" resultType="int">
+        select count(1) from cm_visualize_panel_echart where panel_name = #{panelName}
+    </select>
+
+    <select id="hasExistEchartName" resultType="int">
+        select count(1) from cm_visualize_echart where echart_name = #{echartName}
+    </select>
+
 </mapper>
