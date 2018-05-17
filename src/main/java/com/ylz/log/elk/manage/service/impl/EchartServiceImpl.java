@@ -17,6 +17,8 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
@@ -161,9 +163,11 @@ public class EchartServiceImpl implements EchartService {
         List<Long> seriesDataList = new ArrayList<>();
         List<Map<String, Object>> pieSeriesDataList = new ArrayList<>();
 
+        RangeQueryBuilder lte = QueryBuilders.rangeQuery("time").gte("2018-5-11 15:27:00").lte("now");
         TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(1000);
 
         SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","))
+                .setQuery(lte)
                 .addAggregation(termsAgg);
 
         log.info("generatEchart:\n index = {}, DSL = {}", relIndex.split(","), searchRequestBuilder);

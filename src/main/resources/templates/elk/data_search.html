@@ -12,6 +12,13 @@
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
   <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
   <link rel="stylesheet" type="text/css" th:href="@{/assets/css/log.css}"/>
+
+  <style>
+    .left-cont3 {
+      min-height: 400px;
+      padding:0;
+    }
+  </style>
 </head>
 
 <body>
@@ -72,12 +79,17 @@
               <div class="row no-pd search-info">
                 <label class="control-label no-pd"><b class="mr5 red500">*</b>显示字段</label>
                 <div class="col-xs-12">
-                  <select id="field" class="js-example-basic-single2 span12">
+                  <!--<select id="field" class="js-example-basic-single2 span12">
                     <option value="">全部</option>
                     <th:block th:each="field : ${esFieldmap.fieldList}">
                       <option th:value="${field}" th:text="${field}"></option>
                     </th:block>
-                  </select>
+                  </select>-->
+                  <ul class="list-group ul-top" style="max-height: 300px;overflow-y: auto;overflow-x: hidden">
+                    <th:block th:each="field : ${esFieldmap.fieldList}">
+                      <li class="list-group-item" th:text="${field}"></li>
+                    </th:block>
+                  </ul>
                 </div>
               </div>
             </form>

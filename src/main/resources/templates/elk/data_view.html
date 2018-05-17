@@ -131,7 +131,7 @@
                   </select>
                 </div>
               </div>
-              <div class="form-group" style="display: none">
+              <div class="form-group">
                 <label class="col-sm-3 control-label">
                   查询时间:</label>
                 <div class="col-sm-9">
@@ -139,8 +139,17 @@
                     <option value="">请选择...</option>
                     <option value="1">最近一天</option>
                     <option value="3">最近三天</option>
-                    <option value="7">最近七天</option>
+                    <option value="5">最近五天</option>
+                    <option value="15">最近十五天</option>
+                    <option value="30">最近三十天</option>
                   </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">
+                  过滤条件:</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control input-sm"/>
                 </div>
               </div>
               <div class="form-group">
@@ -377,6 +386,7 @@
   }
 
   var hisEchartName = "";
+
   function editVisualizeEchart(id) {
     var URL = path + "/echartManage/editVisualizeEchart/" + id;
     var formData = {};
@@ -394,21 +404,19 @@
       var type = jsonData.visualizeChartBean.type;
 
       $("#type").val(type);
-      changeType();
-      if (type == "1") {
-        option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_line.series[0].name = jsonData.visualizeChartBean.field;
-        option_line.series[0].data = jsonData.echartMap.seriesDataList;
-      } else if (type == "2") {
-        option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_bar.series[0].name = jsonData.visualizeChartBean.field;
-        option_bar.series[0].data = jsonData.echartMap.seriesDataList;
-      } else if (type == "3") {
-        option_pie.series[0].name = jsonData.visualizeChartBean.field;
-        option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
-      }
 
-      initEchart();
+      option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
+      option_line.series[0].name = jsonData.visualizeChartBean.field;
+      option_line.series[0].data = jsonData.echartMap.seriesDataList;
+
+      option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
+      option_bar.series[0].name = jsonData.visualizeChartBean.field;
+      option_bar.series[0].data = jsonData.echartMap.seriesDataList;
+
+      option_pie.series[0].name = jsonData.visualizeChartBean.field;
+      option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
+
+      changeType();
 
       $(".modal-btn").hide();
       $("#modifyBtn").show();
@@ -469,8 +477,34 @@
         $(this).addClass("show");
       }
     });
+
+    if (generatFlag) {
+      if (type == "1") {
+        myChart_line.dispose();
+        myChart_line = echarts.init(document.getElementById('main_line'));
+        myChart_line.setOption(option_line);
+      } else if (type == "2") {
+        myChart_bar.dispose();
+        myChart_bar = echarts.init(document.getElementById('main_bar'));
+        myChart_bar.setOption(option_bar);
+      } else if (type == "3") {
+        if (option_pie.series[0].data.length > 30) {
+          if (confirm("数据超过30条，确定要展示吗？")) {
+            myChart_pie.dispose();
+            myChart_pie = echarts.init(document.getElementById('main_pie'));
+            myChart_pie.setOption(option_pie);
+          }
+        } else {
+          myChart_pie.dispose();
+          myChart_pie = echarts.init(document.getElementById('main_pie'));
+          myChart_pie.setOption(option_pie);
+        }
+
+      }
+    }
   }
 
+  var generatFlag = false;
   function generatEchart() {
     var relIndex = $("#field").find("option:selected").attr("data-relIndex");
     var field = $("#field").val();
@@ -496,6 +530,8 @@
     var URL = path + "/echartManage/generatEchart";
 
     $.post(URL, formData, function (jsonData) {
+      generatFlag = true;
+
       option_line.xAxis.data = jsonData.xAxisDataList;
       option_line.series[0].name = field;
       option_line.series[0].data = jsonData.seriesDataList;
@@ -507,7 +543,21 @@
       option_pie.series[0].name = field;
       option_pie.series[0].data = jsonData.pieSeriesDataList;
 
-      initEchart();
+      var type = $("#type").val();
+
+      if (type == "1") {
+        myChart_line.dispose();
+        myChart_line = echarts.init(document.getElementById('main_line'));
+        myChart_line.setOption(option_line);
+      } else if (type == "2") {
+        myChart_bar.dispose();
+        myChart_bar = echarts.init(document.getElementById('main_bar'));
+        myChart_bar.setOption(option_bar);
+      } else if (type == "3") {
+        myChart_pie.dispose();
+        myChart_pie = echarts.init(document.getElementById('main_pie'));
+        myChart_pie.setOption(option_pie);
+      }
     }, "json");
   }
 
