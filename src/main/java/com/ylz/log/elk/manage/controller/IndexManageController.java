@@ -44,8 +44,19 @@ public class IndexManageController {
             @RequestParam(value = "field", defaultValue = "") String field,
             @RequestParam(value = "searchContent", defaultValue = "") String searchContent
     ) {
+        Map<String, Object> jsonMap = new HashMap<>();
 
-        return indexService.queryByEs(page, pageSize, index, type, field, searchContent);
+        try {
+            jsonMap.putAll(indexService.queryByEs(page, pageSize, index, type, field, searchContent));
+
+            jsonMap.put("flag", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            jsonMap.put("flag", false);
+        }
+
+        return jsonMap;
     }
 
     @RequestMapping("/listField")

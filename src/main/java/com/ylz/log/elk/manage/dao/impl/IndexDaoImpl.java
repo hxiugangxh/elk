@@ -153,7 +153,7 @@ public class IndexDaoImpl implements IndexDao {
         }
 
         SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(indexList.toArray(new String[]{}))
-                .setFrom(page).setSize(pageSize);
+                .setFrom(page * pageSize).setSize(pageSize);
 
         if (StringUtils.isEmpty(searchContent)) {
             searchRequestBuilder.setQuery(matchAllQuery());
@@ -165,8 +165,8 @@ public class IndexDaoImpl implements IndexDao {
             searchRequestBuilder.setFetchSource(field.split(","), null);
         }
 
-        log.info("queryByEs--查询es数据: index = {}, page = {}, pageSize = {}\n查询DSL: {}",
-                index, page, pageSize, searchRequestBuilder);
+        log.info("queryByEs--查询es数据: index = {}, relIndex = {}, page = {}, pageSize = {}\n查询DSL: {}",
+                index, indexList, page, pageSize, searchRequestBuilder);
 
         SearchHits hits = searchRequestBuilder
                 .setExplain(true).execute().actionGet()
