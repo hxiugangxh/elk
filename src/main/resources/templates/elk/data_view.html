@@ -208,7 +208,7 @@
 
     var URL = path + "/echartManage/hasExistEchartName";
 
-    if (hisEchartName == echartName) {
+    if (hisEchartName != "" && hisEchartName == echartName) {
       $("#existFlag").html("");
       $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
     } else if (echartName.split(" ").join("") == "") {
@@ -334,13 +334,13 @@
   function modifyVisualizeEchart(id) {
     var clazz = $("#existFlag").attr("class");
     var echartName = $("#echartName").val();
-    if (clazz.indexOf("red500") != -1) {
-      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
+    if (echartName.split(" ").join("") == "") {
+      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
 
       return;
     }
-    if (echartName.split(" ").join("") == "") {
-      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
 
       return;
     }
@@ -422,13 +422,13 @@
 
     var clazz = $("#existFlag").attr("class");
     var echartName = $("#echartName").val();
-    if (clazz.indexOf("red500") != -1) {
-      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
+    if (echartName.split(" ").join("") == "") {
+      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
 
       return;
     }
-    if (echartName.split(" ").join("") == "") {
-      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
 
       return;
     }

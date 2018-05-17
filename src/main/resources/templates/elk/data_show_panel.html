@@ -194,7 +194,7 @@
 
     var URL = path + "/echartManage/hasExistPanelName";
 
-    if (hisPanelName == panelName) {
+    if (hisPanelName != "" && hisPanelName == panelName) {
       $("#existFlag").html("");
       $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
     } else if (panelName.split(" ").join("") == "") {
@@ -239,16 +239,17 @@
   function modifyVisualizePanelEchart() {
     var clazz = $("#existFlag").attr("class");
     var panelName = $("#panelName").val();
-    if (clazz.indexOf("red500") != -1) {
-      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
-
-      return;
-    }
     if (panelName.split(" ").join("") == "") {
       layer.msg('面板名称不能为空！', {icon: 2, time: 1000});
 
       return;
     }
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
+
+      return;
+    }
+
 
     var id = $("#id").val();
 
@@ -356,13 +357,13 @@
   function saveVisualizePanelEchart() {
     var clazz = $("#existFlag").attr("class");
     var panelName = $("#panelName").val();
-    if (clazz.indexOf("red500") != -1) {
-      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
+    if (panelName.split(" ").join("") == "") {
+      layer.msg('面板名称不能为空！', {icon: 2, time: 1000});
 
       return;
     }
-    if (panelName.split(" ").join("") == "") {
-      layer.msg('面板名称不能为空！', {icon: 2, time: 1000});
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
 
       return;
     }
