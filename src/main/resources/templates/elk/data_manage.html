@@ -83,14 +83,14 @@
         <div class="col-md-4 mt15 manage">
           <button type="button" class="btn btn-primary btn-add-label mb-20" onclick="saveModal()">
             <span class="glyphicon glyphicon-plus"></span>
-            添加索引
+            添加目录
           </button>
           <div>
             <span class="list-group-item tab">
                 <a href="javascript:void(0);">
                   <i class="iconfont icon-down"></i>
                 </a>
-                <span class="deal">组合索引</span>
+                <span class="deal">日志目录</span>
             </span>
             <ul class="list-group ul-top" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
               <th:block th:each="multiIndexBean : ${multiIndexList}">
@@ -110,7 +110,7 @@
                 <a href="javascript:void(0);">
                   <i class="iconfont icon-down"></i>
                 </a>
-                <span class="deal">Elasticsearch索引</span>
+                <span class="deal">ES日志文件</span>
             </span>
             <ul class="list-group" style="max-height: 198px;overflow-y: auto;overflow-x: hidden">
               <th:block th:each="index : ${indexList}">
@@ -134,7 +134,7 @@
                         aria-hidden="true">&times;
                 </button>
                 <h4 class="modal-title" id="myModalLabel">
-                  添加索引
+                  添加目录
                 </h4>
                 <div class="form-horizontal" style="position: absolute;top: 15px; left: 420px">
                   <div class="form-group">
@@ -142,7 +142,7 @@
                     </div>
                     <div class="block-cont col-md-12">
                       <input type="text" class="form-control" id="multiIndex" onkeyup="throttle(hasExist)"
-                             placeholder="请输入组合索引名称">
+                             placeholder="请输入目录名称">
                     </div>
                   </div>
                 </div>
@@ -150,7 +150,7 @@
               <div class="modal-body" style="min-height: 450px;">
                 <div class="col-md-6">
                   <div class="input-group col-md-11">
-                    <label style="margin-bottom: 5px">Elasticsearch索引：</label>
+                    <label style="margin-bottom: 5px">ES日志文件：</label>
                     <input type="text" style="margin-bottom: 5px" name="" id="txt" class="form-control"
                            onkeyup="throttle(selectOption(this, 'left'))"/>
                   </div>
@@ -174,7 +174,7 @@
 
                 <div class="col-md-6">
                   <div class="input-group col-md-11">
-                    <label style="margin-bottom: 5px">已选索引：</label>
+                    <label style="margin-bottom: 5px">已选日志文件：</label>
                     <input type="text" style="margin-bottom: 5px" name="" class="form-control"
                            onkeyup="throttle(selectOption(this, 'right'))"/>
                   </div>
@@ -197,7 +197,7 @@
         <div class="col-md-8">
           <div class="cf mb-20">
             <div class="mt15 fl">
-              <h4 style="margin:0">索引名称：<span id="name_info" class="bold-reset blue-color"></span></h4>
+              <h4 style="margin:0">文件\目录名称：<span id="name_info" class="bold-reset blue-color"></span></h4>
             </div>
             <div class="mt15 fr">
               <button type="button" class="btn btn-info" id="coll">
@@ -213,7 +213,7 @@
           <table id="table" class="table table-bordered">
             <thead>
             <tr>
-              <th data-field="index">索引名称</th>
+              <th data-field="index">ES文件名称</th>
               <th data-field="field">字段列名</th>
             </tr>
             </thead>
@@ -547,6 +547,7 @@
     var domEle = "";
     domEle += "<li class='list-group-item active'>";
     domEle += "  <a href='javascript:void(0)' class='deal' data-type='" + type + "'>" + multiIndex + "</a>";
+    domEle += "<span class='glyphicon glyphicon-star li-star yellow'></span>"
     domEle += "  <i class='glyphicon glyphicon-remove li-close' data-multiIdex='" + multiIndex + "'";
     domEle += "     onclick='delMultiIndex(this)'></i>";
     domEle += " </li>";
