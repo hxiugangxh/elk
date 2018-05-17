@@ -161,7 +161,7 @@ public class EchartServiceImpl implements EchartService {
         List<Long> seriesDataList = new ArrayList<>();
         List<Map<String, Object>> pieSeriesDataList = new ArrayList<>();
 
-        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(Integer.MAX_VALUE);
+        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(1000);
 
         SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","))
                 .addAggregation(termsAgg);
@@ -196,7 +196,7 @@ public class EchartServiceImpl implements EchartService {
             Iterator<LongTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
             while (teamBucketIt.hasNext()) {
                 LongTerms.Bucket bucket = teamBucketIt.next();
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
                 String key = bucket.getKey() + "";
                 if (dateFlag) {
