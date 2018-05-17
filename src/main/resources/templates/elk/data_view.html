@@ -629,6 +629,8 @@
             $("#field").val(field);
           }
         } else {
+          var domEle = "<option value=''>请选择..</option>";
+          $("#field").html(domEle);
           layer.msg("有不存在的日志文件", {icon: 2, time: 2000});
         }
       }, "json");
