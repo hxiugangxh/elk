@@ -90,7 +90,7 @@
               <label class="col-sm-2 control-label">
                 图表名称:</label>
               <div class="col-sm-4">
-                <input type="text" class="form-control input-sm" id="echartName" placeholder="请输入图表名称" />
+                <input type="text" class="form-control input-sm" id="echartName" placeholder="请输入图表名称"/>
               </div>
               <div class="col-sm-1" style="padding-left: 0px">
                 <button type="button" onclick="pageSelectEchart();"
@@ -214,12 +214,14 @@
       }, "json");
     }
   }
+
   function throttle(method) {
     clearTimeout(method.tId);
     method.tId = setTimeout(function () {
       method.call();
     }, 200);
   }
+
   function batchDelVisualizePanelEchart() {
     var selections = $("#table").bootstrapTable("getSelections");
     var id = [];
@@ -292,6 +294,7 @@
   }
 
   var hisPanelName = "";
+
   function editVisualizePanelEchart(id) {
     var URL = path + "/echartManage/editVisualizePanelEchart/" + id;
     $.post(URL, {}, function (jsonData) {
@@ -587,45 +590,51 @@
     var echartDom = getEchartDom(echartDomIndex);
     if (echartDom != null) {
       $.post(URL, formData, function (jsonData) {
-        var type = jsonData.visualizeChartBean.type;
+        var flag = jsonData.flag;
 
-        var index = $(echartDom).attr("data-sort");
-        $(echartDom).attr("data-flag", (flag + 1) % 2);
-        $(echartDom).attr("data-id", jsonData.visualizeChartBean.id);
-        selectArr[index] = jsonData.visualizeChartBean.id;
-        echartArr[index].dispose();
-        echartArr[index] = echarts.init($(echartDom).get(0));
-        if (type == "1") {
-          optionLine.xAxis.data = jsonData.echartMap.xAxisDataList;
-          optionLine.title.text = jsonData.visualizeChartBean.echartName;
-          optionLine.series[0].name = jsonData.visualizeChartBean.field;
-          optionLine.series[0].data = jsonData.echartMap.seriesDataList;
+        if (flag) {
+          var type = jsonData.visualizeChartBean.type;
 
-          echartArr[index].setOption(optionLine);
-        } else if (type == "2") {
-          optionBar.xAxis.data = jsonData.echartMap.xAxisDataList;
-          optionBar.title.text = jsonData.visualizeChartBean.echartName;
-          optionBar.series[0].name = jsonData.visualizeChartBean.field;
-          optionBar.series[0].data = jsonData.echartMap.seriesDataList;
+          var index = $(echartDom).attr("data-sort");
+          $(echartDom).attr("data-flag", (flag + 1) % 2);
+          $(echartDom).attr("data-id", jsonData.visualizeChartBean.id);
+          selectArr[index] = jsonData.visualizeChartBean.id;
+          echartArr[index].dispose();
+          echartArr[index] = echarts.init($(echartDom).get(0));
+          if (type == "1") {
+            optionLine.xAxis.data = jsonData.echartMap.xAxisDataList;
+            optionLine.title.text = jsonData.visualizeChartBean.echartName;
+            optionLine.series[0].name = jsonData.visualizeChartBean.field;
+            optionLine.series[0].data = jsonData.echartMap.seriesDataList;
 
-          echartArr[index].setOption(optionBar);
-        } else if (type == "3") {
-          /*var title = jsonData.visualizeChartBean.echartName;
-          var length = title.length;
-          var relTile = "";
-          var arr = title.split("");
-          for (var i = 0; i < length; i++) {
-            if (i != 0 && i % 4 == 0) {
-              relTile += arr[i] + "\n"
-            } else {
-              relTile += arr[i];
-            }
-          }*/
-          optionPie.title.text = jsonData.visualizeChartBean.echartName;
-          optionPie.series[0].name = jsonData.visualizeChartBean.field;
-          optionPie.series[0].data = jsonData.echartMap.pieSeriesDataList;
+            echartArr[index].setOption(optionLine);
+          } else if (type == "2") {
+            optionBar.xAxis.data = jsonData.echartMap.xAxisDataList;
+            optionBar.title.text = jsonData.visualizeChartBean.echartName;
+            optionBar.series[0].name = jsonData.visualizeChartBean.field;
+            optionBar.series[0].data = jsonData.echartMap.seriesDataList;
 
-          echartArr[index].setOption(optionPie);
+            echartArr[index].setOption(optionBar);
+          } else if (type == "3") {
+            /*var title = jsonData.visualizeChartBean.echartName;
+            var length = title.length;
+            var relTile = "";
+            var arr = title.split("");
+            for (var i = 0; i < length; i++) {
+              if (i != 0 && i % 4 == 0) {
+                relTile += arr[i] + "\n"
+              } else {
+                relTile += arr[i];
+              }
+            }*/
+            optionPie.title.text = jsonData.visualizeChartBean.echartName;
+            optionPie.series[0].name = jsonData.visualizeChartBean.field;
+            optionPie.series[0].data = jsonData.echartMap.pieSeriesDataList;
+
+            echartArr[index].setOption(optionPie);
+          }
+        } else {
+          layer.msg(jsonData.errorMsg, {icon: 2});
         }
       });
     }

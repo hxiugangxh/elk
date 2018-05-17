@@ -2,6 +2,7 @@ package com.ylz.log.elk.manage.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.ylz.log.elk.base.util.DateUtils;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelRelEchartBean;
@@ -11,7 +12,6 @@ import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -26,12 +26,10 @@ import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -163,15 +161,18 @@ public class EchartServiceImpl implements EchartService {
         List<Long> seriesDataList = new ArrayList<>();
         List<Map<String, Object>> pieSeriesDataList = new ArrayList<>();
 
-        RangeQueryBuilder lte = QueryBuilders.rangeQuery("time").gte("2018-5-11 15:27:00").lte("now");
+        log.info("generatEchart: index = {}", relIndex);
+        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","));
+        if (null != lastDay) {
+            RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("time")
+                    .gte(DateUtils.formate(new Date(), "yyyy-MM-dd HH:mm:ss", -lastDay))
+                    .lte("now");
+            searchRequestBuilder.setQuery(rangeQueryBuilder);
+        }
         TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(1000);
+        searchRequestBuilder.addAggregation(termsAgg);
 
-        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","))
-                .setQuery(lte)
-                .addAggregation(termsAgg);
-
-        log.info("generatEchart:\n index = {}, DSL = {}", relIndex.split(","), searchRequestBuilder);
-
+        log.info("generatEchart:\nDSL = {}", searchRequestBuilder);
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
 
         Aggregations aggregations = searchResponse.getAggregations();
@@ -274,6 +275,7 @@ public class EchartServiceImpl implements EchartService {
         Map<String, Object> dataMap = new HashMap<>();
 
         PageHelper.startPage(pn, pageSize);
+        log.info("pageSelectEchart");
         List<VisualizeChartBean> list = echartMapper.pageVisualizeEchart(echartName, "", "");
 
         PageInfo pageInfo = new PageInfo(list);

@@ -1,5 +1,6 @@
 package com.ylz.log.elk.manage.controller;
 
+import ch.qos.logback.core.joran.conditional.ElseAction;
 import com.ylz.log.elk.manage.bean.MultiIndexBean;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
@@ -55,8 +56,19 @@ public class EchartManagerController {
      */
     @RequestMapping("/listConverField")
     @ResponseBody
-    public Map<String, List<String>> listConverField(@RequestParam("index") String index) {
-        return echartService.listConverField(index);
+    public Map<String, Object> listConverField(@RequestParam("index") String index) {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        try {
+            jsonMap.put("fieldList", echartService.listConverField(index));
+            jsonMap.put("flag", true);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            jsonMap.put("flag", false);
+        }
+
+        return jsonMap;
     }
 
     @RequestMapping(value = "/saveVisualizeEchart", method = RequestMethod.POST)
@@ -121,12 +133,24 @@ public class EchartManagerController {
     public Map<String, Object> detailVisualizeEchart(@PathVariable("id") Integer id) {
         Map<String, Object> jsonMap = new HashMap<>();
 
-        VisualizeChartBean visualizeChartBean = echartService.getVisualizeEchart(id);
-        Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean.getRelIndex(),
-                visualizeChartBean.getField(), visualizeChartBean.getLastDay());
+        log.info("detailVisualizeEchart");
+        VisualizeChartBean visualizeChartBean = null;
+        try {
+            visualizeChartBean = echartService.getVisualizeEchart(id);
+            Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean.getRelIndex(),
+                    visualizeChartBean.getField(), visualizeChartBean.getLastDay());
 
-        jsonMap.put("visualizeChartBean", visualizeChartBean);
-        jsonMap.put("echartMap", echartMap);
+            jsonMap.put("flag", true);
+            jsonMap.put("visualizeChartBean", visualizeChartBean);
+            jsonMap.put("echartMap", echartMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            jsonMap.put("flag", false);
+            if (e.getMessage().contains("no such index")) {
+                jsonMap.put("errorMsg", visualizeChartBean.getEchartName() + "有不存在的文件");
+            }
+        }
 
         return jsonMap;
     }
@@ -136,12 +160,18 @@ public class EchartManagerController {
     public Map<String, Object> editVisualizeEchart(@PathVariable("id") Integer id) {
         Map<String, Object> jsonMap = new HashMap<>();
 
-        VisualizeChartBean visualizeChartBean = echartService.getVisualizeEchart(id);
-        Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean.getRelIndex(),
-                visualizeChartBean.getField(), visualizeChartBean.getLastDay());
+        try {
+            VisualizeChartBean visualizeChartBean = echartService.getVisualizeEchart(id);
+            Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean.getRelIndex(),
+                    visualizeChartBean.getField(), visualizeChartBean.getLastDay());
 
-        jsonMap.put("visualizeChartBean", visualizeChartBean);
-        jsonMap.put("echartMap", echartMap);
+            jsonMap.put("flag", true);
+            jsonMap.put("visualizeChartBean", visualizeChartBean);
+            jsonMap.put("echartMap", echartMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            jsonMap.put("flag", false);
+        }
 
         return jsonMap;
     }
@@ -201,7 +231,6 @@ public class EchartManagerController {
             @RequestParam(value = "pageSize", defaultValue = "4") Integer pageSize,
             @RequestParam(value = "echartName", defaultValue = "") String echartName
     ) {
-
         return echartService.pageSelectEchart(pn, pageSize, echartName);
 
     }

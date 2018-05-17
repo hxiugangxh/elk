@@ -116,6 +116,7 @@
                               th:text="${multiIndexBean.multiIndex}"></option>
                     </th:block>
                   </select>
+                  <span class="mr5 red500" style="position: absolute;top: 9px;right: 0px;">*</span>
                 </div>
               </div>
               <div class="form-group">
@@ -129,20 +130,7 @@
                               th:text="${field}"></option>
                     </th:block>
                   </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-3 control-label">
-                  查询时间:</label>
-                <div class="col-sm-9">
-                  <select class="form-control input-sm" name="lastDay" id="lastDay">
-                    <option value="">请选择...</option>
-                    <option value="1">最近一天</option>
-                    <option value="3">最近三天</option>
-                    <option value="5">最近五天</option>
-                    <option value="15">最近十五天</option>
-                    <option value="30">最近三十天</option>
-                  </select>
+                  <span class="mr5 red500" style="position: absolute;top: 9px;right: 0px;">*</span>
                 </div>
               </div>
               <div class="form-group">
@@ -160,6 +148,15 @@
                     <option value="1">count</option>
                   </select>
                 </div>
+              </div>
+              <div class="form-group">
+                <label class="col-sm-3 control-label">查询范围:</label>
+                <label class="col-sm-2 control-label" style="padding-right: 6px">最近:</label>
+                <div class="col-sm-6">
+                  <input type="text" class="form-control input-sm" placeholder="日志最久365天" id="lastDay"
+                         onkeyup="limit(this)" onblur="limit(this)"/>
+                </div>
+                <label class="col-sm-1 control-label">天</label>
               </div>
               <div class="form-group">
                 <div class="col-sm-9"></div>
@@ -209,6 +206,15 @@
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 <script>
   /*<![CDATA[*/
+  function limit(thisObj) {
+    var value = $(thisObj).val().replace(/\D/g, '');
+
+    if (value > 30) {
+      value = 30;
+    }
+    $(thisObj).val(value);
+  }
+
   function hasExistEchartName() {
     var echartName = $("#echartName").val();
     var formData = {
@@ -392,36 +398,42 @@
     var formData = {};
 
     $.post(URL, formData, function (jsonData) {
-      $("#id").val(jsonData.visualizeChartBean.id);
-      $("#echartName").val(jsonData.visualizeChartBean.echartName);
+      var flag = jsonData.flag;
 
-      hisEchartName = jsonData.visualizeChartBean.echartName;
-      $("#existFlag").html("");
-      $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+      if (flag) {
+        $("#id").val(jsonData.visualizeChartBean.id);
+        $("#echartName").val(jsonData.visualizeChartBean.echartName);
 
-      $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
-      changeMultiIndex(jsonData.visualizeChartBean.field);
-      var type = jsonData.visualizeChartBean.type;
+        hisEchartName = jsonData.visualizeChartBean.echartName;
+        $("#existFlag").html("");
+        $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
 
-      $("#type").val(type);
+        $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
+        changeMultiIndex(jsonData.visualizeChartBean.field);
+        var type = jsonData.visualizeChartBean.type;
 
-      option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
-      option_line.series[0].name = jsonData.visualizeChartBean.field;
-      option_line.series[0].data = jsonData.echartMap.seriesDataList;
+        $("#type").val(type);
 
-      option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
-      option_bar.series[0].name = jsonData.visualizeChartBean.field;
-      option_bar.series[0].data = jsonData.echartMap.seriesDataList;
+        option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
+        option_line.series[0].name = jsonData.visualizeChartBean.field;
+        option_line.series[0].data = jsonData.echartMap.seriesDataList;
 
-      option_pie.series[0].name = jsonData.visualizeChartBean.field;
-      option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
+        option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
+        option_bar.series[0].name = jsonData.visualizeChartBean.field;
+        option_bar.series[0].data = jsonData.echartMap.seriesDataList;
 
-      changeType();
+        option_pie.series[0].name = jsonData.visualizeChartBean.field;
+        option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
 
-      $(".modal-btn").hide();
-      $("#modifyBtn").show();
-      $("#myModalLabel").html("修改图表");
-      $('#Modal_view').modal('show');
+        changeType();
+
+        $(".modal-btn").hide();
+        $("#modifyBtn").show();
+        $("#myModalLabel").html("修改图表");
+        $('#Modal_view').modal('show');
+      } else {
+        layer.msg("图表数据已不存在或被修改", {icon: 2, time: 1000});
+      }
     }, "json");
   }
 
@@ -505,6 +517,7 @@
   }
 
   var generatFlag = false;
+
   function generatEchart() {
     var relIndex = $("#field").find("option:selected").attr("data-relIndex");
     var field = $("#field").val();
@@ -600,15 +613,23 @@
       var formData = {
         "index": multiIndex
       };
-      $.post(URL, formData, function (fieldList) {
-        var domEle = "<option value=''>请选择...</option>";
-        $.each(fieldList, function (key, value) {
-          domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + key + "</option>";
-        });
-        $("#field").html(domEle);
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
 
-        if (field != "") {
-          $("#field").val(field);
+        if (flag) {
+          var fieldList = jsonData.fieldList
+
+          var domEle = "<option value=''>请选择...</option>";
+          $.each(fieldList, function (key, value) {
+            domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + key + "</option>";
+          });
+          $("#field").html(domEle);
+
+          if (field != "") {
+            $("#field").val(field);
+          }
+        } else {
+          layer.msg("有不存在的日志文件", {icon: 2, time: 2000});
         }
       }, "json");
     } else {
