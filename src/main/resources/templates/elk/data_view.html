@@ -137,7 +137,7 @@
                 <label class="col-sm-3 control-label">
                   过滤条件:</label>
                 <div class="col-sm-9">
-                  <input type="text" class="form-control input-sm"/>
+                  <input type="text" class="form-control input-sm" name="filterStr" id="filterStr"/>
                 </div>
               </div>
               <div class="form-group">
@@ -153,7 +153,7 @@
                 <label class="col-sm-3 control-label">查询范围:</label>
                 <label class="col-sm-2 control-label" style="padding-right: 6px">最近:</label>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control input-sm" placeholder="日志最久365天" id="lastDay"
+                  <input type="text" class="form-control input-sm" placeholder="日志最久30天" id="lastDay"
                          onkeyup="limit(this)" onblur="limit(this)"/>
                 </div>
                 <label class="col-sm-1 control-label">天</label>
@@ -261,47 +261,52 @@
     infoEchart.dispose();
     infoEchart = echarts.init(document.getElementById('info_main_bar'));
 
-    var URL = path + "/echartManage/detailVisualizeEchart/" + id;
+    var URL = path + "/echartManage/editVisualizeEchart/" + id;
     var formData = {};
 
     $.post(URL, formData, function (jsonData) {
-      var type = jsonData.visualizeChartBean.type;
+      if (jsonData.flag) {
+        var type = jsonData.visualizeChartBean.type;
 
-      $("#infoEchartName").html(jsonData.visualizeChartBean.echartName);
-      $("#infoMultiIndex").html(jsonData.visualizeChartBean.multiIndex);
-      if (type == "1") {
-        option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_line.series[0].name = jsonData.visualizeChartBean.field;
-        option_line.series[0].data = jsonData.echartMap.seriesDataList;
+        $("#infoEchartName").html(jsonData.visualizeChartBean.echartName);
+        $("#infoMultiIndex").html(jsonData.visualizeChartBean.multiIndex);
+        if (type == "1") {
+          option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
+          option_line.series[0].name = jsonData.visualizeChartBean.field;
+          option_line.series[0].data = jsonData.echartMap.seriesDataList;
 
-        infoEchart.setOption(option_line);
-      } else if (type == "2") {
-        option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
-        option_bar.series[0].name = jsonData.visualizeChartBean.field;
-        option_bar.series[0].data = jsonData.echartMap.seriesDataList;
+          infoEchart.setOption(option_line);
+        } else if (type == "2") {
+          option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
+          option_bar.series[0].name = jsonData.visualizeChartBean.field;
+          option_bar.series[0].data = jsonData.echartMap.seriesDataList;
 
-        infoEchart.setOption(option_bar);
-      } else if (type == "3") {
-        option_pie.series[0].name = jsonData.visualizeChartBean.field;
-        option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
+          infoEchart.setOption(option_bar);
+        } else if (type == "3") {
+          option_pie.series[0].name = jsonData.visualizeChartBean.field;
+          option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
 
-        infoEchart.setOption(option_pie);
-      }
-
-      var layerIndex = layer.open({
-        type: 1,
-        title: '图表详情',
-        area: ['100%', '100%'], //宽高
-        shadeClose: true,
-        content: $("#info_content")
-      });
-
-      window.onkeyup = function (ev) {
-        var key = ev.keyCode || ev.which;
-        if (key == 27) { //按下Escape
-          layer.close(layerIndex); //关闭信息框
+          infoEchart.setOption(option_pie);
         }
+
+        var layerIndex = layer.open({
+          type: 1,
+          title: '图表详情',
+          area: ['100%', '100%'], //宽高
+          shadeClose: true,
+          content: $("#info_content")
+        });
+
+        window.onkeyup = function (ev) {
+          var key = ev.keyCode || ev.which;
+          if (key == 27) { //按下Escape
+            layer.close(layerIndex); //关闭信息框
+          }
+        }
+      } else {
+        layer.msg(jsonData.errorMsg, {icon: 2});
       }
+
     });
   }
 
@@ -399,6 +404,7 @@
 
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
+      console.log(jsonData);
 
       if (flag) {
         $("#id").val(jsonData.visualizeChartBean.id);
@@ -409,6 +415,7 @@
         $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
 
         $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
+
         changeMultiIndex(jsonData.visualizeChartBean.field);
         var type = jsonData.visualizeChartBean.type;
 
@@ -432,7 +439,7 @@
         $("#myModalLabel").html("修改图表");
         $('#Modal_view').modal('show');
       } else {
-        layer.msg("图表数据已不存在或被修改", {icon: 2, time: 1000});
+        layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
       }
     }, "json");
   }
@@ -522,6 +529,7 @@
     var relIndex = $("#field").find("option:selected").attr("data-relIndex");
     var field = $("#field").val();
     var lastDay = $("#lastDay").val();
+    var filerStr = $("#filterStr").val();
 
     if ($("#multiIndex").val() == "") {
       layer.alert("请选择项目名称");
@@ -538,7 +546,8 @@
     var formData = {
       "relIndex": relIndex,
       "field": field,
-      "lastDay": lastDay
+      "lastDay": lastDay,
+      "filerStr": filerStr.split(" ").join(" or ")
     };
     var URL = path + "/echartManage/generatEchart";
 
@@ -613,6 +622,8 @@
       var formData = {
         "index": multiIndex
       };
+      var domEle = "<option value=''>请选择..</option>";
+      $("#field").html(domEle);
       $.post(URL, formData, function (jsonData) {
         var flag = jsonData.flag;
 
@@ -629,8 +640,6 @@
             $("#field").val(field);
           }
         } else {
-          var domEle = "<option value=''>请选择..</option>";
-          $("#field").html(domEle);
           layer.msg("有不存在的日志文件", {icon: 2, time: 2000});
         }
       }, "json");

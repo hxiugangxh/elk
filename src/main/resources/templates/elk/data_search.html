@@ -73,7 +73,7 @@
           <div class="span2 wrapper-content-left left-cont3">
             <form class="form-horizontal cf form-box" id="myform">
               <div class="row no-pd search-info">
-                <label class="control-label no-pd"><b class="mr5 red500">*</b>索引列表</label>
+                <label class="control-label no-pd"><b class="mr5 red500">*</b>文件\目录列表</label>
                 <div class="col-xs-12">
                   <select id="index" class="js-example-basic-single span12"
                           onchange="listField(this)">
@@ -240,13 +240,23 @@
       "type": type
     };
 
-    $.post(URL, formData, function (fieldList) {
-      var domEle = "";
-      for (var i = 0; i < fieldList.length; i++) {
-        domEle += "<li class='list-group-item'>" + fieldList[i] + "</li>";
-      }
+    var domEle = "";
+    $("#field").html(domEle);
+    $("#data-line-div").html("");
+    $.post(URL, formData, function (jsonData) {
+      if (jsonData.flag) {
+        var listField = jsonData.listField;
 
-      $("#field").html(domEle);
+        for (var i = 0; i < fieldList.length; i++) {
+          domEle += "<li class='list-group-item'>" + fieldList[i] + "</li>";
+        }
+
+        $("#field").html(domEle);
+      } else {
+        $("#data-line-div").html("");
+        $("#pagination-ele").html("<span>暂无数据</span>");
+        layer.msg("文件已经不存在或被修改", {icon: 2});
+      }
     }, "json");
   }
 
@@ -340,6 +350,8 @@
         options.currentPage = jsonData.currentPage;
         $("#pagination-ele").bootstrapPaginator(options);
       } else {
+        $("#data-line-div").html("");
+        $("#pagination-ele").html("<span>暂无数据</span>");
         layer.msg("请求失败，有不存在的文件", {icon: 2, time: 1000});
       }
     }, "json")

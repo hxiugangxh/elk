@@ -11,6 +11,7 @@ import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -18,6 +19,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -149,7 +151,7 @@ public class EchartServiceImpl implements EchartService {
     }
 
     @Override
-    public Map<String, Object> generatEchart(String relIndex, String field, Integer lastDay) {
+    public Map<String, Object> generatEchart(String relIndex, String field, Integer lastDay, String filerStr) {
         Map<String, Object> dataMap = new HashMap<>();
         boolean dateFlag = false;
         if (field.contains(".date")) {
@@ -163,6 +165,10 @@ public class EchartServiceImpl implements EchartService {
 
         log.info("generatEchart: index = {}", relIndex);
         SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","));
+        if (StringUtils.isNotBlank(filerStr)) {
+            QueryStringQueryBuilder queryStringQueryBuilder = QueryBuilders.queryStringQuery(filerStr);
+            searchRequestBuilder.setQuery(queryStringQueryBuilder);
+        }
         if (null != lastDay) {
             Date date = new Date();
             RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("@timestamp")
@@ -170,7 +176,7 @@ public class EchartServiceImpl implements EchartService {
                     .lte(date.getTime());
             searchRequestBuilder.setQuery(rangeQueryBuilder);
         }
-        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(1000);
+        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(Integer.MAX_VALUE);
         searchRequestBuilder.addAggregation(termsAgg);
 
         log.info("generatEchart:\nDSL = {}", searchRequestBuilder);
@@ -247,6 +253,11 @@ public class EchartServiceImpl implements EchartService {
 
     @Override
     public VisualizeChartBean getVisualizeEchart(Integer id) {
+        // 检验项目是否被删除
+        int count = echartMapper.valiteMutilIndex(id);
+        if (count == 0) {
+            throw new RuntimeException("项目已经被删除");
+        }
         return echartMapper.getVisualizeEchart(id);
     }
 

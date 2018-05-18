@@ -43,4 +43,6 @@ public interface EchartMapper {
     int hasExistPanelName(@Param("panelName") String panelName);
 
     int hasExistEchartName(@Param("echartName") String echartName);
+
+    int valiteMutilIndex(@Param("id") Integer id);
 }

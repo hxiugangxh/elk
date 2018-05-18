@@ -18,6 +18,9 @@ public class VisualizeChartBean {
     static {
         typeMap = new HashMap<>();
 
+        /**
+         * 1 折线；2：柱状；3：饼状
+         */
         typeMap.put(1, "<i class='iconfont icon-61'></i>");
         typeMap.put(2, "<i class='iconfont icon-62'></i>");
         typeMap.put(3, "<i class='iconfont icon-slice33'></i>");
@@ -32,6 +35,7 @@ public class VisualizeChartBean {
     private String field;
     private String relIndex;
     private Integer lastDay;
+    private String filterStr;
 
     @Transient
     private String typePo;

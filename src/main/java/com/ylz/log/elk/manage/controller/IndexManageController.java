@@ -61,11 +61,20 @@ public class IndexManageController {
 
     @RequestMapping("/listField")
     @ResponseBody
-    public List<String> listField(
+    public Map<String, Object> listField(
             @RequestParam("index") String index,
             @RequestParam(value = "type", defaultValue = "0") String type
     ) {
-        return indexService.listField(index, type);
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        try {
+            jsonMap.put("fieldList", indexService.listField(index, type));
+            jsonMap.put("flag", true);
+        } catch (Exception e) {
+            e.getMessage();
+            jsonMap.put("flag", false);
+        }
+        return jsonMap;
     }
 
     @RequestMapping("/dataManage")

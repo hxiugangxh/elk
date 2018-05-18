@@ -20,7 +20,7 @@
     <insert id="saveVisualizeEchart" parameterType="VisualizeChartBean"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into cm_visualize_echart values
-          (null, #{echartName}, #{type}, #{multiIndex}, #{field}, #{relIndex}, #{lastDay})
+          (null, #{echartName}, #{type}, #{multiIndex}, #{field}, #{relIndex}, #{lastDay}. #{filterStr})
     </insert>
 
     <delete id="delVisualizeEchart">
@@ -37,7 +37,7 @@
     <update id="modifyVisualizeEchart" parameterType="VisualizeChartBean">
         update cm_visualize_echart set
           echart_name = #{echartName}, type = #{type}, multi_index = #{multiIndex},
-          field = #{field}, rel_index = #{relIndex}, last_day = #{lastDay}
+          field = #{field}, rel_index = #{relIndex}, last_day = #{lastDay}, filter_str = #{filterStr}
           where id = #{id}
     </update>
 
@@ -93,6 +93,11 @@
 
     <select id="hasExistEchartName" resultType="int">
         select count(1) from cm_visualize_echart where echart_name = #{echartName}
+    </select>
+
+    <select id="valiteMutilIndex" resultType="int">
+        select count(1) from cm_multi_index where multi_index =
+          (select multi_index from cm_visualize_echart where id = #{id})
     </select>
 
 </mapper>
