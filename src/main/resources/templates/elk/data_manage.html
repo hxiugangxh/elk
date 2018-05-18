@@ -498,13 +498,14 @@
   function saveMultiIndex() {
     var clazz = $("#existFlag").attr("class");
     var multiIndex = $("#multiIndex").val();
-    if (clazz.indexOf("red500") != -1) {
-      layer.msg('组合索引已经存在！', {icon: 2, time: 1000});
+
+    if (multiIndex.split(" ").join("") == "") {
+      layer.msg('目录\项目不能为空！', {icon: 2, time: 1000});
 
       return;
     }
-    if (multiIndex.split(" ").join("") == "") {
-      layer.msg('组合索引不能为空！', {icon: 2, time: 1000});
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('目录项目已经存在！', {icon: 2, time: 1000});
 
       return;
     }
