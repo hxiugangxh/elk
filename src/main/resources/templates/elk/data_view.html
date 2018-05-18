@@ -402,9 +402,10 @@
     var URL = path + "/echartManage/editVisualizeEchart/" + id;
     var formData = {};
 
+    generatFlag = true;
+
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
-      console.log(jsonData);
 
       if (flag) {
         $("#id").val(jsonData.visualizeChartBean.id);
@@ -589,6 +590,7 @@
   var myChart_pie = echarts.init(document.getElementById('main_pie'));
 
   function addVisualizeEchart() {
+    generatFlag = false;
     hisEchartName = "";
 
     $("#Modal_view").html(myModalClone.html());
