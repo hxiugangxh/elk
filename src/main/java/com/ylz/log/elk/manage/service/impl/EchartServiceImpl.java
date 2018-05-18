@@ -2,7 +2,6 @@ package com.ylz.log.elk.manage.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ylz.log.elk.base.util.DateUtils;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelRelEchartBean;
@@ -12,6 +11,7 @@ import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.time.DateUtils;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -164,9 +164,10 @@ public class EchartServiceImpl implements EchartService {
         log.info("generatEchart: index = {}", relIndex);
         SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","));
         if (null != lastDay) {
-            RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("time")
-                    .gte(DateUtils.formate(new Date(), "yyyy-MM-dd HH:mm:ss", -lastDay))
-                    .lte("now");
+            Date date = new Date();
+            RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("@timestamp")
+                    .gte(DateUtils.addDays(date, -lastDay).getTime())
+                    .lte(date.getTime());
             searchRequestBuilder.setQuery(rangeQueryBuilder);
         }
         TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(1000);
