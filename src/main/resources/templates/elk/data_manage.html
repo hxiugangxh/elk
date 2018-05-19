@@ -81,7 +81,7 @@
       <div class="box-body">
         <!-- 按钮 -->
         <div class="col-md-4 mt15 manage">
-          <button type="button" class="btn btn-primary btn-add-label mb-20" onclick="saveModal()">
+          <button type="button" class="btn btn-primary btn-add-label mb-20" onclick="addMultiIndex()">
             <span class="glyphicon glyphicon-plus"></span>
             添加目录\项目
           </button>
@@ -280,7 +280,7 @@
 
   var myModalClone = $("#myModal").clone();
 
-  function saveModal() {
+  function addMultiIndex() {
     $("#myModal").html(myModalClone.html());
     $('#myModal').modal('show').css({
       width: 'auto',

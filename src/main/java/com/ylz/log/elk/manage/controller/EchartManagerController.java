@@ -26,11 +26,23 @@ public class EchartManagerController {
     @RequestMapping("/dataView")
     public String dataView(Map<String, Object> map) {
 
-        List<MultiIndexBean> multiIndexList = indexService.listMultiIndex();
-
-        map.put("multiIndexList", multiIndexList);
-
         return "elk/data_view";
+    }
+
+    @RequestMapping("/loadMultiIndex")
+    @ResponseBody
+    public Map<String, Object> loadMultiIndex() {
+        Map<String, Object> jsonMap = new HashMap<>();
+
+        try {
+            jsonMap.put("multiIndexList", indexService.listMultiIndex());
+            jsonMap.put("flag", true);
+        } catch (Exception e) {
+            log.error("exception", e);
+            jsonMap.put("flag", false);
+        }
+
+        return jsonMap;
     }
 
     @RequestMapping("/pageVisualizeEchart")

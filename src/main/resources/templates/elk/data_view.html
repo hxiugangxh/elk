@@ -111,10 +111,6 @@
                   <select class="form-control input-sm" onchange="changeMultiIndex('')" name="multiIndex"
                           id="multiIndex">
                     <option value="">请选择项目...</option>
-                    <th:block th:each="multiIndexBean : ${multiIndexList}">
-                      <option th:value="${multiIndexBean.multiIndex}"
-                              th:text="${multiIndexBean.multiIndex}"></option>
-                    </th:block>
                   </select>
                   <span class="mr5 red500" style="position: absolute;top: 9px;right: 0px;">*</span>
                 </div>
@@ -403,7 +399,6 @@
     var formData = {};
 
     generatFlag = true;
-
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
 
@@ -415,9 +410,7 @@
         $("#existFlag").html("");
         $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
 
-        $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
 
-        changeMultiIndex(jsonData.visualizeChartBean.field);
         var type = jsonData.visualizeChartBean.type;
 
         $("#type").val(type);
@@ -433,12 +426,7 @@
         option_pie.series[0].name = jsonData.visualizeChartBean.field;
         option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
 
-        changeType();
-
-        $(".modal-btn").hide();
-        $("#modifyBtn").show();
-        $("#myModalLabel").html("修改图表");
-        $('#Modal_view').modal('show');
+        openModal("修改图表", "modifyBtn", jsonData.visualizeChartBean.multiIndex, jsonData.visualizeChartBean.field);
       } else {
         layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
       }
@@ -593,12 +581,38 @@
     generatFlag = false;
     hisEchartName = "";
 
-    $("#Modal_view").html(myModalClone.html());
-    $('#Modal_view').modal('show');
+    openModal("添加图表", "saveBtn", "", "");
+  }
 
-    $(".modal-btn").hide();
-    $("#myModalLabel").html("添加图表");
-    $("#saveBtn").show();
+  function openModal(title, btnId, multiIndex, field) {
+    var domEle = "<option value=''>请选择...</option>";
+    $("#multiIndex").html(domEle);
+    var URL = path + "/echartManage/loadMultiIndex";
+    $.post(URL, {}, function (jsonData) {
+      $("#Modal_view").html(myModalClone.html());
+      if (jsonData.flag) {
+        var multiIndexList = jsonData.multiIndexList;
+        for (var i = 0; i < multiIndexList.length; i++) {
+          domEle += "  <option value='" + multiIndexList[i].multiIndex + "'>";
+          domEle += multiIndexList[i].multiIndex + "</option>";
+        }
+
+        $("#multiIndex").html(domEle);
+
+        if (multiIndex != "") {
+          $("#multiIndex").val(multiIndex);
+          changeMultiIndex(field);
+          changeType();
+        }
+      } else {
+        layer.msg("加载项目名称错误", {icon: 2});
+      }
+
+      $(".modal-btn").hide();
+      $("#myModalLabel").html(title);
+      $("#" + btnId).show();
+      $('#Modal_view').modal('show');
+    }, "json");
   }
 
   function initEchart() {
@@ -635,7 +649,7 @@
           var domEle = "<option value=''>请选择...</option>";
           var existFieldFlag = false;
           $.each(fieldList, function (key, value) {
-            if (value == field) {
+            if (key == field) {
               existFieldFlag = true;
             }
             domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + key + "</option>";
