@@ -249,7 +249,7 @@
     event.stopPropagation();
 
     var multiIndex = $(thisObj).attr("data-multiIdex");
-    layer.confirm("确定要删除索引：" + multiIndex + " 吗？", function () {
+    layer.confirm("确定要删除目录\项目：" + multiIndex + " 吗？", function () {
       var URL = path + "/indexManage/delMultiIndex";
       var formData = {
         "multiIndex": multiIndex

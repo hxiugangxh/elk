@@ -556,7 +556,6 @@
 
   function getEchartDom(echartDomIndex) {
     if (echartDomIndex && echartDomIndex > -1) {
-      console.log("通过传递的index");
       return $(".echart_view").eq(echartDomIndex);
     }
 
@@ -626,10 +625,17 @@
           var $input = $("#tableShow input[type=checkbox]").filter(function () {
             return $(this).val() == id;
           });
-          var txt = "<div style='font-size: 20px;font-weight: bold;color: #ddd;position: relative;top:65px; left: 125px'>" +
-            $input.parents("td").next().html() + "图表损坏</div>";
-          echartArr[index].setOption({title: {text: "没有图表"}});
-          $(echartDom).prepend(txt);
+          var txt = $input.parents("td").next().html();
+          if (txt != undefined) {
+            txt += "的图表损坏";
+          } else {
+            txt = "id=" + id + "的图表已经不存在";
+          }
+          var txtDom = "<div style='font-size: 20px;font-weight: bold;color: #ddd;line-height: 174px;vertical-align: center;text-align: center'>" +
+             txt + "</div>";
+          // 放个空值 占位
+          echartArr[index].setOption({title: {text: " "}});
+          $(echartDom).prepend(txtDom);
           //layer.msg($input.parents("td").next().html() + "所属的" + jsonData.errorMsg, {icon: 2});
         }
       });
