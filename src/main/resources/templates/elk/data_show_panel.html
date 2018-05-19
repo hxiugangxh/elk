@@ -540,21 +540,23 @@
   var flag = 0;
 
   function initEchart() {
-    $(".echart_view").each(function (index, domEle) {
-      if (!echartArr[index]) {
-        echartArr[index] = echarts.init($(this).get(0));
+    var arr = $(".echart_view");
+    for (var i = 0; i < arr.length; i++) {
+      if (!echartArr[i]) {
+        echartArr[i] = echarts.init(arr.eq(i).get(0));
       }
-      echartArr[index].setOption({});
+      echartArr[i].setOption({});
 
-      $(domEle).attr("data-flag", flag);
-      $(domEle).attr("data-sort", index);
-    });
+      $(arr.eq(i)).attr("data-flag", flag);
+      $(arr.eq(i)).attr("data-sort", i);
+    }
     // 清空数据
     $(".echart-close").click();
   }
 
   function getEchartDom(echartDomIndex) {
-    if (echartDomIndex) {
+    if (echartDomIndex && echartDomIndex > -1) {
+      console.log("通过传递的index");
       return $(".echart_view").eq(echartDomIndex);
     }
 
@@ -584,23 +586,21 @@
   }
 
   function detailVisualizeEchart(id, echartDomIndex) {
-    var URL = path + "/echartManage/detailVisualizeEchart/" + id;
+    var URL = path + "/echartManage/editVisualizeEchart/" + id;
     var formData = {};
 
     var echartDom = getEchartDom(echartDomIndex);
     if (echartDom != null) {
       $.post(URL, formData, function (jsonData) {
-        var flag = jsonData.flag;
-
-        if (flag) {
+        var index = $(echartDom).attr("data-sort");
+        $(echartDom).attr("data-flag", (flag + 1) % 2);
+        selectArr[index] = id;
+        $(echartDom).attr("data-id", id);
+        echartArr[index].dispose();
+        echartArr[index] = echarts.init($(echartDom).get(0));
+        if (jsonData.flag) {
           var type = jsonData.visualizeChartBean.type;
 
-          var index = $(echartDom).attr("data-sort");
-          $(echartDom).attr("data-flag", (flag + 1) % 2);
-          $(echartDom).attr("data-id", jsonData.visualizeChartBean.id);
-          selectArr[index] = jsonData.visualizeChartBean.id;
-          echartArr[index].dispose();
-          echartArr[index] = echarts.init($(echartDom).get(0));
           if (type == "1") {
             optionLine.xAxis.data = jsonData.echartMap.xAxisDataList;
             optionLine.title.text = jsonData.visualizeChartBean.echartName;
@@ -616,17 +616,6 @@
 
             echartArr[index].setOption(optionBar);
           } else if (type == "3") {
-            /*var title = jsonData.visualizeChartBean.echartName;
-            var length = title.length;
-            var relTile = "";
-            var arr = title.split("");
-            for (var i = 0; i < length; i++) {
-              if (i != 0 && i % 4 == 0) {
-                relTile += arr[i] + "\n"
-              } else {
-                relTile += arr[i];
-              }
-            }*/
             optionPie.title.text = jsonData.visualizeChartBean.echartName;
             optionPie.series[0].name = jsonData.visualizeChartBean.field;
             optionPie.series[0].data = jsonData.echartMap.pieSeriesDataList;
@@ -634,20 +623,27 @@
             echartArr[index].setOption(optionPie);
           }
         } else {
-          layer.msg(jsonData.errorMsg, {icon: 2});
+          var $input = $("#tableShow input[type=checkbox]").filter(function () {
+            return $(this).val() == id;
+          });
+          var txt = "<div style='font-size: 20px;font-weight: bold;color: #ddd;position: relative;top:65px; left: 125px'>" +
+            $input.parents("td").next().html() + "图表损坏</div>";
+          echartArr[index].setOption({title: {text: "没有图表"}});
+          $(echartDom).prepend(txt);
+          //layer.msg($input.parents("td").next().html() + "所属的" + jsonData.errorMsg, {icon: 2});
         }
       });
     }
   }
 
   // 选中数据 根据echart_view初始化
-  var selectArr = []
+  var selectArr = [];
   $(document).on("click", ".table_show input[type=checkbox]", function () {
     var selectedFlag = $(this).prop("checked");
     var id = $(this).val();
 
     if (selectedFlag) {
-      detailVisualizeEchart(id);
+      detailVisualizeEchart(id, -1);
     } else {
       var index = 0;
       $(".echart_view").each(function (i, domEle) {
@@ -661,8 +657,8 @@
       echartArr[index].setOption({});
       $(".echart_view").eq(index).attr("data-flag", flag);
       $(".echart_view").eq(index).attr("data-id", -1);
-      var index = $(".echart_view").eq(index).attr("data-sort");
-      selectArr[index] = -1;
+      var sort = $(".echart_view").eq(index).attr("data-sort");
+      selectArr[sort] = -1;
     }
   });
   /*]]>*/

@@ -633,12 +633,16 @@
           var fieldList = jsonData.fieldList
 
           var domEle = "<option value=''>请选择...</option>";
+          var existFieldFlag = false;
           $.each(fieldList, function (key, value) {
+            if (value == field) {
+              existFieldFlag = true;
+            }
             domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + key + "</option>";
           });
           $("#field").html(domEle);
 
-          if (field != "") {
+          if (field != "" && existFieldFlag) {
             $("#field").val(field);
           }
         } else {

@@ -256,7 +256,7 @@ public class EchartServiceImpl implements EchartService {
         // 检验项目是否被删除
         int count = echartMapper.valiteMutilIndex(id);
         if (count == 0) {
-            throw new RuntimeException("项目已经被删除");
+            throw new RuntimeException("目录\\项目已经被删除");
         }
         return echartMapper.getVisualizeEchart(id);
     }
