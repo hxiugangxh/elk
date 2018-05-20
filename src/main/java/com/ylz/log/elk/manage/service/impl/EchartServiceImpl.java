@@ -246,7 +246,7 @@ public class EchartServiceImpl implements EchartService {
             return true;
         }
 
-        log.error("saveVisualizeEchart: 保存失败，有效行为0");
+        log.error("delVisualizeEchart: 删除失败，有效行为0");
 
         return false;
     }
@@ -301,14 +301,20 @@ public class EchartServiceImpl implements EchartService {
 
     @Override
     @Transactional
-    public boolean saveVisualizePanelEchart(VisualizePanelEchartBean visualizePanelEchartBean,
-                                            List<String> echartIdList) {
+    public boolean saveVisualizePanelEchart(
+            VisualizePanelEchartBean visualizePanelEchartBean,
+            List<String> echartIdList
+    ) {
         entityManager.persist(visualizePanelEchartBean);
 
         if (visualizePanelEchartBean.getId() > 0) {
             List<String> list = echartIdList.stream().filter(
                     echartId -> !echartId.equals("-1")).collect(Collectors.toList());
 
+            int length = (list.size() < 4) ? 4 - list.size() : 0;
+            for (int i = 0 ;i < length ; i++) {
+                list.add("-1");
+            }
             int count = echartMapper.savePanelRelEchart(visualizePanelEchartBean.getId(), list);
 
             if (count > 0) {
@@ -364,9 +370,7 @@ public class EchartServiceImpl implements EchartService {
         // 修改
         int count = echartMapper.modifyVisualizePanelEchart(visualizePanelEchartBean);
 
-        // 删除已有关系
-        count = (count > 0) ? echartMapper.delVisualizePanelRelEchart(
-                Arrays.asList(visualizePanelEchartBean.getId() + "")) : count;
+        echartMapper.delVisualizePanelRelEchart(Arrays.asList(visualizePanelEchartBean.getId() + ""));
         // 保存新定义关系
         count = (count > 0) ? echartMapper.savePanelRelEchart(visualizePanelEchartBean.getId(), echartIdList) : count;
 

@@ -35,4 +35,6 @@ public interface IndexDao {
     boolean dealCollIndex(String s, String type, String index);
 
     List<String> getRelIndex(String index);
+
+    boolean delMultiRelEchartAndPanel(String multiIndex);
 }

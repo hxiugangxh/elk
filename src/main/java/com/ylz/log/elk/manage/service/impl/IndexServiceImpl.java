@@ -134,7 +134,10 @@ public class IndexServiceImpl implements IndexService {
     @Override
     @Transactional
     public boolean delMultiIndex(String multiIndex) {
-        return indexDao.delMultiIndex(multiIndex);
+        boolean flag = indexDao.delMultiIndex(multiIndex);
+        flag = (flag) ? indexDao.delMultiRelEchartAndPanel(multiIndex) : flag;
+
+        return flag;
     }
 
     @Override

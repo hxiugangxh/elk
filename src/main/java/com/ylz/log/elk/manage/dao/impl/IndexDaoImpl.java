@@ -2,10 +2,10 @@ package com.ylz.log.elk.manage.dao.impl;
 
 import com.ylz.log.elk.base.util.EsUtil;
 import com.ylz.log.elk.base.util.LoginInfoUtil;
-import com.ylz.log.elk.manage.bean.EsIndexBean;
-import com.ylz.log.elk.manage.bean.MultiIndexBean;
-import com.ylz.log.elk.manage.bean.UserCollIndexBean;
+import com.ylz.log.elk.manage.bean.*;
 import com.ylz.log.elk.manage.dao.IndexDao;
+import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
+import com.ylz.log.elk.manage.service.impl.EchartServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -26,6 +26,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -45,6 +46,9 @@ public class IndexDaoImpl implements IndexDao {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private EchartMapper echartMapper;
 
     @Autowired
     private EsUtil esUtil;
@@ -116,7 +120,7 @@ public class IndexDaoImpl implements IndexDao {
     public List<String> getRelIndex(String multiIndex) {
         String querySQL = "select c.*\n" +
                 "  from cm_multi_index a\n" +
-                "  left join cm_multi_es_index_rel b on a.id = b.multi_index_id\n" +
+                "  left join cm_multi_rel_es_index b on a.id = b.multi_index_id\n" +
                 "  left join cm_es_index c on c.id = b.es_index_id\n" +
                 " where c.index is not null\n" +
                 "  and a.multi_index = :multiIndex";
@@ -316,7 +320,7 @@ public class IndexDaoImpl implements IndexDao {
         });
 
         Integer length = esIndexList.size();
-        String insertSQL = "insert into cm_multi_es_index_rel values";
+        String insertSQL = "insert into cm_multi_rel_es_index values";
         for (int i = 0; i < length; i++) {
             if (i == length - 1) {
                 insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + ")";
@@ -422,7 +426,7 @@ public class IndexDaoImpl implements IndexDao {
             esIndexIdList.add(MapUtils.getString(map, "id", ""));
         });
         paramMap.put("esIndexIdList", esIndexIdList);
-        delSQL = "delete from cm_multi_es_index_rel where es_index_id in (:esIndexIdList)";
+        delSQL = "delete from cm_multi_rel_es_index where es_index_id in (:esIndexIdList)";
         log.info("delMultiRelIndex--删除映射关系:\n" + delSQL + "\n参数: " + paramMap);
         Integer count = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
@@ -440,9 +444,9 @@ public class IndexDaoImpl implements IndexDao {
         Map<String, Object> paramMap = new HashMap<>();
 
         paramMap.put("multiIndex", multiIndex);
-        String querySQL = "SELECT * FROM cm_multi_index WHERE multi_index = :multiIndex";
+        String querySQL = "select * from cm_multi_index WHERE multi_index = :multiIndex";
 
-        log.info("delMultiIndex--获取组合索引数据:\n" + querySQL + "\n参数: " + paramMap);
+        log.info("delMultiIndex--获取组合索引数据:\n{}\n参数：{}", querySQL, paramMap);
 
         List<MultiIndexBean> multiIndexList = this.getNamedParameterJdbcTemplate().query(querySQL, paramMap, new
                 BeanPropertyRowMapper(MultiIndexBean.class));
@@ -459,7 +463,7 @@ public class IndexDaoImpl implements IndexDao {
         String delSQL = "delete from cm_es_index\n" +
                 " where id in (select *\n" +
                 "                from (select b.id\n" +
-                "                        from cm_multi_es_index_rel a\n" +
+                "                        from cm_multi_rel_es_index a\n" +
                 "                        left join cm_es_index b on a.es_index_id = b.id\n" +
                 "                       where a.multi_index_id = :multiIndexId) t)";
 
@@ -469,7 +473,7 @@ public class IndexDaoImpl implements IndexDao {
         log.info("delMultiIndex--删除数据库管理的es的index值:\n" + delSQL + "\n参数: " + paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
-        delSQL = "delete from cm_multi_es_index_rel where multi_index_id = :multiIndexId";
+        delSQL = "delete from cm_multi_rel_es_index where multi_index_id = :multiIndexId";
         log.info("delMultiIndex--删除组合索引与es索引的关系表:\n" + delSQL + "\n参数: " + paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
@@ -492,8 +496,8 @@ public class IndexDaoImpl implements IndexDao {
 
         log.info("getUserCollIndexBean: {}", querySQL);
 
-        List<UserCollIndexBean> list = this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper(UserCollIndexBean
-                .class));
+        List<UserCollIndexBean> list = this.jdbcTemplate.query(querySQL,
+                new BeanPropertyRowMapper(UserCollIndexBean.class));
 
         return (list.size() > 0) ? list.get(0) : null;
     }
@@ -529,5 +533,130 @@ public class IndexDaoImpl implements IndexDao {
         log.error("dealCollIndex--保存失败，有效行为0");
 
         return false;
+    }
+
+    /**
+     * 删除所有基于组合索引的图标与面板
+     * 步骤一：获取组合索引关联的图标，获得应该删除的echartIdDelList
+     * 步骤二：获取应该删除的图标所关联的面板，且记为面板A
+     * 步骤三：获取面板A对应的所有的图表的panelRelEchartList并且过滤得到不需要删除的visualizePanelRelEchartList
+     * 步骤四：删除所有面板对应的关联关系，保存不需要删除的visualizePanelRelEchartList
+     * 步骤五：删除应该删除的图表数据
+     * 步骤六：检测面板关联数据是否已经变为空，若为空则删除
+     *
+     * @param multiIndex
+     * @return
+     */
+    @Override
+    public boolean delMultiRelEchartAndPanel(String multiIndex) {
+        Map<String, Object> paramMap = new HashMap<>();
+        String querySQL = "select * from cm_visualize_echart where multi_index = :multiIndex";
+
+        paramMap.put("multiIndex", multiIndex);
+
+        log.info("delMultiRelEchartAndPanel:获取组合索引关联的图表:\n{}\n参数：{}", querySQL, paramMap);
+        List<MultiIndexBean> multiIndexList = this.getNamedParameterJdbcTemplate().query(querySQL, paramMap,
+                new BeanPropertyRowMapper(MultiIndexBean.class));
+
+        List<Integer> echartIdDelList = multiIndexList.stream()
+                .map(MultiIndexBean::getId)
+                .collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(echartIdDelList)) {
+            return true;
+        }
+
+        querySQL = "select *\n" +
+                "  from cm_visualize_panel_echart\n" +
+                " where id in (select panel_id\n" +
+                "                from cm_visualize_panel_rel_echart\n" +
+                "               where echart_id in (:echartIdDelList))";
+
+        paramMap.clear();
+        paramMap.put("echartIdDelList", echartIdDelList);
+
+        log.info("delMultiRelEchartAndPanel:获取需要删除的图表对应的面板数据:\n{}\n参数：{}", querySQL, paramMap);
+        List<VisualizeChartBean> visualizeChartList = this.getNamedParameterJdbcTemplate()
+                .query(querySQL, paramMap, new BeanPropertyRowMapper(VisualizeChartBean.class));
+
+        List<Integer> panelIdList = visualizeChartList.stream()
+                .map(VisualizeChartBean::getId)
+                .collect(Collectors.toList());
+
+        querySQL = "select * from cm_visualize_panel_rel_echart where panel_id in (:panelIdList)";
+        paramMap.clear();
+        paramMap.put("panelIdList", panelIdList);
+        log.info("delMultiRelEchartAndPanel:获取面板对应的图表关系数据:\n{}\n参数：{}", querySQL, paramMap);
+        List<VisualizePanelRelEchartBean> panelRelEchartList = this.getNamedParameterJdbcTemplate()
+                .query(querySQL, paramMap, new BeanPropertyRowMapper(VisualizePanelRelEchartBean.class));
+        // 获取不需要删除的图标ID的集合
+        List<VisualizePanelRelEchartBean> visualizePanelRelEchartList = panelRelEchartList.stream()
+                .filter(panelRelEchart ->
+                        !echartIdDelList.contains(panelRelEchart.getEchartId()) && panelRelEchart.getEchartId() != -1
+                )
+                .collect(Collectors.toList());
+        for (VisualizePanelRelEchartBean visualizePanelRelEchartBean : visualizePanelRelEchartList) {
+            System.out.println("保存回去的: " + visualizePanelRelEchartBean);
+        }
+
+        echartMapper.delVisualizePanelRelEchart(panelIdList);
+        if (CollectionUtils.isNotEmpty(visualizePanelRelEchartList)) {
+            Integer tmp = visualizePanelRelEchartList.get(0).getPanelId();
+            List<String> echartIdList = new ArrayList<>();
+            for (VisualizePanelRelEchartBean visualizePanelRelEchartBean : visualizePanelRelEchartList) {
+                Integer panelId = visualizePanelRelEchartBean.getPanelId();
+                System.out.println("panelId = " + panelId);
+                if (tmp != panelId) {
+                    int length = (echartIdList.size() < 4) ? 4 - echartIdList.size() : 0;
+                    for (int i = 0; i < length; i++) {
+                        echartIdList.add("-1");
+                    }
+                    log.info("保存panelId = {}, echartIdList = {}", panelId, echartIdList);
+                    echartMapper.savePanelRelEchart(tmp, echartIdList);
+                    echartIdList = new ArrayList<>();
+                    tmp = panelId;
+                }
+
+                echartIdList.add(visualizePanelRelEchartBean.getEchartId() + "");
+            }
+            int length = (echartIdList.size() < 4) ? 4 - echartIdList.size() : 0;
+            for (int i = 0; i < length; i++) {
+                echartIdList.add("-1");
+            }
+            echartMapper.savePanelRelEchart(tmp, echartIdList);
+        }
+
+        String delSQL = "delete from cm_visualize_echart where multi_index = :multiIndex";
+        paramMap.clear();
+        paramMap.put("multiIndex", multiIndex);
+        log.info("delMultiRelEchartAndPanel:删除关联图表:\n{}\n参数：{}", delSQL, paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        querySQL = "select a.*\n" +
+                "  from cm_visualize_panel_echart a\n" +
+                "  left join (select *\n" +
+                "               from cm_visualize_panel_rel_echart\n" +
+                "              where echart_id > -1) b on a.id = b.panel_id\n" +
+                " where b.echart_id is null";
+
+        List<VisualizePanelEchartBean> visualizePanelEchartList = this.jdbcTemplate
+                .query(querySQL, new BeanPropertyRowMapper(VisualizePanelEchartBean.class));
+
+        List<Integer> delPanelIdList = visualizePanelEchartList.stream()
+                .map(VisualizePanelEchartBean::getId)
+                .collect(Collectors.toList());
+
+        if (CollectionUtils.isEmpty(delPanelIdList)) {
+            return true;
+        }
+        delSQL = "delete from cm_visualize_panel_echart where id in (:delPanelIdList)";
+
+        paramMap.clear();
+        paramMap.put("delPanelIdList", delPanelIdList);
+
+        log.info("delMultiRelEchartAndPanel:删除已为空的面板:\n{}\n参数：{}", delSQL, paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        return true;
     }
 }

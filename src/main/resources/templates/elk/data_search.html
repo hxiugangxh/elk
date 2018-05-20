@@ -242,10 +242,8 @@
 
     var domEle = "";
     $("#field").html(domEle);
-    $("#data-line-div").html("");
     $.post(URL, formData, function (jsonData) {
-      if (jsonData.flag) {
-        var listField = jsonData.listField;
+        var fieldList = jsonData.fieldList;
 
         for (var i = 0; i < fieldList.length; i++) {
           domEle += "<li class='list-group-item'>" + fieldList[i] + "</li>";

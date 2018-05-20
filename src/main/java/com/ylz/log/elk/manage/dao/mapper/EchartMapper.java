@@ -15,6 +15,7 @@ public interface EchartMapper {
             @Param("echartName") String echartName,
             @Param("sortName") String sortName,
             @Param("sortOrder") String sortOrder);
+
     int saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 
     int delVisualizeEchart(@Param("idList") List<String> idList);
@@ -30,7 +31,7 @@ public interface EchartMapper {
 
     int delVisualizePanelEchart(@Param("idList") List<String> idList);
 
-    int delVisualizePanelRelEchart(@Param("idList") List<String> id);
+    int delVisualizePanelRelEchart(@Param("idList") List<?> idList);
 
     VisualizePanelEchartBean getVisualizePanel(@Param("id") Integer id);
 
