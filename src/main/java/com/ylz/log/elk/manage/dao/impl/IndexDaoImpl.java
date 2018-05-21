@@ -595,9 +595,6 @@ public class IndexDaoImpl implements IndexDao {
                         !echartIdDelList.contains(panelRelEchart.getEchartId()) && panelRelEchart.getEchartId() != -1
                 )
                 .collect(Collectors.toList());
-        for (VisualizePanelRelEchartBean visualizePanelRelEchartBean : visualizePanelRelEchartList) {
-            System.out.println("保存回去的: " + visualizePanelRelEchartBean);
-        }
 
         echartMapper.delVisualizePanelRelEchart(panelIdList);
         if (CollectionUtils.isNotEmpty(visualizePanelRelEchartList)) {
@@ -611,7 +608,6 @@ public class IndexDaoImpl implements IndexDao {
                     for (int i = 0; i < length; i++) {
                         echartIdList.add("-1");
                     }
-                    log.info("保存panelId = {}, echartIdList = {}", panelId, echartIdList);
                     echartMapper.savePanelRelEchart(tmp, echartIdList);
                     echartIdList = new ArrayList<>();
                     tmp = panelId;

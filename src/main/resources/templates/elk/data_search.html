@@ -243,6 +243,7 @@
     var domEle = "";
     $("#field").html(domEle);
     $.post(URL, formData, function (jsonData) {
+      if (jsonData.flag) {
         var fieldList = jsonData.fieldList;
 
         for (var i = 0; i < fieldList.length; i++) {
