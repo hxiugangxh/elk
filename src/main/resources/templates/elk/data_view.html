@@ -223,7 +223,6 @@
     var field = $("#field").val();
     if (field.indexOf("\.date") != -1) {
      $("#timeDiv").show();
-     $("#lastDay").val("");
     } else {
       $("#lastDay").val("");
       $("#timeDiv").hide();
@@ -474,7 +473,7 @@
           $("#existFlag").html("");
           $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
 
-          changeField();
+          x
           $(".date").datepicker({
             format: 'yyyy-MM-dd HH:mm:ss HH:mm;ss',
             weekStart: 1,
@@ -715,6 +714,7 @@
 
           if (field != "" && existFieldFlag) {
             $("#field").val(field);
+            changeField();
           }
         } else {
           layer.msg("有不存在的日志文件", {icon: 2, time: 2000});
