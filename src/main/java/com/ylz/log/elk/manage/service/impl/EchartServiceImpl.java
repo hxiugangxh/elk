@@ -19,6 +19,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
@@ -26,6 +27,7 @@ import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
+import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -166,18 +168,24 @@ public class EchartServiceImpl implements EchartService {
 
         log.info("generatEchart: index = {}", relIndex);
         SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","));
+
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         if (StringUtils.isNotBlank(filerStr)) {
             QueryStringQueryBuilder queryStringQueryBuilder = QueryBuilders.queryStringQuery(filerStr);
-            searchRequestBuilder.setQuery(queryStringQueryBuilder);
+
+            boolQueryBuilder.must(queryStringQueryBuilder);
         }
         if (null != lastDay) {
             Date date = new Date();
             RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("@timestamp")
                     .gte(DateUtils.addDays(date, -lastDay).getTime())
                     .lte(date.getTime());
-            searchRequestBuilder.setQuery(rangeQueryBuilder);
+            boolQueryBuilder.must(rangeQueryBuilder);
         }
-        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field).size(Integer.MAX_VALUE);
+        searchRequestBuilder.setQuery(boolQueryBuilder);
+        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field)
+                .order(Terms.Order.term(true))
+                .size(Integer.MAX_VALUE);
         searchRequestBuilder.addAggregation(termsAgg);
 
         log.info("generatEchart:\nDSL = {}", searchRequestBuilder);

@@ -149,7 +149,7 @@
                 <label class="col-sm-3 control-label">查询范围:</label>
                 <label class="col-sm-2 control-label" style="padding-right: 6px">最近:</label>
                 <div class="col-sm-6">
-                  <input type="text" class="form-control input-sm" placeholder="日志最久30天" id="lastDay"
+                  <input type="text" class="form-control input-sm" placeholder="日志最久30天" name="lastDay" id="lastDay"
                          onkeyup="limit(this)" onblur="limit(this)"/>
                 </div>
                 <label class="col-sm-1 control-label">天</label>
@@ -403,14 +403,7 @@
       var flag = jsonData.flag;
 
       if (flag) {
-        $("#id").val(jsonData.visualizeChartBean.id);
-        $("#echartName").val(jsonData.visualizeChartBean.echartName);
-
         hisEchartName = jsonData.visualizeChartBean.echartName;
-        $("#existFlag").html("");
-        $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
-
-
         var type = jsonData.visualizeChartBean.type;
 
         $("#type").val(type);
@@ -426,7 +419,38 @@
         option_pie.series[0].name = jsonData.visualizeChartBean.field;
         option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
 
-        openModal("修改图表", "modifyBtn", jsonData.visualizeChartBean.multiIndex, jsonData.visualizeChartBean.field);
+        var domEle = "<option value=''>请选择...</option>";
+        $("#multiIndex").html(domEle);
+        var URL = path + "/echartManage/loadMultiIndex";
+        $.post(URL, {}, function (jsonData2) {
+          $("#Modal_view").html(myModalClone.html());
+          if (jsonData2.flag) {
+            var multiIndexList = jsonData2.multiIndexList;
+            for (var i = 0; i < multiIndexList.length; i++) {
+              domEle += "  <option value='" + multiIndexList[i].multiIndex + "'>";
+              domEle += multiIndexList[i].multiIndex + "</option>";
+            }
+
+            $("#multiIndex").html(domEle);
+
+            $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
+            changeMultiIndex(jsonData.visualizeChartBean.field);
+            changeType();
+          } else {
+            layer.msg("加载项目名称错误", {icon: 2});
+          }
+
+          $("#id").val(jsonData.visualizeChartBean.id);
+          $("#echartName").val(jsonData.visualizeChartBean.echartName);
+          $("#lastDay").val(jsonData.visualizeChartBean.lastDay);
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+
+          $(".modal-btn").hide();
+          $("#myModalLabel").html("修改图表");
+          $("#modifyBtn").show();
+          $('#Modal_view').modal('show');
+        }, "json");
       } else {
         layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
       }
