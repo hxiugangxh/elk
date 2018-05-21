@@ -25,6 +25,7 @@ import org.elasticsearch.index.query.QueryStringQueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.bucket.histogram.*;
 import org.elasticsearch.search.aggregations.bucket.terms.LongTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
@@ -175,18 +176,27 @@ public class EchartServiceImpl implements EchartService {
 
             boolQueryBuilder.must(queryStringQueryBuilder);
         }
-        if (null != lastDay) {
+        if (null != lastDay && dateFlag) {
             Date date = new Date();
-            RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery("@timestamp")
+            RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(field)
                     .gte(DateUtils.addDays(date, -lastDay).getTime())
                     .lte(date.getTime());
             boolQueryBuilder.must(rangeQueryBuilder);
         }
         searchRequestBuilder.setQuery(boolQueryBuilder);
-        TermsAggregationBuilder termsAgg = AggregationBuilders.terms(field).field(field)
-                .order(Terms.Order.term(true))
-                .size(Integer.MAX_VALUE);
-        searchRequestBuilder.addAggregation(termsAgg);
+
+        if (dateFlag) {
+            DateHistogramAggregationBuilder dateAgg = AggregationBuilders.dateHistogram(field).field(field)
+                    .dateHistogramInterval(DateHistogramInterval.DAY)
+                    .format("yyyy-MM-dd");
+            searchRequestBuilder.addAggregation(dateAgg);
+        } else {
+            TermsAggregationBuilder termAgg = AggregationBuilders.terms(field).field(field)
+                    .order(Terms.Order.term(true))
+                    .size(Integer.MAX_VALUE);
+
+            searchRequestBuilder.addAggregation(termAgg);
+        }
 
         log.info("generatEchart:\nDSL = {}", searchRequestBuilder);
         SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
@@ -217,12 +227,28 @@ public class EchartServiceImpl implements EchartService {
             Iterator<LongTerms.Bucket> teamBucketIt = teamAgg.getBuckets().iterator();
             while (teamBucketIt.hasNext()) {
                 LongTerms.Bucket bucket = teamBucketIt.next();
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
                 String key = bucket.getKey() + "";
-                if (dateFlag) {
-                    key = df.format(new Date(Long.parseLong(bucket.getKey() + "")));
-                }
+                long count = bucket.getDocCount();
+
+                xAxisDataList.add(key);
+                seriesDataList.add(count);
+
+                Map<String, Object> map = new HashMap<>();
+
+                map.put("name", key);
+                map.put("value", count);
+
+                pieSeriesDataList.add(map);
+            }
+        } else if (obj instanceof InternalDateHistogram) {
+            InternalDateHistogram internalDateHistogram = (InternalDateHistogram) aggregations.get(field);
+            Iterator<InternalDateHistogram.Bucket> teamBucketIt = internalDateHistogram.getBuckets().iterator();
+
+            while (teamBucketIt.hasNext()) {
+                InternalDateHistogram.Bucket bucket = teamBucketIt.next();
+
+                String key = bucket.getKeyAsString();
                 long count = bucket.getDocCount();
 
                 xAxisDataList.add(key);
@@ -236,7 +262,6 @@ public class EchartServiceImpl implements EchartService {
                 pieSeriesDataList.add(map);
             }
         }
-
 
         dataMap.put("xAxisDataList", xAxisDataList);
         dataMap.put("seriesDataList", seriesDataList);
