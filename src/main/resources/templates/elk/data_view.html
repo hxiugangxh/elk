@@ -121,7 +121,7 @@
                 <label class="col-sm-4 control-label">
                   统计依据:</label>
                 <div class="col-sm-8">
-                  <select class="form-control input-sm" id="field" name="field">
+                  <select class="form-control input-sm" id="field" name="field" onchange="changeField()">
                     <option value="">请选择...</option>
                     <th:block th:each="field : ${fieldList}">
                       <option th:value="${field}"
@@ -147,11 +147,11 @@
                   </select>
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group" id="timeDiv">
                 <label class="col-sm-4 control-label">查询范围:</label>
                 <label class="col-sm-2 control-label" style="padding-right: 6px">最近:</label>
                 <div class="col-sm-5">
-                  <input type="text" class="form-control input-sm" placeholder="日志最久30天" name="lastDay" id="lastDay"
+                  <input type="text" class="form-control input-sm" placeholder="最长30天" name="lastDay" id="lastDay"
                          onkeyup="limit(this)" onblur="limit(this)"/>
                 </div>
                 <label class="col-sm-1 control-label">天</label>
@@ -216,11 +216,19 @@
 <!--js插件库-->
 <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
 <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/plugins/bootstrap-select-1.10.0/js/bootstrap-select.min.js}"></script>
-<script type="text/javascript" th:src="@{/assets/plugins/bootstrap-select-1.10.0/js/i18n/defaults-zh_CN.min.js}"></script>
 
 <script>
   /*<![CDATA[*/
+  function changeField() {
+    var field = $("#field").val();
+    if (field.indexOf("\.date") != -1) {
+     $("#timeDiv").show();
+     $("#lastDay").val("");
+    } else {
+      $("#lastDay").val("");
+      $("#timeDiv").hide();
+    }
+  }
   function limit(thisObj) {
     var value = $(thisObj).val().replace(/\D/g, '');
 
@@ -466,6 +474,7 @@
           $("#existFlag").html("");
           $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
 
+          changeField();
           $(".date").datepicker({
             format: 'yyyy-MM-dd HH:mm:ss HH:mm;ss',
             weekStart: 1,
