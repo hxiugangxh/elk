@@ -628,30 +628,17 @@ public class IndexDaoImpl implements IndexDao {
         log.info("delMultiRelEchartAndPanel:删除关联图表:\n{}\n参数：{}", delSQL, paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
-        querySQL = "select a.*\n" +
-                "  from cm_visualize_panel_echart a\n" +
-                "  left join (select *\n" +
-                "               from cm_visualize_panel_rel_echart\n" +
-                "              where echart_id > -1) b on a.id = b.panel_id\n" +
-                " where b.echart_id is null";
-
-        List<VisualizePanelEchartBean> visualizePanelEchartList = this.jdbcTemplate
-                .query(querySQL, new BeanPropertyRowMapper(VisualizePanelEchartBean.class));
+        // 获取需要删除的面板panel
+        List<VisualizePanelEchartBean> visualizePanelEchartList = echartMapper.getVisualizePanelEchartRelNull();
 
         List<Integer> delPanelIdList = visualizePanelEchartList.stream()
                 .map(VisualizePanelEchartBean::getId)
                 .collect(Collectors.toList());
 
-        if (CollectionUtils.isEmpty(delPanelIdList)) {
-            return true;
+        // 如果有需要删除的panel那么就删除
+        if (CollectionUtils.isNotEmpty(delPanelIdList)) {
+            echartMapper.delVisualizePanelEchartRelNull(delPanelIdList);
         }
-        delSQL = "delete from cm_visualize_panel_echart where id in (:delPanelIdList)";
-
-        paramMap.clear();
-        paramMap.put("delPanelIdList", delPanelIdList);
-
-        log.info("delMultiRelEchartAndPanel:删除已为空的面板:\n{}\n参数：{}", delSQL, paramMap);
-        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         return true;
     }

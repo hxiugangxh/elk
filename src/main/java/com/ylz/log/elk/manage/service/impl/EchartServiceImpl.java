@@ -10,6 +10,7 @@ import com.ylz.log.elk.manage.dao.IndexDao;
 import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
@@ -242,6 +243,16 @@ public class EchartServiceImpl implements EchartService {
 
         int count = echartMapper.delVisualizeEchart(idList);
 
+        List<VisualizePanelEchartBean> visualizePanelEchartList = echartMapper.getVisualizePanelEchartRelNull();
+
+        List<Integer> delPanelIdList = visualizePanelEchartList.stream()
+                .map(VisualizePanelEchartBean::getId)
+                .collect(Collectors.toList());
+
+        if (CollectionUtils.isNotEmpty(delPanelIdList)) {
+            echartMapper.delVisualizePanelEchartRelNull(delPanelIdList);
+        }
+
         if (count > 0) {
             return true;
         }
@@ -312,7 +323,7 @@ public class EchartServiceImpl implements EchartService {
                     echartId -> !echartId.equals("-1")).collect(Collectors.toList());
 
             int length = (list.size() < 4) ? 4 - list.size() : 0;
-            for (int i = 0 ;i < length ; i++) {
+            for (int i = 0; i < length; i++) {
                 list.add("-1");
             }
             int count = echartMapper.savePanelRelEchart(visualizePanelEchartBean.getId(), list);

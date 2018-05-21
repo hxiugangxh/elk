@@ -46,4 +46,8 @@ public interface EchartMapper {
     int hasExistEchartName(@Param("echartName") String echartName);
 
     int valiteMutilIndex(@Param("id") Integer id);
+
+    List<VisualizePanelEchartBean> getVisualizePanelEchartRelNull();
+
+    void delVisualizePanelEchartRelNull(@Param("delPanelIdList") List<Integer> delPanelIdList);
 }
