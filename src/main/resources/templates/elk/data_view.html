@@ -10,6 +10,8 @@
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
 
   <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css}" />
+
   <style>
     .fixed-table-container {
       border: none;
@@ -20,12 +22,12 @@
     }
 
     .bor_view {
-      height: 400px
+      height: 500px
     }
 
     .echart_view {
-      width: 570px;
-      height: 430px;
+      width: 800px;
+      height: 520px;
       padding: 8px;
       display: none;
     }
@@ -65,7 +67,7 @@
 <!-- 模态框 -->
 <div class="modal fade" id="Modal_view" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
      aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog" style="width: 1100px">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -100,14 +102,14 @@
           </div>
           <!--  -->
           <div class="row view_show">
-            <div class="col-sm-4 bor_view">
+            <div class="col-sm-3 bor_view">
               <div class="row">
                 <h4>项目名称：<span id="multiIndexSpan">日志系统</span></h4>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label">
+                <label class="col-sm-4 control-label">
                   项目名称:</label>
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                   <select class="form-control input-sm" onchange="changeMultiIndex('')" name="multiIndex"
                           id="multiIndex">
                     <option value="">请选择项目...</option>
@@ -116,9 +118,9 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label">
+                <label class="col-sm-4 control-label">
                   统计依据:</label>
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                   <select class="form-control input-sm" id="field" name="field">
                     <option value="">请选择...</option>
                     <th:block th:each="field : ${fieldList}">
@@ -130,30 +132,40 @@
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label">
+                <label class="col-sm-4 control-label">
                   过滤条件:</label>
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                   <input type="text" class="form-control input-sm" name="filterStr" id="filterStr"/>
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label">
+                <label class="col-sm-4 control-label">
                   汇聚方式:</label>
-                <div class="col-sm-9">
+                <div class="col-sm-8">
                   <select class="form-control input-sm" id="converMethod" name="converMethod">
                     <option value="1">count</option>
                   </select>
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-sm-3 control-label">查询范围:</label>
+                <label class="col-sm-4 control-label">查询范围:</label>
                 <label class="col-sm-2 control-label" style="padding-right: 6px">最近:</label>
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                   <input type="text" class="form-control input-sm" placeholder="日志最久30天" name="lastDay" id="lastDay"
                          onkeyup="limit(this)" onblur="limit(this)"/>
                 </div>
                 <label class="col-sm-1 control-label">天</label>
               </div>
+              <!--<div class="form-group form-group-sm">
+                <label class="col-sm-4 control-label">开始时间:</label>
+                <div class="col-md-8">
+                  <div class="input-group date">
+                    <input class="form-control" placeholder="请输入开始时间" type="text" id="dateday" name="dateday"
+                           datatype="*">
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+                  </div>
+                </div>
+              </div>-->
               <div class="form-group">
                 <div class="col-sm-9"></div>
                 <div class="col-sm-2 col-sm-pull-1">
@@ -161,7 +173,7 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-9">
               <div class="bor_view">
                 <div id="main_line" class="echart_view show" data-type="1"></div>
                 <div id="main_bar" class="echart_view" data-type="2"></div>
@@ -200,6 +212,13 @@
 <th:block th:include="common/pub_head :: echart"></th:block>
 <link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
+
+<!--js插件库-->
+<script type="text/javascript" th:src="@{/assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/bootstrap-select-1.10.0/js/bootstrap-select.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/bootstrap-select-1.10.0/js/i18n/defaults-zh_CN.min.js}"></script>
+
 <script>
   /*<![CDATA[*/
   function limit(thisObj) {
@@ -443,9 +462,17 @@
           $("#id").val(jsonData.visualizeChartBean.id);
           $("#echartName").val(jsonData.visualizeChartBean.echartName);
           $("#lastDay").val(jsonData.visualizeChartBean.lastDay);
+          $("#filterStr").val(jsonData.visualizeChartBean.filterStr);
           $("#existFlag").html("");
           $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
 
+          $(".date").datepicker({
+            format: 'yyyy-MM-dd HH:mm:ss HH:mm;ss',
+            weekStart: 1,
+            autoclose: true,
+            todayBtn: 'linked',
+            language: 'zh-CN'
+          });
           $(".modal-btn").hide();
           $("#myModalLabel").html("修改图表");
           $("#modifyBtn").show();
@@ -602,13 +629,10 @@
   var myChart_pie = echarts.init(document.getElementById('main_pie'));
 
   function addVisualizeEchart() {
+
     generatFlag = false;
     hisEchartName = "";
 
-    openModal("添加图表", "saveBtn", "", "");
-  }
-
-  function openModal(title, btnId, multiIndex, field) {
     var domEle = "<option value=''>请选择...</option>";
     $("#multiIndex").html(domEle);
     var URL = path + "/echartManage/loadMultiIndex";
@@ -622,20 +646,20 @@
         }
 
         $("#multiIndex").html(domEle);
-
-        if (multiIndex != "") {
-          $("#multiIndex").val(multiIndex);
-          changeMultiIndex(field);
-          changeType();
-        }
       } else {
         layer.msg("加载项目名称错误", {icon: 2});
       }
-
+      $(".date").datepicker({
+        format: 'yy-mm-dd',
+        language: 'zh-CN'
+      });
       $(".modal-btn").hide();
-      $("#myModalLabel").html(title);
-      $("#" + btnId).show();
-      $('#Modal_view').modal('show');
+      $("#myModalLabel").html("添加图表");
+      $("#saveBtn").show();
+      $('#Modal_view').modal('show').css({
+        width: 'auto',
+        'margin-left': 'auto'
+      });
     }, "json");
   }
 

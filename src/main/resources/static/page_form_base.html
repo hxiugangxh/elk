@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>form表单Demo</title>
+
+		<!-- 插件样式库 -->
+		<link rel="stylesheet" type="text/css" href="assets/plugins/bootstrap-3.3.0/css/bootstrap.min.css" />
+        <!--下拉表格插件样式-->
+        <link type="text/css" rel="stylesheet" href="assets/plugins/select-table-search/css/selectTable.css"/>
+
+        <!--日期样式-->
+        <link rel="stylesheet" type="text/css" href="assets/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css" />
+        <!--下拉样式-->
+        <link rel="stylesheet" type="text/css" href="assets/plugins/bootstrap-select-1.10.0/css/bootstrap-select.min.css" />
+        <!--文件上传样式-->
+		<link rel="stylesheet" type="text/css" href="assets/plugins/webuploader-0.1.5/css/webuploader.css">
+        <!--表单验证样式-->
+		<link rel="stylesheet" type="text/css" href="assets/plugins/Validform_v5.3.2/css/style.css" />
+        <!--选中样式-->
+		<link rel="stylesheet" type="text/css" href="assets/plugins/icheck-1.x/skins/blue.css" />
+        <!--select2下拉插件样式css-->
+        <link type="text/css" rel="stylesheet" href="assets/plugins/select2/css/select2.css"/>
+
+		<!-- 自定义样式库 -->
+        <!-- 字体样式 -->
+        <link type="text/css" rel="stylesheet" href="assets/font/iconfont.css"/>
+        <!-- 基础样式，放字体样式下第一个 -->
+        <link type="text/css" rel="stylesheet" href="assets/css/base/base.css"/>
+        <!-- 颜色样式 -->
+		<link rel="stylesheet" type="text/css" href="assets/css/base/color.css" />
+        <!-- 通用样式 -->
+		<link rel="stylesheet" type="text/css" href="assets/css/base/common.css" />
+        <!-- 重写样式--放在最后-->
+        <link rel="stylesheet" type="text/css" href="assets/css/base/rewrite.css" />
+        <!--表单样式文件-->
+        <link type="text/css" rel="stylesheet" href="assets/css/base/forms.css"/>
+
+        <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.min.js" type="text/javascript"></script>
+        <script src="assets/js/respond.min.js" type="text/javascript"></script>
+        <![endif]-->
+
+		<!--主题色-->
+		<link type="text/css" rel="stylesheet" href="assets/css/base/themecolor_blue.css"/>
+
+
+        <style>
+            .tip-block{
+                height: 20px;
+                width:20px;
+                background: #4e7fa9;
+                border-radius: 50%;
+                line-height: 20px;
+                text-align: center;
+                color:#fff;
+                font-size:14px;
+                position: absolute;
+                right: -15px;
+                top:3px;
+                cursor: pointer;
+                z-index: 2;
+            }
+            .tip-before:before {
+                content: '';
+                border: 7px solid transparent;
+                border-right-color: #26a69a;
+                position: absolute;
+                bottom: 3px;
+                left: 16px;
+            }
+            .tip2{
+                position: relative;
+                width: 1px;
+                height: 1px;
+            }
+            .tip-block .tip-content {
+               display: none;
+               position: absolute;
+               z-index: 9999999 !important;
+               bottom: 2px;
+               right: -183px;
+               box-sizing: border-box;
+               height: auto;
+               background: #26a69a;
+               font-size: 12px;
+               color:#fff;
+               padding:5px 5px;
+               /*border-radius: 3px;*/
+               text-align: center;
+            }
+            /*.form-control{*/
+                /*border-radius: 4px !important;*/
+            /*}*/
+        </style>
+	</head>
+
+	<body>
+	<div class="wrapper-content">
+			<div class="box">
+					<div class="box-header with-border">
+						<h3 class="box-title dec_1 theme-border-left">参保登记申报</h3>
+					</div>
+					<div class="box-body">
+					   <div class="row">
+					      <div class="col-xs-12">
+							<div class="widget-box transparent">
+								<div class="widget-header">
+									<div class="widget-title theme-border-bottom">基础信息</div>
+									<div class="widget-toolbar">
+										<a class="widget-shrink"><i class="iconfont icon-down"></i></a>
+										<a class="widget-close"><i class="iconfont icon-guanbi2"></i></a>
+									</div>
+								</div>
+								<div class="widget-body">
+									<form class="form-horizontal" id="myform">
+										<div class="form-group form-group-sm">
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>证件号码</label>
+											<div class="col-md-3">
+												<input type="text" placeholder="请输入证件号码" class="form-control span12" datatype="idcard"/>
+                                                <div class="tip-block">?<div class="tip2"><div class="tip-content">参保登记申报参保登记申报</div></div></div>
+											</div>
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>姓名</label>
+											<div class="col-md-3">
+												<input type="text" placeholder="请输入姓名" class="form-control" name="name" datatype="*2-6"/>
+											</div>
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>证件类型</label>
+											<div class="col-md-3">
+												<select name="idcardtype" class="form-control selectpicker" datatype="*">
+													<option value="">...</option>
+													<option value="1">居民身份证（户口簿）</option>
+													<option value="0">护照</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group form-group-sm">
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>参保身份</label>
+											<div class="col-md-3">
+												<select name="content" class="form-control selectpicker" datatype="*" >
+													<option value="">...</option>
+													<option value="1">在职人员</option>
+													<option value="0">失业人员</option>
+												</select>
+											</div>
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>性别</label>
+											<div class="col-md-3 checkbg">
+												<label><input type="radio" name="sex" value="男" checked/>男</label>
+												<label><input type="radio" name="sex" value="女"/>女</label>
+											</div>
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>民族</label>
+											<div class="col-md-3">
+												<select name="show" class="form-control selectpicker" datatype="*">
+													<option value="">...</option>
+													<option value="1">汉族</option>
+												</select>
+											</div>
+										</div>
+										<div class="form-group form-group-sm">
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>工资</label>
+											<div class="col-md-3">
+												<input type="text" placeholder=" " class="form-control"  datatype="floatpoint"/>
+											</div>
+											<label class="col-md-1 control-label">业务类型</label>
+											<div class="col-md-3">
+												<select name="show" class="form-control selectpicker" datatype="*">
+													<option>...</option>
+													<option value="1">个人新增</option>
+												</select>
+											</div>
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>工作日期</label>
+											<div class="col-md-3">
+												<input type="text" placeholder="20160202" class="form-control" datatype="*"/>
+											</div>
+										</div>
+										<div class="form-group form-group-sm">
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>户口性质</label>
+											<div class="col-md-3">
+												<select name="aa" class="form-control selectpicker" datatype="*">
+													<option></option>
+													<option value="1">非农业户口（城镇）</option>
+													<option value="0">...</option>
+												</select>
+											</div>
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>出生日期</label>
+											<div class="col-md-3">
+												<div class="input-group date form_date">
+													<input class="form-control" placeholder="请输入出生日期" type="text" id="dateday" name="dateday" datatype="*">
+													<span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span></span>
+												</div>
+											</div>
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>邮政编码</label>
+											<div class="col-md-3">
+												<input type="text" placeholder="请输入邮政编码" class="form-control"  datatype="*"/>
+											</div>
+										</div>
+										<div class="form-group form-group-sm">
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>时间区间</label>
+											<div class="col-md-3">
+												<div class="input-daterange input-group form_date" id="datepicker">
+													<input type="text" class="form-control" name="start" id="start" datatype="*"/>
+													<div class="input-group-addon">至</div>
+													<input type="text" class="form-control" name="end" id="end" datatype="*"/>
+												</div>
+											</div>
+                                            <label class="col-md-1 control-label"><b class="mr5 red500">*</b>单选下拉</label>
+                                            <div class="col-md-3">
+                                                <select class="js-example-basic-single span12" >
+                                                    <option value="0">选项一</option>
+                                                    <option value="1">选项二</option>
+                                                    <option value="2">选项三</option>
+                                                </select>
+                                            </div>
+                                            <label class="col-md-1 control-label"><b class="mr5 red500">*</b>下拉多选</label>
+                                            <div class="col-md-3">
+                                                <select class="js-example-basic-multiple span12" multiple="multiple">
+                                                    <option value="0">选项一</option>
+                                                    <option value="1">选项二</option>
+                                                    <option value="2">选项三</option>
+													<option value="2">选项四</option>
+													<option value="2">选项五</option>
+													<option value="2">选项六</option>
+													<option value="2">选项七</option>
+                                                </select>
+
+                                            </div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>上传附件</label>
+											<div class="col-md-3">
+												<div id="uploader" class="wu-example">
+													<!--用来存放文件信息-->
+													<div class="uploader-list clearfix"></div>
+													<div class="btns">
+														<div class="choosefile">选择文件</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label class="col-md-1 control-label"><b class="mr5 red500">*</b>所选人员</label>
+											<div class="col-md-11">
+												<div class="selectLable">
+													<span>林某某<i class="close"></i></span><span>李某某<i class="close"></i></span><span>林某某<i class="close"></i></span>
+												</div>
+												<button type="button" class="btn btn-assist1" id="selectPerson">选择人员</button>
+											</div>
+
+										</div>
+
+                                        <div class="form-group mrt10 tc">
+											<button type="submit" class="btn btn-theme">保存</button>
+											<button type="reset" class="btn btn-default" id="resetButton">重置</button>
+                                        </div>
+									</form>
+								</div>
+							</div>
+						  </div>
+						</div>
+					</div>
+				</div>
+			</div>
+        <!--jquery-->
+		<script type="text/javascript" src="assets/js/jquery/jquery-1.12.3.min.js"></script>
+        <!--select2下拉插件脚本js-->
+        <script type="text/javascript" src="assets/plugins/select2/js/select2.full.js"></script>
+		<!--js插件库-->
+		<script type="text/javascript" src="assets/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="assets/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+		<script type="text/javascript" src="assets/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+		<script type="text/javascript" src="assets/plugins/bootstrap-select-1.10.0/js/bootstrap-select.min.js"></script>
+		<script type="text/javascript" src="assets/plugins/bootstrap-select-1.10.0/js/i18n/defaults-zh_CN.min.js"></script>
+
+	    <script type="text/javascript" src="assets/plugins/layer-v2.4/layer.js"></script>
+	    <script type="text/javascript" src="assets/plugins/Validform_v5.3.2/js/Validform_v5.3.2.js"></script>
+		<script type="text/javascript" src="assets/plugins/icheck-1.x/icheck.min.js"></script>
+		<script type="text/javascript" src="assets/plugins/webuploader-0.1.5/js/webuploader.js"></script>
+		<!--自定义js-->
+		<!--<script type="text/javascript" src="assets/出生日期
+		js/myvalidate.js"></script>-->
+		<script type="text/javascript" src="assets/js/uploaderFunction.js"></script>
+		<script type="text/javascript" src="assets/js/common.js"></script>
+		<script type="text/javascript" src="assets/js/plugins-common.js"></script>
+
+		<script>
+			$().ready(function() {
+				$('.selectLable .close').click(function(){
+					$(this).parents('span').remove();
+				});
+
+
+//                下拉插件单选
+                $(".js-example-basic-multiple").select2({theme: "classic"});
+//                下拉插件多选
+                $(".js-example-basic-single").select2({
+                    theme: "classic"
+                });
+
+				$("#myform,#myform1").Validform({
+					showAllError:true,
+					tiptype:function(msg,o,cssctl){
+						if(!o.obj.is('form')){
+							if(o.type!=2){
+								if(o.obj.parent().find('.Validform_checktip').length==0){
+									o.obj.parent().append('<span class="Validform_checktip"></span>');
+									o.obj.parent().next().find('.Validform_checktip').remove();
+								}
+								var objtip=o.obj.parent().find('.Validform_checktip');
+								cssctl(objtip,o.type);
+								objtip.text(msg);
+							}else if(o.type==2){
+								o.obj.parent().find('.Validform_checktip').remove();
+							}
+						}
+					}
+				});
+
+
+				$('#selectPerson').click(function(){
+					var layerindex =layer.open({
+						type: 2,
+						area: ['900px','480px'],
+						fixed: false, //不固定
+						maxmin: true,
+						/*skin: 'layui-layer-rim', //加上边框*/
+						content: 'selectPerson.html'
+					});
+				});
+
+
+
+			});
+			var uploader = WebUploader.create({
+			    // swf文件路径
+			    swf:'../assets/plugins/webuploader-0.1.5/Uploader.swf',
+			    // 文件接收服务端。测试
+			//  server: 'http://webuploader.duapp.com/server/fileupload.php',
+			    // 选择文件的按钮。可选。
+			    // 内部根据当前运行是创建，可能是input元素，也可能是flash.
+			    pick: '.choosefile',
+			    // 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+			    resize: false,
+			    auto:true
+			});
+			uploaderOnMethod(uploader);
+
+            function doSearch(){
+                $('#dg').datagrid('load',{
+                    name:$("#search").val()
+                });
+            }
+            $(window).load(function() {
+                var tipH=$(".tip-block .tip-content").height()/2-6;
+                $(".tip-block .tip-content").css("bottom","-"+tipH+"px");
+                $(".tip-block").on("click",function(){
+                    $(this).find(".tip-content").show();
+                    $(this).addClass("tip-before");
+                });
+            });
+		</script>
+	</body>
+</html>
