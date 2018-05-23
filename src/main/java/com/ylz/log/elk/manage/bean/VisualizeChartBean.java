@@ -5,6 +5,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,8 +35,10 @@ public class VisualizeChartBean {
     private String multiIndex;
     private String field;
     private String relIndex;
-    private Integer lastDay;
     private String filterStr;
+    private Integer last;
+    private Integer timeField;
+    private String formate;
 
     @Transient
     private String typePo;

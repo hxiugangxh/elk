@@ -9,6 +9,7 @@ import com.ylz.log.elk.manage.constants.Constants;
 import com.ylz.log.elk.manage.dao.IndexDao;
 import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
 import com.ylz.log.elk.manage.service.EchartService;
+import com.ylz.log.elk.manage.util.MyDateUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -36,8 +37,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -155,9 +154,10 @@ public class EchartServiceImpl implements EchartService {
     }
 
     @Override
-    public Map<String, Object> generatEchart(String relIndex, String field, Integer lastDay, String filerStr) {
+    public Map<String, Object> generatEchart(VisualizeChartBean visualizeChartBean) {
         Map<String, Object> dataMap = new HashMap<>();
         boolean dateFlag = false;
+        String field = visualizeChartBean.getField();
         if (field.contains(".date")) {
             dateFlag = true;
             field = field.replaceAll("\\.date", "");
@@ -167,19 +167,22 @@ public class EchartServiceImpl implements EchartService {
         List<Long> seriesDataList = new ArrayList<>();
         List<Map<String, Object>> pieSeriesDataList = new ArrayList<>();
 
-        log.info("generatEchart: index = {}", relIndex);
-        SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(relIndex.split(","));
+        log.info("generatEchart: index = {}", visualizeChartBean.getRelIndex());
+        SearchRequestBuilder searchRequestBuilder = this.client
+                .prepareSearch(visualizeChartBean.getRelIndex().split(","));
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
-        if (StringUtils.isNotBlank(filerStr)) {
-            QueryStringQueryBuilder queryStringQueryBuilder = QueryBuilders.queryStringQuery(filerStr);
+        if (StringUtils.isNotBlank(visualizeChartBean.getFilterStr())) {
+            QueryStringQueryBuilder queryStringQueryBuilder = QueryBuilders
+                    .queryStringQuery(visualizeChartBean.getFilterStr());
 
             boolQueryBuilder.must(queryStringQueryBuilder);
         }
-        if (null != lastDay && dateFlag) {
+        if (dateFlag) {
             Date date = new Date();
             RangeQueryBuilder rangeQueryBuilder = QueryBuilders.rangeQuery(field)
-                    .gte(DateUtils.addDays(date, -lastDay).getTime())
+                    .gte(MyDateUtils.calDate(date, visualizeChartBean.getTimeField(),
+                            -visualizeChartBean.getLast()).getTime())
                     .lte(date.getTime());
             boolQueryBuilder.must(rangeQueryBuilder);
         }
@@ -188,7 +191,7 @@ public class EchartServiceImpl implements EchartService {
         if (dateFlag) {
             DateHistogramAggregationBuilder dateAgg = AggregationBuilders.dateHistogram(field).field(field)
                     .dateHistogramInterval(DateHistogramInterval.DAY)
-                    .format("yyyy-MM-dd");
+                    .format(Constants.formateMap.get(visualizeChartBean.getFormate()));
             searchRequestBuilder.addAggregation(dateAgg);
         } else {
             TermsAggregationBuilder termAgg = AggregationBuilders.terms(field).field(field)

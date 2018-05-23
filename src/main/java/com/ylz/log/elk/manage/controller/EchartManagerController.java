@@ -1,11 +1,12 @@
 package com.ylz.log.elk.manage.controller;
 
-import com.ylz.log.elk.manage.bean.MultiIndexBean;
 import com.ylz.log.elk.manage.bean.VisualizeChartBean;
 import com.ylz.log.elk.manage.bean.VisualizePanelEchartBean;
+import com.ylz.log.elk.manage.constants.Constants;
 import com.ylz.log.elk.manage.service.EchartService;
 import com.ylz.log.elk.manage.service.IndexService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,9 @@ public class EchartManagerController {
 
     @RequestMapping("/dataView")
     public String dataView(Map<String, Object> map) {
+
+        map.put("formateMap", Constants.formateMap);
+        map.put("timeFieldMap", Constants.timeFieldMap);
 
         return "elk/data_view";
     }
@@ -102,22 +106,12 @@ public class EchartManagerController {
         return jsonMap;
     }
 
-    /**
-     * @param relIndex 索引
-     * @param field    列名
-     * @param lastDay  默认查询最近lastDay
-     * @return
-     */
+
     @RequestMapping("/generatEchart")
     @ResponseBody
-    public Map<String, Object> generatEchart(
-            @RequestParam("relIndex") String relIndex,
-            @RequestParam("field") String field,
-            @RequestParam(value = "lastDay", defaultValue = "") Integer lastDay,
-            @RequestParam(value = "filerStr", defaultValue = "") String filerStr
-    ) {
+    public Map<String, Object> generatEchart(VisualizeChartBean visualizeChartBean) {
 
-        return echartService.generatEchart(relIndex, field, lastDay, filerStr);
+        return echartService.generatEchart(visualizeChartBean);
     }
 
     @RequestMapping(value = "/delVisualizeEchart", method = RequestMethod.DELETE)
@@ -148,8 +142,7 @@ public class EchartManagerController {
         VisualizeChartBean visualizeChartBean = null;
         try {
             visualizeChartBean = echartService.getVisualizeEchart(id);
-            Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean.getRelIndex(),
-                    visualizeChartBean.getField(), visualizeChartBean.getLastDay(), visualizeChartBean.getFilterStr());
+            Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean);
 
             jsonMap.put("flag", true);
             jsonMap.put("visualizeChartBean", visualizeChartBean);
@@ -157,10 +150,10 @@ public class EchartManagerController {
         } catch (Exception e) {
             e.printStackTrace();
             jsonMap.put("flag", false);
-            if (e.getMessage().contains("no such index")) {
+            if (StringUtils.isNotEmpty(e.getMessage()) && e.getMessage().contains("no such index")) {
                 jsonMap.put("errorMsg", visualizeChartBean.getEchartName() + "有不存在的文件");
             } else {
-                jsonMap.put("errorMsg", e.getMessage());
+                jsonMap.put("errorMsg", e.getMessage() + "");
             }
         }
 

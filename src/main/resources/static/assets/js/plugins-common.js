@@ -5,7 +5,7 @@ $(function(){
         radioClass: 'iradio_minimal-theme',
         /* increaseArea: '10%' // optional*/
     });
-
+;
     // 下拉插件单选
     $(".js-example-basic-multiple").size()>0&&$(".js-example-basic-multiple").select2({theme: "classic"});
     // 下拉插件多选

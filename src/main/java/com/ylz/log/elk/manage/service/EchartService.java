@@ -12,7 +12,7 @@ public interface EchartService {
 
     boolean saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 
-    Map<String, Object> generatEchart(String relIndex, String field, Integer lastDay, String filerStr);
+    Map<String, Object> generatEchart(VisualizeChartBean visualizeChartBean);
 
     Map<String, List<String>> listConverField(String index);
 
