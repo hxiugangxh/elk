@@ -12,11 +12,17 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -141,8 +147,8 @@ public class IndexDaoImpl implements IndexDao {
     }
 
     @Override
-    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field, String
-            searchContent) {
+    public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type,
+                                         String field, String searchContent) {
         Map<String, Object> dataMap = new HashMap<>();
 
         List<String> indexList = new ArrayList<>();
@@ -162,7 +168,14 @@ public class IndexDaoImpl implements IndexDao {
         if (StringUtils.isEmpty(searchContent)) {
             searchRequestBuilder.setQuery(matchAllQuery());
         } else {
+            MatchPhraseQueryBuilder address = QueryBuilders.matchPhraseQuery("address", searchContent);
             searchRequestBuilder.setQuery(queryStringQuery(searchContent));
+            HighlightBuilder highlightBuilder = new HighlightBuilder();
+            List<String> fieldList = this.listField(index, type);
+            for (String highField : fieldList) {
+                highlightBuilder.field(highField);
+            }
+            searchRequestBuilder.highlighter(highlightBuilder);
         }
 
         if (StringUtils.isNotEmpty(field)) {
@@ -191,6 +204,10 @@ public class IndexDaoImpl implements IndexDao {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", hit.getId());
             map.putAll(hit.getSource());
+
+            Map<String, HighlightField> highlightFields = hit.getHighlightFields();
+
+            System.out.println(highlightFields);
 
             result.add(map);
         }

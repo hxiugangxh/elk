@@ -625,7 +625,7 @@
     function generatEchart() {
         var relIndex = $("#field").find("option:selected").attr("data-relIndex");
         var field = $("#field").val();
-        var filerStr = $("#filterStr").val();
+        var filterStr = $("#filterStr").val();
         var formate = $("#formate").val();
         var last = $("#last").val();
         var timeField = $("#timeField").val();
@@ -652,7 +652,7 @@
         var formData = {
             "relIndex": relIndex,
             "field": field,
-            "filerStr": filerStr.split(" ").join(" or "),
+            "filterStr": filterStr.split(" ").join(" or "),
             "formate": formate,
             "last": last,
             "timeField": timeField
