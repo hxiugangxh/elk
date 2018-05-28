@@ -97,6 +97,12 @@ public class IndexDaoImpl implements IndexDao {
             indexList.add(index);
         }
 
+        boolean flag = esUtil.isExistsIndex(indexList);
+        if (!flag) {
+            log.error("有不存在的索引");
+            return null;
+        }
+
         ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
                 .prepareGetMappings(indexList.toArray(new String[]{})).execute()
                 .actionGet().getMappings();
@@ -218,6 +224,7 @@ public class IndexDaoImpl implements IndexDao {
                         nameTmp += text;
                     }
                     //将高亮片段组装到结果中去
+                    System.out.println("nameTmp = " + nameTmp);
                     source.put("title", nameTmp);
                 }
             }
@@ -614,12 +621,18 @@ public class IndexDaoImpl implements IndexDao {
                 .map(VisualizeChartBean::getId)
                 .collect(Collectors.toList());
 
-        querySQL = "select * from cm_visualize_panel_rel_echart where panel_id in (:panelIdList)";
+        List<VisualizePanelRelEchartBean> panelRelEchartList = new ArrayList<>();
         paramMap.clear();
         paramMap.put("panelIdList", panelIdList);
-        log.info("delMultiRelEchartAndPanel:获取面板对应的图表关系数据:\n{}\n参数：{}", querySQL, paramMap);
-        List<VisualizePanelRelEchartBean> panelRelEchartList = this.getNamedParameterJdbcTemplate()
-                .query(querySQL, paramMap, new BeanPropertyRowMapper(VisualizePanelRelEchartBean.class));
+        if (CollectionUtils.isNotEmpty(panelIdList)) {
+
+            querySQL = "select * from cm_visualize_panel_rel_echart where panel_id in (:panelIdList)";
+            log.info("delMultiRelEchartAndPanel:获取面板对应的图表关系数据:\n{}\n参数：{}", querySQL, paramMap);
+
+            panelRelEchartList = this.getNamedParameterJdbcTemplate()
+                    .query(querySQL, paramMap, new BeanPropertyRowMapper(VisualizePanelRelEchartBean.class));
+        }
+
         // 获取不需要删除的图标ID的集合
         List<VisualizePanelRelEchartBean> visualizePanelRelEchartList = panelRelEchartList.stream()
                 .filter(panelRelEchart ->
@@ -627,13 +640,13 @@ public class IndexDaoImpl implements IndexDao {
                 )
                 .collect(Collectors.toList());
 
+        // 删除关联图表
         echartMapper.delVisualizePanelRelEchart(panelIdList);
         if (CollectionUtils.isNotEmpty(visualizePanelRelEchartList)) {
             Integer tmp = visualizePanelRelEchartList.get(0).getPanelId();
             List<String> echartIdList = new ArrayList<>();
             for (VisualizePanelRelEchartBean visualizePanelRelEchartBean : visualizePanelRelEchartList) {
                 Integer panelId = visualizePanelRelEchartBean.getPanelId();
-                System.out.println("panelId = " + panelId);
                 if (tmp != panelId) {
                     int length = (echartIdList.size() < 4) ? 4 - echartIdList.size() : 0;
                     for (int i = 0; i < length; i++) {

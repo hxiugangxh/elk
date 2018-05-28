@@ -9,7 +9,7 @@
         <where>
             <if test="echartName != ''">
                 <bind name="echartName" value="'%' + echartName + '%'"/>
-                echart_name like #{echartName}
+                and echart_name like #{echartName}
             </if>
         </where>
         <if test="sortName != '' and sortOrder != ''">
@@ -25,14 +25,31 @@
     </insert>
 
     <delete id="delVisualizeEchart">
-        delete from cm_visualize_echart where id in
-        <foreach collection="idList" item="id" open="(" separator="," close=")">
-            #{id}
-        </foreach>;
-        update cm_visualize_panel_rel_echart set echart_id = -1 where echart_id in
-        <foreach collection="idList" item="echartId" open="(" close=")" separator=",">
-            #{echartId}
-        </foreach>
+        delete from cm_visualize_echart
+        <where>
+            <if test="idList != null and idList.size > 0">
+                and id in
+                <foreach collection="idList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>;
+            </if>
+            <if test="idList == null or idList.size == 0">
+                and 1 = 2;
+            </if>
+        </where>
+
+        update cm_visualize_panel_rel_echart set echart_id = -1
+        <where>
+            <if test="idList != null and idList.size > 0">
+                and echart_id in
+                <foreach collection="idList" item="echartId" open="(" close=")" separator=",">
+                    #{echartId}
+                </foreach>;
+            </if>
+            <if test="idList == null or idList.size == 0">
+                and 1 = 2
+            </if>
+        </where>
     </delete>
 
     <select id="getVisualizeEchart" resultType="VisualizeChartBean">
@@ -52,7 +69,7 @@
         <where>
             <if test="panelName != ''">
                 <bind name="panelName" value="'%' + panelName + '%'"/>
-                panel_name like #{panelName}
+                and panel_name like #{panelName}
             </if>
         </where>
         <if test="sortName != '' and sortOrder != ''">
@@ -61,17 +78,33 @@
     </select>
 
     <delete id="delVisualizePanelEchart">
-        delete from cm_visualize_panel_echart where id in
-        <foreach collection="idList" item="id" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+        delete from cm_visualize_panel_echart
+        <where>
+            <if test="idList != null and idList.size > 0">
+                and id in
+                <foreach collection="idList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="idList == null or idList.size == 0">
+                and 1 = 2;
+            </if>
+        </where>
     </delete>
 
     <delete id="delVisualizePanelRelEchart">
-        delete from cm_visualize_panel_rel_echart where panel_id in
-        <foreach collection="idList" item="id" open="(" separator="," close=")">
-            #{id}
-        </foreach>
+        delete from cm_visualize_panel_rel_echart
+        <where>
+            <if test="idList != null and idList.size > 0">
+                and panel_id in
+                <foreach collection="idList" item="id" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="idList == null or idList.size == 0">
+                and 1 = 2
+            </if>
+        </where>
     </delete>
 
     <select id="getVisualizePanel" resultType="VisualizePanelEchartBean">
@@ -116,10 +149,18 @@
     </select>
 
     <delete id="delVisualizePanelEchartRelNull">
-        delete from cm_visualize_panel_echart where id in
-          <foreach collection="delPanelIdList" item="panelId" open="(" close=")" separator=",">
-              #{panelId}
-          </foreach>
+        delete from cm_visualize_panel_echart
+        <where>
+            <if test="delPanelIdList != null and delPanelIdList.size > 0">
+                and id in
+                <foreach collection="delPanelIdList" item="panelId" open="(" close=")" separator=",">
+                    #{panelId}
+                </foreach>
+            </if>
+            <if test="delPanelIdList == null or delPanelIdList.size == 0">
+                and 1 = 2;
+            </if>
+        </where>
     </delete>
 
 </mapper>

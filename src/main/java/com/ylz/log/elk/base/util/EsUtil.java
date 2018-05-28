@@ -9,6 +9,8 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class EsUtil {
 
@@ -28,6 +30,16 @@ public class EsUtil {
                 .indices()
                 .exists(new IndicesExistsRequest()
                         .indices(new String[]{indexName})).actionGet();
+        return response.isExists();
+    }
+
+    public boolean isExistsIndex(List<String> indexList) {
+
+        IndicesExistsResponse response = transportClient
+                .admin()
+                .indices()
+                .exists(new IndicesExistsRequest()
+                        .indices(indexList.toArray(new String[]{}))).actionGet();
         return response.isExists();
     }
 
