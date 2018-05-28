@@ -36,6 +36,9 @@
     .list-group-item.active:hover {
 
     }
+    em {
+      color: #e51c23;
+    }
   </style>
 </head>
 
@@ -251,6 +254,8 @@
         }
 
         $("#field").html(domEle);
+        $("#allLiSelect").removeClass("active");
+        $("#allLiSelect").addClass("active");
       } else {
         $("#data-line-div").html("");
         $("#pagination-ele").html("<span>暂无数据</span>");

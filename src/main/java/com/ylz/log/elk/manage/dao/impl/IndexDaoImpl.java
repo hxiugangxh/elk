@@ -16,6 +16,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
+import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -165,13 +166,13 @@ public class IndexDaoImpl implements IndexDao {
         SearchRequestBuilder searchRequestBuilder = this.client.prepareSearch(indexList.toArray(new String[]{}))
                 .setFrom(page * pageSize).setSize(pageSize);
 
+        List<String> fieldList = new ArrayList<>();
         if (StringUtils.isEmpty(searchContent)) {
             searchRequestBuilder.setQuery(matchAllQuery());
         } else {
-            MatchPhraseQueryBuilder address = QueryBuilders.matchPhraseQuery("address", searchContent);
             searchRequestBuilder.setQuery(queryStringQuery(searchContent));
             HighlightBuilder highlightBuilder = new HighlightBuilder();
-            List<String> fieldList = this.listField(index, type);
+            fieldList = this.listField(index, type);
             for (String highField : fieldList) {
                 highlightBuilder.field(highField);
             }
@@ -203,12 +204,25 @@ public class IndexDaoImpl implements IndexDao {
         for (SearchHit hit : hits) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", hit.getId());
-            map.putAll(hit.getSource());
 
+
+            Map<String, Object> source = hit.getSource();
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
 
-            System.out.println(highlightFields);
+            for (String tmpField : fieldList) {
+                HighlightField highlightField = highlightFields.get(tmpField);
+                if (null != highlightField) {
+                    Text[] fragments = highlightField.fragments();
+                    String nameTmp = "";
+                    for (Text text : fragments) {
+                        nameTmp += text;
+                    }
+                    //将高亮片段组装到结果中去
+                    source.put("title", nameTmp);
+                }
+            }
 
+            map.putAll(source);
             result.add(map);
         }
 
