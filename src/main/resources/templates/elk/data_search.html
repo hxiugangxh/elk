@@ -278,6 +278,11 @@
 
     searchContent = searchContent = searchContent.split(" ").join(" or ");
 
+    if (index == "" || type == "") {
+        // console.log("没有数据");
+        return ;
+    }
+
     var formData = {
       "index": index,
       "type": type,

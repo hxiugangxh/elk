@@ -32,35 +32,33 @@ public class IndexServiceImpl implements IndexService {
         List<String> esIndexList = indexDao.listIndex();
         UserCollIndexBean userCollIndexBean = this.getUserCollIndexBean(LoginInfoUtil.getUserId());
 
-        if (userCollIndexBean != null) {
-            String type = userCollIndexBean.getType();
+        multiIndexList.forEach(multiIndexBean -> {
+            Map<String, Object> map = new HashMap<>();
 
-            multiIndexList.forEach(multiIndexBean -> {
-                Map<String, Object> map = new HashMap<>();
+            map.put("index", multiIndexBean.getMultiIndex());
+            map.put("type", multiIndexBean.getType());
 
-                map.put("index", multiIndexBean.getMultiIndex());
-                map.put("type", type);
+            if (userCollIndexBean != null && multiIndexBean.getType().equals(userCollIndexBean.getType())
+                    && multiIndexBean.getMultiIndex().equals(userCollIndexBean.getIndex())) {
+                indexList.add(0, map);
+            } else {
+                indexList.add(map);
+            }
+        });
 
-                if ("1".equals(type) && multiIndexBean.getMultiIndex().equals(userCollIndexBean.getIndex())) {
-                    indexList.add(0, map);
-                } else {
-                    indexList.add(map);
-                }
-            });
+        esIndexList.forEach(str -> {
+            Map<String, Object> map = new HashMap<>();
 
-            esIndexList.forEach(str -> {
-                Map<String, Object> map = new HashMap<>();
+            map.put("index", str);
+            map.put("type", "0");
 
-                map.put("index", str);
-                map.put("type", "0");
-
-                if ("0".equals(type) && str.equals(userCollIndexBean.getIndex())) {
-                    indexList.add(0, map);
-                } else {
-                    indexList.add(map);
-                }
-            });
-        }
+            if (userCollIndexBean != null && "0".equals(userCollIndexBean.getType())
+                    && str.equals(userCollIndexBean.getIndex())) {
+                indexList.add(0, map);
+            } else {
+                indexList.add(map);
+            }
+        });
 
         List<String> fieldList = new ArrayList<>();
 

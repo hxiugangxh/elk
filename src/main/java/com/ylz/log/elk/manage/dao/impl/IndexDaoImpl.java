@@ -224,7 +224,6 @@ public class IndexDaoImpl implements IndexDao {
                         nameTmp += text;
                     }
                     //将高亮片段组装到结果中去
-                    System.out.println("nameTmp = " + nameTmp);
                     source.put("title", nameTmp);
                 }
             }
@@ -514,6 +513,9 @@ public class IndexDaoImpl implements IndexDao {
         delSQL = "delete from cm_multi_rel_es_index where multi_index_id = :multiIndexId";
         log.info("delMultiIndex--删除组合索引与es索引的关系表:\n" + delSQL + "\n参数: " + paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        delSQL = "delete from cm_user_coll_index where user_id = " + LoginInfoUtil.getUserId();
+        this.jdbcTemplate.update(delSQL);
 
         delSQL = "delete from cm_multi_index where id = :multiIndexId";
         log.info("delMultiIndex--删除组合索引:\n" + delSQL + "\n参数: " + paramMap);
