@@ -24,13 +24,13 @@ import java.util.concurrent.ExecutionException;
 @RestController
 public class TestController {
 
+
     @Autowired
     private Client client;
 
     @Autowired
     private IndexService indexService;
 
-    // git提交
     @GetMapping("/test")
     public String index() {
 
