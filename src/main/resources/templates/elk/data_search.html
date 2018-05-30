@@ -276,7 +276,7 @@
     }).get().join(",");
     var searchContent = $("#searchContent").val();
 
-    searchContent = searchContent = searchContent.split(" ").join(" or ");
+    // searchContent = searchContent.split(" ").join(" or ");
 
     if (index == "" || type == "") {
         // console.log("没有数据");
@@ -394,7 +394,7 @@
   var options = {
     containerClass: "pagination",
     currentPage: 1,
-    numberOfPages: 6,
+    numberOfPages: 10,
     totalPages: 5,
     prev: "上一页",
     next: "下一页",

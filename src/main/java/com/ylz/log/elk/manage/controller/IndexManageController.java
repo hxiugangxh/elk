@@ -5,6 +5,7 @@ import com.ylz.log.elk.manage.bean.MultiIndexBean;
 import com.ylz.log.elk.manage.bean.UserCollIndexBean;
 import com.ylz.log.elk.manage.service.IndexService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -68,8 +69,13 @@ public class IndexManageController {
         Map<String, Object> jsonMap = new HashMap<>();
 
         try {
-            jsonMap.put("fieldList", indexService.listField(index, type));
-            jsonMap.put("flag", true);
+            List<String> fieldList = indexService.listField(index, type);
+            if (CollectionUtils.isNotEmpty(fieldList)) {
+                jsonMap.put("fieldList", indexService.listField(index, type));
+                jsonMap.put("flag", true);
+            } else {
+                jsonMap.put("flag", false);
+            }
         } catch (Exception e) {
             e.getMessage();
             jsonMap.put("flag", false);

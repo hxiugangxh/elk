@@ -224,681 +224,680 @@
 <script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
 
 <script>
-    /*<![CDATA[*/
-    function dealTime() {
-        var endTime = new Date($("#endTime").val());
-        var startTime = new Date($("#startTime").val());
-        if (startTime.getTime() > endTime.getTime()) {
-            $("#startTime").val($("#endTime").val());
-        }
+  /*<![CDATA[*/
+  function dealTime() {
+    var endTime = new Date($("#endTime").val());
+    var startTime = new Date($("#startTime").val());
+    if (startTime.getTime() > endTime.getTime()) {
+      $("#startTime").val($("#endTime").val());
     }
+  }
 
-    function changeField() {
-        var field = $("#field").val();
-        if (field.indexOf("\.date") != -1) {
-            $(".timeDiv").show();
+  function changeField() {
+    var field = $("#field").val();
+    if (field.indexOf("\.date") != -1) {
+      $(".timeDiv").show();
+    } else {
+      $("#last").val("");
+      $(".timeDiv").hide();
+    }
+  }
+
+  function limitDigit(thisObj) {
+    var value = $(thisObj).val().replace(/\D/g, '');
+
+    $(thisObj).val(value);
+  }
+
+  function hasExistEchartName() {
+    var echartName = $("#echartName").val();
+    var formData = {
+      "echartName": echartName
+    };
+
+    var URL = path + "/echartManage/hasExistEchartName";
+
+    if (hisEchartName != "" && hisEchartName == echartName) {
+      $("#existFlag").html("");
+      $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+    } else if (echartName.split(" ").join("") == "") {
+      $("#existFlag").html("*");
+      $("#existFlag").attr("class", "mr5 red500");
+    } else {
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
+
+        if (flag) {
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-remove red500");
         } else {
-            $("#last").val("");
-            $(".timeDiv").hide();
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
         }
+      }, "json");
     }
+  }
 
-    function limitDigit(thisObj) {
-        var value = $(thisObj).val().replace(/\D/g, '');
+  function throttle(method) {
+    clearTimeout(method.tId);
+    method.tId = setTimeout(function () {
+      method.call();
+    }, 200);
+  }
 
-        $(thisObj).val(value);
-    }
-
-    function hasExistEchartName() {
-        var echartName = $("#echartName").val();
-        var formData = {
-            "echartName": echartName
-        };
-
-        var URL = path + "/echartManage/hasExistEchartName";
-
-        if (hisEchartName != "" && hisEchartName == echartName) {
-            $("#existFlag").html("");
-            $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
-        } else if (echartName.split(" ").join("") == "") {
-            $("#existFlag").html("*");
-            $("#existFlag").attr("class", "mr5 red500");
-        } else {
-            $.post(URL, formData, function (jsonData) {
-                var flag = jsonData.flag;
-
-                if (flag) {
-                    $("#existFlag").html("");
-                    $("#existFlag").attr("class", "mr5 glyphicon glyphicon-remove red500");
-                } else {
-                    $("#existFlag").html("");
-                    $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
-                }
-            }, "json");
-        }
-    }
-
-    function throttle(method) {
-        clearTimeout(method.tId);
-        method.tId = setTimeout(function () {
-            method.call();
-        }, 200);
-    }
-
-    /*]]>*/
+  /*]]>*/
 </script>
 <script>
-    /*<![CDATA[*/
-    var infoEchart = echarts.init(document.getElementById('info_main_bar'));
+  /*<![CDATA[*/
+  var infoEchart = echarts.init(document.getElementById('info_main_bar'));
 
-    function detailVisualizeEchart(id) {
-        infoEchart.dispose();
-        infoEchart = echarts.init(document.getElementById('info_main_bar'));
+  function detailVisualizeEchart(id) {
+    infoEchart.dispose();
+    infoEchart = echarts.init(document.getElementById('info_main_bar'));
 
-        var URL = path + "/echartManage/editVisualizeEchart/" + id;
-        var formData = {};
+    var URL = path + "/echartManage/editVisualizeEchart/" + id;
+    var formData = {};
 
-        $.post(URL, formData, function (jsonData) {
-            if (jsonData.flag) {
-                var type = jsonData.visualizeChartBean.type;
+    $.post(URL, formData, function (jsonData) {
+      if (jsonData.flag) {
+        var type = jsonData.visualizeChartBean.type;
 
-                $("#infoEchartName").html(jsonData.visualizeChartBean.echartName);
-                $("#infoMultiIndex").html(jsonData.visualizeChartBean.multiIndex);
-                if (type == "1") {
-                    option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
-                    option_line.series[0].name = jsonData.visualizeChartBean.field;
-                    option_line.series[0].data = jsonData.echartMap.seriesDataList;
+        $("#infoEchartName").html(jsonData.visualizeChartBean.echartName);
+        $("#infoMultiIndex").html(jsonData.visualizeChartBean.multiIndex);
+        if (type == "1") {
+          option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
+          option_line.series[0].name = jsonData.visualizeChartBean.field;
+          option_line.series[0].data = jsonData.echartMap.seriesDataList;
 
-                    infoEchart.setOption(option_line);
-                } else if (type == "2") {
-                    option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
-                    option_bar.series[0].name = jsonData.visualizeChartBean.field;
-                    option_bar.series[0].data = jsonData.echartMap.seriesDataList;
+          infoEchart.setOption(option_line);
+        } else if (type == "2") {
+          option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
+          option_bar.series[0].name = jsonData.visualizeChartBean.field;
+          option_bar.series[0].data = jsonData.echartMap.seriesDataList;
 
-                    infoEchart.setOption(option_bar);
-                } else if (type == "3") {
-                    option_pie.series[0].name = jsonData.visualizeChartBean.field;
-                    option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
+          infoEchart.setOption(option_bar);
+        } else if (type == "3") {
+          option_pie.series[0].name = jsonData.visualizeChartBean.field;
+          option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
 
-                    infoEchart.setOption(option_pie);
-                }
+          infoEchart.setOption(option_pie);
+        }
 
-                var layerIndex = layer.open({
-                    type: 1,
-                    title: '图表详情',
-                    area: ['100%', '100%'], //宽高
-                    shadeClose: true,
-                    content: $("#info_content")
-                });
-
-                window.onkeyup = function (ev) {
-                    var key = ev.keyCode || ev.which;
-                    if (key == 27) { //按下Escape
-                        layer.close(layerIndex); //关闭信息框
-                    }
-                }
-            } else {
-                layer.msg(jsonData.errorMsg, {icon: 2});
-            }
-
+        var layerIndex = layer.open({
+          type: 1,
+          title: '图表详情',
+          area: ['100%', '100%'], //宽高
+          shadeClose: true,
+          content: $("#info_content")
         });
+
+        window.onkeyup = function (ev) {
+          var key = ev.keyCode || ev.which;
+          if (key == 27) { //按下Escape
+            layer.close(layerIndex); //关闭信息框
+          }
+        }
+      } else {
+        layer.msg(jsonData.errorMsg, {icon: 2});
+      }
+
+    });
+  }
+
+  function batchDelVisualizeEchart() {
+    var selections = $("#table").bootstrapTable("getSelections");
+    var id = [];
+    for (var i = 0; i < selections.length; i++) {
+      id.push(selections[i].id);
     }
 
-    function batchDelVisualizeEchart() {
-        var selections = $("#table").bootstrapTable("getSelections");
-        var id = [];
-        for (var i = 0; i < selections.length; i++) {
-            id.push(selections[i].id);
-        }
+    if (id.length == 0) {
+      layer.alert("尚未选择，不能执行该操作！");
 
-        if (id.length == 0) {
-            layer.alert("尚未选择，不能执行该操作！");
-
-            return;
-        }
-
-        delVisualizeEchart(id + "");
+      return;
     }
 
-    function delVisualizeEchart(id) {
-        var URL = path + "/echartManage/delVisualizeEchart";
+    delVisualizeEchart(id + "");
+  }
 
-        var formData = {
-            "id": id,
-            "_method": "DELETE"
-        };
-        layer.confirm("确定要删除数据吗？", function () {
-            $.post(URL, formData, function (jsonData) {
-                var flag = jsonData.flag;
+  function delVisualizeEchart(id) {
+    var URL = path + "/echartManage/delVisualizeEchart";
 
-                if (flag) {
-                    layer.msg('删除成功！', {icon: 1, time: 1000});
-                    $("#Modal_view").modal("hide");
-                    $("#table").bootstrapTable("refresh");
-                } else {
-                    layer.msg('删除失败！', {icon: 2, time: 1000});
-                }
+    var formData = {
+      "id": id,
+      "_method": "DELETE"
+    };
+    layer.confirm("确定要删除数据吗？", function () {
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
 
-                $("#add_btn").removeAttr("disabled");
-                $("#add_btn").attr("class", "btn btn-primary");
-            }, "json");
-        });
-    }
-
-    function modifyVisualizeEchart(id) {
-        var clazz = $("#existFlag").attr("class");
-        var echartName = $("#echartName").val();
-        if (echartName.split(" ").join("") == "") {
-            layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
-
-            return;
-        }
-        if (clazz.indexOf("red500") != -1) {
-            layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
-
-            return;
-        }
-
-        if ($("#multiIndex").val() == "") {
-            layer.alert("请选择项目名称");
-
-            return;
-        }
-
-        if ($("#field").val() == "") {
-            layer.alert("请选择统计依据");
-
-            return;
-        }
-
-        var formData = $("#list_form").serializeArray();
-        var timeFlag = ($(".timeDiv").eq(0).attr("style") + "").indexOf("none") != -1;
-        if (!timeFlag) {
-            if ($("#last").val() == "") {
-                layer.alert("最近时间不能为空");
-
-                return;
-            }
+        if (flag) {
+          layer.msg('删除成功！', {icon: 1, time: 1000});
+          $("#Modal_view").modal("hide");
+          $("#table").bootstrapTable("refresh");
         } else {
-            for (var i = 0; i < formData.length; i++) {
-                if (formData[i].name == "format") {
-                    formData[i].value = null;
-                }
-                if (formData[i].name == "last") {
-                    formData[i].value = null;
-                }
-                if (formData[i].name == "timeField") {
-                    formData[i].value = null;
-                }
-            }
+          layer.msg('删除失败！', {icon: 2, time: 1000});
         }
-        var URL = path + "/echartManage/modifyVisualizeEchart/" + $("#id").val();
-        var relIndex = $("#field").find("option:selected").attr("data-relIndex");
-        formData.push({"name": "_method", "value": "PUT"});
-        formData.push({"name": "relIndex", "value": relIndex});
 
-        $.post(URL, formData, function (jsonData) {
-            var flag = jsonData.flag;
+        $("#add_btn").removeAttr("disabled");
+        $("#add_btn").attr("class", "btn btn-primary");
+      }, "json");
+    });
+  }
 
-            if (flag) {
-                layer.msg('修改成功！', {icon: 1, time: 1000});
-                $("#Modal_view").modal("hide");
-                $("#table").bootstrapTable("refresh");
-            } else {
-                layer.msg('修改失败！', {icon: 2, time: 1000});
-            }
-        }, "json");
+  function modifyVisualizeEchart(id) {
+    var clazz = $("#existFlag").attr("class");
+    var echartName = $("#echartName").val();
+    if (echartName.split(" ").join("") == "") {
+      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
+
+      return;
+    }
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
+
+      return;
     }
 
-    var hisEchartName = "";
+    if ($("#multiIndex").val() == "") {
+      layer.alert("请选择项目名称");
 
-    function editVisualizeEchart(id) {
-        var URL = path + "/echartManage/editVisualizeEchart/" + id;
-        var formData = {};
-
-        generatFlag = true;
-        $.post(URL, formData, function (jsonData) {
-            var flag = jsonData.flag;
-
-            if (flag) {
-                hisEchartName = jsonData.visualizeChartBean.echartName;
-                var type = jsonData.visualizeChartBean.type;
-
-                $("#type").val(type);
-
-                option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
-                option_line.series[0].name = jsonData.visualizeChartBean.field;
-                option_line.series[0].data = jsonData.echartMap.seriesDataList;
-
-                option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
-                option_bar.series[0].name = jsonData.visualizeChartBean.field;
-                option_bar.series[0].data = jsonData.echartMap.seriesDataList;
-
-                option_pie.series[0].name = jsonData.visualizeChartBean.field;
-                option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
-
-                var domEle = "<option value=''>请选择...</option>";
-                $("#multiIndex").html(domEle);
-                var URL = path + "/echartManage/loadMultiIndex";
-                $.post(URL, {}, function (jsonData2) {
-                    $("#Modal_view").html(myModalClone.html());
-                    if (jsonData2.flag) {
-                        var multiIndexList = jsonData2.multiIndexList;
-                        for (var i = 0; i < multiIndexList.length; i++) {
-                            domEle += "  <option value='" + multiIndexList[i].multiIndex + "'>";
-                            domEle += multiIndexList[i].multiIndex + "</option>";
-                        }
-
-                        $("#multiIndex").html(domEle);
-
-                        $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
-                        $("#formate").val(jsonData.visualizeChartBean.formate);
-                        $("#last").val(jsonData.visualizeChartBean.last);
-                        $("#timeField").val(jsonData.visualizeChartBean.timeField);
-                        changeMultiIndex(jsonData.visualizeChartBean.field);
-                        changeType();
-                    } else {
-                        layer.msg("加载项目名称错误", {icon: 2});
-                    }
-
-                    $("#id").val(jsonData.visualizeChartBean.id);
-                    $("#echartName").val(jsonData.visualizeChartBean.echartName);
-                    $("#lastDay").val(jsonData.visualizeChartBean.lastDay);
-                    $("#filterStr").val(jsonData.visualizeChartBean.filterStr);
-                    $("#existFlag").html("");
-                    $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
-
-                    $(".modal-btn").hide();
-                    $("#myModalLabel").html("修改图表");
-                    $("#modifyBtn").show();
-                    $('#Modal_view').modal('show');
-                }, "json");
-            } else {
-                layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
-            }
-        }, "json");
+      return;
     }
 
-    function saveVisualizeEchart() {
-        var relIndex = $("#field").find("option:selected").attr("data-relIndex");
+    if ($("#field").val() == "") {
+      layer.alert("请选择统计依据");
 
-        var clazz = $("#existFlag").attr("class");
-        var echartName = $("#echartName").val();
-        if (echartName.split(" ").join("") == "") {
-            layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
-
-            return;
-        }
-        if (clazz.indexOf("red500") != -1) {
-            layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
-
-            return;
-        }
-
-        if ($("#multiIndex").val() == "") {
-            layer.alert("请选择项目名称");
-
-            return;
-        }
-
-        if ($("#field").val() == "") {
-            layer.alert("请选择统计依据");
-
-            return;
-        }
-
-        var formData = $("#list_form").serializeArray();
-        var timeFlag = ($(".timeDiv").eq(0).attr("style") + "").indexOf("none") != -1;
-        if (!timeFlag) {
-            if ($("#last").val() == "") {
-                layer.alert("最近时间不能为空");
-
-                return;
-            }
-        } else {
-            for (var i = 0; i < formData.length; i++) {
-                if (formData[i].name == "format") {
-                    formData[i].value = null;
-                }
-                if (formData[i].name == "last") {
-                    formData[i].value = null;
-                }
-                if (formData[i].name == "timeField") {
-                    formData[i].value = null;
-                }
-            }
-        }
-
-        formData.push({"name": "relIndex", "value": relIndex});
-        var URL = path + "/echartManage/saveVisualizeEchart";
-
-        $.post(URL, formData, function (jsonData) {
-            var flag = jsonData.flag;
-
-            if (flag) {
-                layer.msg('保存成功！', {icon: 1, time: 1000});
-                $("#Modal_view").modal("hide");
-                $("#table").bootstrapTable("refresh");
-            } else {
-                layer.msg('保存失败！', {icon: 2, time: 1000});
-            }
-        });
+      return;
     }
 
-    function changeType() {
-        var type = $("#type").val();
-        $(".echart_view").each(function () {
-            $(this).removeClass("show");
-            if (type == $(this).attr("data-type")) {
-                $(this).addClass("show");
-            }
-        });
+    var formData = $("#list_form").serializeArray();
+    var timeFlag = ($(".timeDiv").eq(0).attr("style") + "").indexOf("none") != -1;
+    if (!timeFlag) {
+      if ($("#last").val() == "") {
+        layer.alert("最近时间不能为空");
 
-        if (generatFlag) {
-            if (type == "1") {
-                myChart_line.dispose();
-                myChart_line = echarts.init(document.getElementById('main_line'));
-                myChart_line.setOption(option_line);
-            } else if (type == "2") {
-                myChart_bar.dispose();
-                myChart_bar = echarts.init(document.getElementById('main_bar'));
-                myChart_bar.setOption(option_bar);
-            } else if (type == "3") {
-                if (option_pie.series[0].data.length > 30) {
-                    if (confirm("数据超过30条，确定要展示吗？")) {
-                        myChart_pie.dispose();
-                        myChart_pie = echarts.init(document.getElementById('main_pie'));
-                        myChart_pie.setOption(option_pie);
-                    }
-                } else {
-                    myChart_pie.dispose();
-                    myChart_pie = echarts.init(document.getElementById('main_pie'));
-                    myChart_pie.setOption(option_pie);
-                }
-
-            }
+        return;
+      }
+    } else {
+      for (var i = 0; i < formData.length; i++) {
+        if (formData[i].name == "format") {
+          formData[i].value = null;
         }
+        if (formData[i].name == "last") {
+          formData[i].value = null;
+        }
+        if (formData[i].name == "timeField") {
+          formData[i].value = null;
+        }
+      }
     }
+    var URL = path + "/echartManage/modifyVisualizeEchart/" + $("#id").val();
+    var relIndex = $("#field").find("option:selected").attr("data-relIndex");
+    formData.push({"name": "_method", "value": "PUT"});
+    formData.push({"name": "relIndex", "value": relIndex});
 
-    var generatFlag = false;
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
 
-    function generatEchart() {
-        var relIndex = $("#field").find("option:selected").attr("data-relIndex");
-        var field = $("#field").val();
-        var filterStr = $("#filterStr").val();
-        var formate = $("#formate").val();
-        var last = $("#last").val();
-        var timeField = $("#timeField").val();
-        var timeFlag = ($(".timeDiv").eq(0).attr("style") + "").indexOf("none") != -1;
+      if (flag) {
+        layer.msg('修改成功！', {icon: 1, time: 1000});
+        $("#Modal_view").modal("hide");
+        $("#table").bootstrapTable("refresh");
+      } else {
+        layer.msg('修改失败！', {icon: 2, time: 1000});
+      }
+    }, "json");
+  }
 
-        if ($("#multiIndex").val() == "") {
-            layer.alert("请选择项目名称");
+  var hisEchartName = "";
 
-            return;
-        }
+  function editVisualizeEchart(id) {
+    var URL = path + "/echartManage/editVisualizeEchart/" + id;
+    var formData = {};
 
-        if ($("#field").val() == "") {
-            layer.alert("请选择统计依据");
+    generatFlag = true;
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
 
-            return;
-        }
+      if (flag) {
+        hisEchartName = jsonData.visualizeChartBean.echartName;
+        var type = jsonData.visualizeChartBean.type;
 
-        if (!timeFlag && last == "") {
-            layer.alert("最近时间不能为空");
+        option_line.xAxis.data = jsonData.echartMap.xAxisDataList;
+        option_line.series[0].name = jsonData.visualizeChartBean.field;
+        option_line.series[0].data = jsonData.echartMap.seriesDataList;
 
-            return;
-        }
+        option_bar.xAxis.data = jsonData.echartMap.xAxisDataList;
+        option_bar.series[0].name = jsonData.visualizeChartBean.field;
+        option_bar.series[0].data = jsonData.echartMap.seriesDataList;
 
-        var formData = {
-            "relIndex": relIndex,
-            "field": field,
-            "filterStr": filterStr.split(" ").join(" or "),
-            "formate": formate,
-            "last": last,
-            "timeField": timeField
-        };
-        var URL = path + "/echartManage/generatEchart";
-
-        $.post(URL, formData, function (jsonData) {
-            generatFlag = true;
-
-            option_line.xAxis.data = jsonData.xAxisDataList;
-            option_line.series[0].name = field;
-            option_line.series[0].data = jsonData.seriesDataList;
-
-            option_bar.xAxis.data = jsonData.xAxisDataList;
-            option_bar.series[0].name = field;
-            option_bar.series[0].data = jsonData.seriesDataList;
-
-            option_pie.series[0].name = field;
-            option_pie.series[0].data = jsonData.pieSeriesDataList;
-
-            var type = $("#type").val();
-
-            if (type == "1") {
-                myChart_line.dispose();
-                myChart_line = echarts.init(document.getElementById('main_line'));
-                myChart_line.setOption(option_line);
-            } else if (type == "2") {
-                myChart_bar.dispose();
-                myChart_bar = echarts.init(document.getElementById('main_bar'));
-                myChart_bar.setOption(option_bar);
-            } else if (type == "3") {
-                myChart_pie.dispose();
-                myChart_pie = echarts.init(document.getElementById('main_pie'));
-                myChart_pie.setOption(option_pie);
-            }
-        }, "json");
-    }
-
-    var myModalClone = $("#Modal_view").clone();
-    var myChart_line = echarts.init(document.getElementById('main_line'));
-    var myChart_bar = echarts.init(document.getElementById('main_bar'));
-    var myChart_pie = echarts.init(document.getElementById('main_pie'));
-
-    function addVisualizeEchart() {
-
-        generatFlag = false;
-        hisEchartName = "";
+        option_pie.series[0].name = jsonData.visualizeChartBean.field;
+        option_pie.series[0].data = jsonData.echartMap.pieSeriesDataList;
 
         var domEle = "<option value=''>请选择...</option>";
         $("#multiIndex").html(domEle);
         var URL = path + "/echartManage/loadMultiIndex";
-        $.post(URL, {}, function (jsonData) {
-            $("#Modal_view").html(myModalClone.html());
-            if (jsonData.flag) {
-                var multiIndexList = jsonData.multiIndexList;
-                for (var i = 0; i < multiIndexList.length; i++) {
-                    domEle += "  <option value='" + multiIndexList[i].multiIndex + "'>";
-                    domEle += multiIndexList[i].multiIndex + "</option>";
-                }
-
-                $("#multiIndex").html(domEle);
-            } else {
-                layer.msg("加载项目名称错误", {icon: 2});
+        $.post(URL, {}, function (jsonData2) {
+          $("#Modal_view").html(myModalClone.html());
+          $("#type").val(type);
+          if (jsonData2.flag) {
+            var multiIndexList = jsonData2.multiIndexList;
+            for (var i = 0; i < multiIndexList.length; i++) {
+              domEle += "  <option value='" + multiIndexList[i].multiIndex + "'>";
+              domEle += multiIndexList[i].multiIndex + "</option>";
             }
 
-            $(".modal-btn").hide();
-            $("#myModalLabel").html("添加图表");
-            $("#saveBtn").show();
-            $('#Modal_view').modal('show').css({
-                width: 'auto',
-                'margin-left': 'auto'
-            });
+            $("#multiIndex").html(domEle);
+
+            $("#multiIndex").val(jsonData.visualizeChartBean.multiIndex);
+            $("#formate").val(jsonData.visualizeChartBean.formate);
+            $("#last").val(jsonData.visualizeChartBean.last);
+            $("#timeField").val(jsonData.visualizeChartBean.timeField);
+            changeMultiIndex(jsonData.visualizeChartBean.field);
+            changeType();
+          } else {
+            layer.msg("加载项目名称错误", {icon: 2});
+          }
+
+          $("#id").val(jsonData.visualizeChartBean.id);
+          $("#echartName").val(jsonData.visualizeChartBean.echartName);
+          $("#lastDay").val(jsonData.visualizeChartBean.lastDay);
+          $("#filterStr").val(jsonData.visualizeChartBean.filterStr);
+          $("#existFlag").html("");
+          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+
+          $(".modal-btn").hide();
+          $("#myModalLabel").html("修改图表");
+          $("#modifyBtn").show();
+          $('#Modal_view').modal('show');
         }, "json");
+      } else {
+        layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
+      }
+    }, "json");
+  }
+
+  function saveVisualizeEchart() {
+    var relIndex = $("#field").find("option:selected").attr("data-relIndex");
+
+    var clazz = $("#existFlag").attr("class");
+    var echartName = $("#echartName").val();
+    if (echartName.split(" ").join("") == "") {
+      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
+
+      return;
+    }
+    if (clazz.indexOf("red500") != -1) {
+      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
+
+      return;
     }
 
-    function initEchart() {
+    if ($("#multiIndex").val() == "") {
+      layer.alert("请选择项目名称");
+
+      return;
+    }
+
+    if ($("#field").val() == "") {
+      layer.alert("请选择统计依据");
+
+      return;
+    }
+
+    var formData = $("#list_form").serializeArray();
+    var timeFlag = ($(".timeDiv").eq(0).attr("style") + "").indexOf("none") != -1;
+    if (!timeFlag) {
+      if ($("#last").val() == "") {
+        layer.alert("最近时间不能为空");
+
+        return;
+      }
+    } else {
+      for (var i = 0; i < formData.length; i++) {
+        if (formData[i].name == "format") {
+          formData[i].value = null;
+        }
+        if (formData[i].name == "last") {
+          formData[i].value = null;
+        }
+        if (formData[i].name == "timeField") {
+          formData[i].value = null;
+        }
+      }
+    }
+
+    formData.push({"name": "relIndex", "value": relIndex});
+    var URL = path + "/echartManage/saveVisualizeEchart";
+
+    $.post(URL, formData, function (jsonData) {
+      var flag = jsonData.flag;
+
+      if (flag) {
+        layer.msg('保存成功！', {icon: 1, time: 1000});
+        $("#Modal_view").modal("hide");
+        $("#table").bootstrapTable("refresh");
+      } else {
+        layer.msg('保存失败！', {icon: 2, time: 1000});
+      }
+    });
+  }
+
+  function changeType() {
+    var type = $("#type").val();
+    $(".echart_view").each(function () {
+      $(this).removeClass("show");
+      if (type == $(this).attr("data-type")) {
+        $(this).addClass("show");
+      }
+    });
+
+    if (generatFlag) {
+      if (type == "1") {
         myChart_line.dispose();
         myChart_line = echarts.init(document.getElementById('main_line'));
         myChart_line.setOption(option_line);
-
+      } else if (type == "2") {
         myChart_bar.dispose();
         myChart_bar = echarts.init(document.getElementById('main_bar'));
         myChart_bar.setOption(option_bar);
+      } else if (type == "3") {
+        if (option_pie.series[0].data.length > 30) {
+          if (confirm("数据超过30条，确定要展示吗？")) {
+            myChart_pie.dispose();
+            myChart_pie = echarts.init(document.getElementById('main_pie'));
+            myChart_pie.setOption(option_pie);
+          }
+        } else {
+          myChart_pie.dispose();
+          myChart_pie = echarts.init(document.getElementById('main_pie'));
+          myChart_pie.setOption(option_pie);
+        }
 
+      }
+    }
+  }
+
+  var generatFlag = false;
+
+  function generatEchart() {
+    var relIndex = $("#field").find("option:selected").attr("data-relIndex");
+    var field = $("#field").val();
+    var filterStr = $("#filterStr").val();
+    var formate = $("#formate").val();
+    var last = $("#last").val();
+    var timeField = $("#timeField").val();
+    var timeFlag = ($(".timeDiv").eq(0).attr("style") + "").indexOf("none") != -1;
+
+    if ($("#multiIndex").val() == "") {
+      layer.alert("请选择项目名称");
+
+      return;
+    }
+
+    if ($("#field").val() == "") {
+      layer.alert("请选择统计依据");
+
+      return;
+    }
+
+    if (!timeFlag && last == "") {
+      layer.alert("最近时间不能为空");
+
+      return;
+    }
+
+    var formData = {
+      "relIndex": relIndex,
+      "field": field,
+      "filterStr": filterStr.split(" ").join(" or "),
+      "formate": formate,
+      "last": last,
+      "timeField": timeField
+    };
+    var URL = path + "/echartManage/generatEchart";
+
+    $.post(URL, formData, function (jsonData) {
+      generatFlag = true;
+
+      option_line.xAxis.data = jsonData.xAxisDataList;
+      option_line.series[0].name = field;
+      option_line.series[0].data = jsonData.seriesDataList;
+
+      option_bar.xAxis.data = jsonData.xAxisDataList;
+      option_bar.series[0].name = field;
+      option_bar.series[0].data = jsonData.seriesDataList;
+
+      option_pie.series[0].name = field;
+      option_pie.series[0].data = jsonData.pieSeriesDataList;
+
+      var type = $("#type").val();
+
+      if (type == "1") {
+        myChart_line.dispose();
+        myChart_line = echarts.init(document.getElementById('main_line'));
+        myChart_line.setOption(option_line);
+      } else if (type == "2") {
+        myChart_bar.dispose();
+        myChart_bar = echarts.init(document.getElementById('main_bar'));
+        myChart_bar.setOption(option_bar);
+      } else if (type == "3") {
         myChart_pie.dispose();
         myChart_pie = echarts.init(document.getElementById('main_pie'));
         myChart_pie.setOption(option_pie);
-    }
+      }
+    }, "json");
+  }
 
-    function changeMultiIndex(field) {
-        var multiIndex = $("#multiIndex").val();
-        $("#multiIndexSpan").html(multiIndex);
+  var myModalClone = $("#Modal_view").clone();
+  var myChart_line = echarts.init(document.getElementById('main_line'));
+  var myChart_bar = echarts.init(document.getElementById('main_bar'));
+  var myChart_pie = echarts.init(document.getElementById('main_pie'));
 
-        if (multiIndex != "") {
-            var URL = path + "/echartManage/listConverField";
-            var formData = {
-                "index": multiIndex
-            };
-            var domEle = "<option value=''>请选择..</option>";
-            $("#field").html(domEle);
-            $.post(URL, formData, function (jsonData) {
-                var flag = jsonData.flag;
+  function addVisualizeEchart() {
 
-                if (flag) {
-                    var fieldList = jsonData.fieldList
+    generatFlag = false;
+    hisEchartName = "";
 
-                    var domEle = "<option value=''>请选择...</option>";
-                    var existFieldFlag = false;
-                    $.each(fieldList, function (key, value) {
-                        if (key == field) {
-                            existFieldFlag = true;
-                        }
-                        var txt = key;
-                        if (txt.indexOf("\.date")) {
-                            txt = txt.replace("\.date", "");
-                        }
-                        domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + txt + "</option>";
-                    });
-                    $("#field").html(domEle);
-
-                    if (field != "" && existFieldFlag) {
-                        $("#field").val(field);
-                        changeField();
-                    }
-                } else {
-                    layer.msg("有不存在的日志文件", {icon: 2, time: 2000});
-                }
-            }, "json");
-        } else {
-            var domEle = "<option value=''>请选择..</option>";
-            $("#field").html(domEle);
+    var domEle = "<option value=''>请选择...</option>";
+    $("#multiIndex").html(domEle);
+    var URL = path + "/echartManage/loadMultiIndex";
+    $.post(URL, {}, function (jsonData) {
+      $("#Modal_view").html(myModalClone.html());
+      if (jsonData.flag) {
+        var multiIndexList = jsonData.multiIndexList;
+        for (var i = 0; i < multiIndexList.length; i++) {
+          domEle += "  <option value='" + multiIndexList[i].multiIndex + "'>";
+          domEle += multiIndexList[i].multiIndex + "</option>";
         }
-    }
 
-    /*]]>*/
+        $("#multiIndex").html(domEle);
+      } else {
+        layer.msg("加载项目名称错误", {icon: 2});
+      }
+
+      $(".modal-btn").hide();
+      $("#myModalLabel").html("添加图表");
+      $("#saveBtn").show();
+      $('#Modal_view').modal('show').css({
+        width: 'auto',
+        'margin-left': 'auto'
+      });
+    }, "json");
+  }
+
+  function initEchart() {
+    myChart_line.dispose();
+    myChart_line = echarts.init(document.getElementById('main_line'));
+    myChart_line.setOption(option_line);
+
+    myChart_bar.dispose();
+    myChart_bar = echarts.init(document.getElementById('main_bar'));
+    myChart_bar.setOption(option_bar);
+
+    myChart_pie.dispose();
+    myChart_pie = echarts.init(document.getElementById('main_pie'));
+    myChart_pie.setOption(option_pie);
+  }
+
+  function changeMultiIndex(field) {
+    var multiIndex = $("#multiIndex").val();
+    $("#multiIndexSpan").html(multiIndex);
+
+    if (multiIndex != "") {
+      var URL = path + "/echartManage/listConverField";
+      var formData = {
+        "index": multiIndex
+      };
+      var domEle = "<option value=''>请选择..</option>";
+      $("#field").html(domEle);
+      $.post(URL, formData, function (jsonData) {
+        var flag = jsonData.flag;
+
+        if (flag) {
+          var fieldList = jsonData.fieldList
+
+          var domEle = "<option value=''>请选择...</option>";
+          var existFieldFlag = false;
+          $.each(fieldList, function (key, value) {
+            if (key == field) {
+              existFieldFlag = true;
+            }
+            var txt = key;
+            if (txt.indexOf("\.date")) {
+              txt = txt.replace("\.date", "");
+            }
+            domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + txt + "</option>";
+          });
+          $("#field").html(domEle);
+
+          if (field != "" && existFieldFlag) {
+            $("#field").val(field);
+            changeField();
+          }
+        } else {
+          layer.msg("有不存在的日志文件", {icon: 2, time: 2000});
+        }
+      }, "json");
+    } else {
+      var domEle = "<option value=''>请选择..</option>";
+      $("#field").html(domEle);
+    }
+  }
+
+  /*]]>*/
 </script>
 <script>
-    /*<![CDATA[*/
-    var $table = $('#table');
-    $table.bootstrapTable({
-        classes: 'table table-hover table-condensed table-bordered table-responsive',
-        contentType: "application/x-www-form-urlencoded",
-        height: getHeight(),
-        url: path + "/echartManage/pageVisualizeEchart",
-        striped: true, //隔行变色
-        pagination: true,
-        singleSelect: false,
-        queryParamsType: '',
-        queryParams: queryParams,
-        sidePagination: "server",//表格分页的位置
-        pageNumber: 1,
-        pageSize: 10,
-        pageList: [10, 20, 50, 100],
-        onLoadSuccess: function () {
-            $(".bs-checkbox").css({"text-align": "center", "vertical-align": "middle"});
-        },
-        columns: [{
-            checkbox: true,
-            width: 50
-        }, {
-            field: 'id',
-            width: 100,
-            title: '编号',
-            halign: 'center',
-            align: 'center',
-            valign: 'middle'
-        }, {
-            width: 250,
-            field: 'echartName',
-            title: '图表名称',
-            halign: 'center',
-            align: 'center',
-            valign: 'middle',
-            sortable: true
-        }, {
-            width: 150,
-            field: 'multiIndex',
-            title: '项目名称',
-            halign: 'center',
-            align: 'center',
-            valign: 'middle',
-            sortable: true
-        }, {
-            width: 130,
-            field: 'field',
-            title: '统计依据',
-            halign: 'center',
-            align: 'center',
-            valign: 'middle',
-            sortable: true
-        }, {
-            width: 100,
-            field: 'typePo',
-            title: '图表类型',
-            halign: 'center',
-            align: 'center',
-            valign: 'middle',
-            sortable: true
-        }, {
-            width: 250,
-            field: 'operate',
-            title: '操作',
-            halign: 'center',
-            align: 'center',
-            valign: 'middle',
-            formatter: operateFormatter
-        }
-        ]
+  /*<![CDATA[*/
+  var $table = $('#table');
+  $table.bootstrapTable({
+    classes: 'table table-hover table-condensed table-bordered table-responsive',
+    contentType: "application/x-www-form-urlencoded",
+    height: getHeight(),
+    url: path + "/echartManage/pageVisualizeEchart",
+    striped: true, //隔行变色
+    pagination: true,
+    singleSelect: false,
+    queryParamsType: '',
+    queryParams: queryParams,
+    sidePagination: "server",//表格分页的位置
+    pageNumber: 1,
+    pageSize: 10,
+    pageList: [10, 20, 50, 100],
+    onLoadSuccess: function () {
+      $(".bs-checkbox").css({"text-align": "center", "vertical-align": "middle"});
+    },
+    columns: [{
+      checkbox: true,
+      width: 50
+    }, {
+      field: 'id',
+      width: 100,
+      title: '编号',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle'
+    }, {
+      width: 250,
+      field: 'echartName',
+      title: '图表名称',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      width: 150,
+      field: 'multiIndex',
+      title: '项目名称',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      width: 130,
+      field: 'field',
+      title: '统计依据',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      width: 100,
+      field: 'typePo',
+      title: '图表类型',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      sortable: true
+    }, {
+      width: 250,
+      field: 'operate',
+      title: '操作',
+      halign: 'center',
+      align: 'center',
+      valign: 'middle',
+      formatter: operateFormatter
+    }
+    ]
+  });
+
+  function queryParams(params) {
+    var sortName = (params.sortName) ? params.sortName.replace(/([A-Z])/g, "_$1").toLowerCase() : "";
+    if (sortName == "type_po") {
+      sortName = "type";
+    }
+    var paramMap = {
+      "pageSize": params.pageSize,
+      "pn": params.pageNumber,
+      "echartName": $('#echartNameQuery').val(),
+      "sortName": sortName,
+      "sortOrder": params.sortOrder
+    };
+
+    return paramMap;
+  }
+
+  function operateFormatter(value, row, index) {
+    return [
+      "<a class='btn btn-primary' href=\"javascript:detailVisualizeEchart('" + row.id + "')\" " +
+      "title='查看详情'>查看详情</a>",
+      "<a class='btn btn-success' href=\"javascript:editVisualizeEchart('" + row.id + "')\" title='修改'>修改</a>",
+      "<a class='btn btn-danger' href=\"javascript:delVisualizeEchart('" + row.id + "')\" title='删除'>删除</a>"
+    ].join('');
+  }
+
+  $(window).resize(function () {
+    $table.bootstrapTable('resetView', {
+      height: getHeight()
     });
+  });
 
-    function queryParams(params) {
-        var sortName = (params.sortName) ? params.sortName.replace(/([A-Z])/g, "_$1").toLowerCase() : "";
-        if (sortName == "type_po") {
-            sortName = "type";
-        }
-        var paramMap = {
-            "pageSize": params.pageSize,
-            "pn": params.pageNumber,
-            "echartName": $('#echartNameQuery').val(),
-            "sortName": sortName,
-            "sortOrder": params.sortOrder
-        };
+  function getHeight() {
+    return $(window).height() - 195;
+  }
 
-        return paramMap;
-    }
-
-    function operateFormatter(value, row, index) {
-        return [
-            "<a class='btn btn-primary' href=\"javascript:detailVisualizeEchart('" + row.id + "')\" " +
-            "title='查看详情'>查看详情</a>",
-            "<a class='btn btn-success' href=\"javascript:editVisualizeEchart('" + row.id + "')\" title='修改'>修改</a>",
-            "<a class='btn btn-danger' href=\"javascript:delVisualizeEchart('" + row.id + "')\" title='删除'>删除</a>"
-        ].join('');
-    }
-
-    $(window).resize(function () {
-        $table.bootstrapTable('resetView', {
-            height: getHeight()
-        });
-    });
-
-    function getHeight() {
-        return $(window).height() - 195;
-    }
-
-    /*]]>*/
+  /*]]>*/
 </script>
 </body>
 </html>

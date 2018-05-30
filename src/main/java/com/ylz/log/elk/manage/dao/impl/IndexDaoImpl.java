@@ -20,6 +20,7 @@ import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
@@ -32,11 +33,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 
 @Slf4j
 @Repository("indexDao")
@@ -176,11 +179,27 @@ public class IndexDaoImpl implements IndexDao {
         if (StringUtils.isEmpty(searchContent)) {
             searchRequestBuilder.setQuery(matchAllQuery());
         } else {
+            fieldList = this.listField(index, type);
+
+            BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+
+            // 暂时先让message可以like全文搜索
+            for (String content : searchContent.toLowerCase().split(" ")) {
+                WildcardQueryBuilder wildcardQueryBuilder = QueryBuilders.wildcardQuery
+                        ("message", "*" + content + "*");
+
+                boolQueryBuilder.should(wildcardQueryBuilder);
+            }
+
+            boolQueryBuilder.should(queryStringQuery(StringUtils.join(searchContent.split(" "), " or ")));
             searchRequestBuilder.setQuery(queryStringQuery(searchContent));
+
+            searchRequestBuilder.setQuery(boolQueryBuilder);
+
             HighlightBuilder highlightBuilder = new HighlightBuilder();
             fieldList = this.listField(index, type);
-            for (String highField : fieldList) {
-                highlightBuilder.field(highField);
+            for (String tmpField : fieldList) {
+                highlightBuilder.field(tmpField);
             }
             searchRequestBuilder.highlighter(highlightBuilder);
         }
@@ -201,6 +220,8 @@ public class IndexDaoImpl implements IndexDao {
         long currentPage = page + 1;
         if (totalPages != 0 && currentPage > totalPages) {
             log.info("该页面无数据，处理page后再次查询");
+            log.info("queryByEs--查询es数据: index = {}, relIndex = {}, page = {}, pageSize = {}\n查询DSL: {}",
+                    index, indexList, page, pageSize, searchRequestBuilder);
             currentPage = totalPages;
 
             return this.queryByEs((int) (currentPage - 1), pageSize, index, type, field, searchContent);
@@ -224,7 +245,7 @@ public class IndexDaoImpl implements IndexDao {
                         nameTmp += text;
                     }
                     //将高亮片段组装到结果中去
-                    source.put("title", nameTmp);
+                    source.put(tmpField, nameTmp);
                 }
             }
 

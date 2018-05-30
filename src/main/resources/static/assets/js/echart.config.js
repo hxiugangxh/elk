@@ -11,6 +11,8 @@ var option_pie = {
   tooltip: {
     formatter: "{a} <br/>{b} : {c} ({d}%)"
   },
+  // DEBUGER ERROR INFO WARN
+  color: ['#428BCA', '#D9534F', '#9cc5b0', '#F0AD4E'],
   series: [
     {
       name: '记录',
@@ -42,9 +44,9 @@ var option_line = {
   xAxis: {
     boundaryGap: false,
     data: ["A", "B", "C", "D", "E", "F"],
-    axisLabel : {
-      show : true,
-      formatter:function(val) {
+    axisLabel: {
+      show: true,
+      formatter: function (val) {
         return val.split(" ").join("\n")
       }
     }
