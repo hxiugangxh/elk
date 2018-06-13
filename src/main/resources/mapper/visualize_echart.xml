@@ -10,6 +10,8 @@
             <if test="echartName != ''">
                 <bind name="echartName" value="'%' + echartName + '%'"/>
                 and echart_name like #{echartName}
+                or multi_index like #{echartName}
+                or field like #{echartName}
             </if>
         </where>
         <if test="sortName != '' and sortOrder != ''">

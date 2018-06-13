@@ -4,6 +4,7 @@ import com.ylz.log.elk.base.core.bean.SysPermission;
 import com.ylz.log.elk.base.core.bean.SysRole;
 import com.ylz.log.elk.base.core.bean.UserInfo;
 import com.ylz.log.elk.base.core.service.UserInfoService;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -41,6 +42,7 @@ public class MyShiroRealm extends AuthorizingRealm {
             System.out.println("=========" + username);
             return null;
         }
+
         //3、加密. 使用SimpleAuthenticationInfo 进行身份处理.
         SimpleAuthenticationInfo simpleAuthenticationInfo = new SimpleAuthenticationInfo(userInfo, userInfo
                 .getPassword(), ByteSource.Util.bytes(userInfo.getUserNameAndSalt()), getName());
