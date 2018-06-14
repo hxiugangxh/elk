@@ -1,44 +1,178 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.w3.org/1999/xhtml">
-<head>
-<meta charset="UTF-8" />
-<title>Insert title here</title>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+  <meta charset="UTF-8" />
+  <title>首页</title>
+  <link rel="shortcut icon" th:href="@{assets/img/favicon.ico}"/>
+  <link rel="bookmark" th:href="@{assets/img/favicon.ico}"/>
+  <!-- 插件样式库 -->
+  <link rel="stylesheet" type="text/css" th:href="@{assets/plugins/bootstrap-3.3.0/css/bootstrap.min.css}"/>
+  <!--layer-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/plugins/layer-v2.4/skin/layer.css}"/>
+  <!--zTree插件-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/plugins/zTree_v3-master/css/zTreeStyle/zTreeStyle.css}"/>
+  <!--iconfont字体库-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/font/iconfont.css}"/>
+  <link type="text/css" rel="stylesheet" th:href="@{assets/font/font-awesome.css}"/>
+  <!--基础样式-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/css/base/base.css}"/>
+  <!--页面布局样式文件-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/css/base/layout.css}"/>
+  <!--颜色样式-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/css/base/color.css}"/>
+  <!--warnDialog样式文件-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/plugins/warn-dialog/css/warnDialog.css}"/>
+
+  <!--主题色-->
+  <link type="text/css" rel="stylesheet" th:href="@{assets/css/base/themecolor_blue.css}"/>
 </head>
-<body>
-	
-	<!-- 1、显示当前登录的用户名. -->
-	<h3>
-		<span th:text="'登录账号：'+${userInfo.username}+'--名称：'+${userInfo.name}"></span>
-		
-		<a href="/logout">退出</a>
-		
-	</h3>
-	
-	<!-- 2、通过shiro标签控制权限信息. -->
-	<h5>通过shiro标签控制权限信息-2017</h5>
+<body class="well-blue">
+<div class="index">
+  <!--logo 头部-->
+  <div class="themebg header cf">
+    <div class="fl header-fl">
+      <img th:src="@{/assets/img/logo3.png}" style="width: 137px;margin-right: 22px;">分布式日志监控系统
+    </div>
+    <div class="fr header-fr">
+      <ul class="header-tools cf">
+        <li>
+          <a><i class="iconfont icon-yonghu"></i><span class="login-user">林某某</span><i
+              class="iconfont icon-down"></i></a>
+          <ul class="header-child userinfo">
+            <li><a>个人信息</a></li>
+            <li><a>密码修改</a></li>
+            <li class="last"><a href="page_login.html" target="_blank">安全退出</a></li>
+          </ul>
+        </li>
+        <li>
+          <a><i class="iconfont icon-tixing"></i><sup class="light_green400-bg">3</sup></a>
+          <ul class="header-child">
+            <li><a onclick="showallnews('8888','未读信息内容','')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a></li>
+            <li><a onclick="showallnews('9999','未读信息内容','')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a></li>
+            <li class="tools"><a onclick="showallnews('6666','未读信息','')"><i class="iconfont icon-weidu"></i>查看所有消息</a>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a><i class="iconfont icon-svg31"></i><sup class="yellow800-bg">3</sup></a>
+          <ul class="header-child">
+            <li><a onclick="showallnews('6666','报警信息','warning-content.html')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a>
+            </li>
+            <li><a onclick="showallnews('5555','报警信息','warning-content.html')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a>
+            </li>
+            <li class="tools"><a onclick="showallnews('7777','报警信息','warning-content.html')"><i
+                class="iconfont icon-weidu"></i>查看所有消息</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <!--logo 头部-->
+  <!--nav 菜单栏 头部-->
+  <!--<div id="nav" class="nav"></div>-->
+  <!--nav 菜单栏 头部-->
+  <!--左侧菜单-->
+  <div class="left">
+    <div class="search-nav">
+      <input type="text" placeholder="搜索..."/><i class="icon-search"></i>
+    </div>
+    <div class="left-nav" id="left-nav" tabindex="5000" style="height: 566px; overflow-y: hidden; outline: none;">
+      <ul id="treeDemo" class="ztree"></ul>
+    </div>
+    <!---收缩按钮-->
+    <div class="shrink"></div>
+    <!---收缩按钮-->
+  </div>
+  <!--左侧菜单-->
+  <!--右侧内容-->
+  <div class="page-wrapper">
+    <!--右侧内容主tab-->
+    <div class="content-tabs">
+      <button class="roll-nav roll-left"><i class="iconfont icon-ttpodicon"></i></button>
+      <div class="page-tabs">
+        <a href="javascript:;" class="first J_menuTab active last" data-id="daas"><i
+            class="iconfont icon-shouyeshouye2"></i>首页</a>
+      </div>
+      <button class="roll-nav roll-right J_tabRight"><i class="iconfont icon-next"></i></button>
+      <div class="roll-nav roll-right btn-group" id="other_operation">
+        <button class="closeopers">其他操作<i class="iconfont icon-down"></i></button>
+        <ul class="dropdown-menu-right">
+          <li class="J_tabRefreshActive"><a>刷新当前选项卡</a></li>
+          <li class="J_tabShowActive"><a>定位当前选项卡</a></li>
+          <li class="divider"></li>
+          <li class="J_tabCloseAll"><a>关闭全部选项卡</a></li>
+          <li class="J_tabCloseOther"><a>关闭其他选项卡</a></li>
+        </ul>
+      </div>
+    </div>
+    <!--右侧内容主tab-->
+    <div class="page-content" id="pageContent" style="overflow-y: hidden">
+      <iframe class="J_iframe" scrolling="no" src="page_index_first.html" width="100%" height="100%" frameborder="0"
+              data-id="daas"></iframe>
+    </div>
+    <!--右侧内容-->
+  </div>
+  <!--底部-->
+  <div class="footer" id="indexfooter">
+    版权所有:易联众信息技术股份有限公司
+  </div>
+</div>
+<!--底部-->
+<!--jquery 引入-->
+<script type="text/javascript" th:src="@{/assets/js/jquery/jquery-1.12.3.min.js}"></script>
+<!--[if lte IE 8]>
+<script type="text/javascript" th:src="@{/assets/js/jquery/jquery-1.9.0.min.js}"></script>
+<![endif]-->
+<!--layer插件-->
+<script type="text/javascript" th:src="@{/assets/plugins/layer-v2.4/layer.js}"></script>
+<!--滚动条-->
+<script type="text/javascript" th:src="@{/assets/plugins/scroll/jquery.nicescroll.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/scroll/jquery.SuperSlide.2.1.js}"></script>
+<!--zTree插件-->
+<script type="text/javascript" th:src="@{/assets/plugins/zTree_v3-master/js/jquery.ztree.core.min.js}"></script>
+<script type="text/javascript" th:src="@{/assets/data/data.js}"></script>
+<script type="text/javascript" th:src="@{/assets/js/ggfwkj.js}"></script>
+<script type="text/javascript" th:src="@{/assets/plugins/warn-dialog/js/warnDialog.js}"></script>
+<script type="text/javascript">
 
-	<p shiro:hasPermission="userInfo:view">
-		<a href="/userInfo/userList">用户查询</a>
-	</p>
-	<p shiro:hasPermission="userInfo:add">
-		<a href="/userInfo/userAdd">用户添加</a>
-	</p>
-	<p shiro:hasPermission="userInfo:del">
-		<a href="/userInfo/userDelete">用户删除</a>
-	</p>
-	
-	<!-- 3、通过数据库获取权限信息.(实际当中使用的是这种方式，不是上面的方式.) 角色+权限信息展示出来-->
-	
-	<hr />
+  $(function () {
+    $.warnDialog({
+      height: 152,
+      firstBtn: "处理完成",
+      secBtn: "忽略",
+      url: ""
+    });
+    /***通过大菜单的id获取对应左侧的子菜单**/
+    loadleftnav('treeDemo', '', zNodes);
 
-	<h5>通过数据库获取权限信息</h5>
-	<div th:each="role:${userInfo.roles}">
-		<span th:text="${role.description}"></span>
-		<p  th:each="permissions:${role.permissions}" style="color:blue;margin-left:30px;">
-			<a th:href="${permissions.url}" th:text="${permissions.name}"></a>
-		</p>
-	</div>
-	
-	
+    function setHeight() {
+      var bodyHeight = $(window).height();
+      var contHeight = bodyHeight - 160;
+      $("#left-nav").css("height", contHeight + "px");
+    }
+
+    setHeight();
+    var html = '<div style="padding: 10px 30px;line-height: 30px;">该框架仅适用于易联众公司，<br>如有在使用过程中有任何疑问，<br>请及时跟开发人员联系</div>';
+    /*var ob={aaa:1,callback: {onClick:function(that){console.log("aaa")}}}
+     loadleftnav('treeDemo',ob,zNodes);*/
+    $("#left-nav,.ztree,.J_iframe").niceScroll({
+      cursorcolor: "#666666",
+      cursoropacitymax: 1,
+      touchbehavior: false,
+      cursorwidth: "5px",
+      cursorborder: "0",
+      cursorborderradius: "5px",
+      horizrailenabled: false,
+      autohidemode: true//不滚动时设置隐藏滚动条
+    });
+    $(window).resize(function () {
+      setHeight();
+      var smy_hei = $(window).height() - 100;
+      $("#left-nav").height(smy_hei);
+      $(".ztree").height(smy_hei);
+      $(".J_iframe").height(smy_hei);
+    });
+  });
+</script>
 </body>
 </html>

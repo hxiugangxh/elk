@@ -144,7 +144,7 @@ public class IndexDaoImpl implements IndexDao {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("multiIndex", multiIndex);
 
-        log.info("getRelIndex--组合索引映射: \n" + querySQL + "\n参数: " + paramMap);
+        log.info("getRelIndex--组合索引映射: \n{}\n参数: {}", querySQL, paramMap);
 
         List<Map<String, Object>> list = this.getNamedParameterJdbcTemplate().queryForList(querySQL, paramMap);
 
@@ -309,7 +309,7 @@ public class IndexDaoImpl implements IndexDao {
     public List<MultiIndexBean> listMultiIndex() {
         String querySQL = "select * from cm_multi_index";
 
-        log.info("listMultiIndex--获取多重复合索引:\n" + querySQL);
+        log.info("listMultiIndex--获取多重复合索引: {}", querySQL);
 
         return this.jdbcTemplate.query(querySQL, new BeanPropertyRowMapper<>(MultiIndexBean.class));
     }
@@ -387,7 +387,7 @@ public class IndexDaoImpl implements IndexDao {
             }
         }
 
-        log.info("saveMultiIndex--批量保存关系: " + insertSQL);
+        log.info("saveMultiIndex--批量保存关系: {}", insertSQL);
 
         Integer count = this.jdbcTemplate.update(insertSQL);
         if (count > 0) {
@@ -404,7 +404,7 @@ public class IndexDaoImpl implements IndexDao {
         Map<String, Object> dataMap = new HashMap<>();
         String querySQL = "select count(1) from cm_multi_index where multi_index = '" + multiIndex + "'";
 
-        log.info("hasExist: " + querySQL);
+        log.info("hasExist: {}", querySQL);
         Integer count = this.jdbcTemplate.queryForObject(querySQL, Integer.class);
 
         if (count > 0) {
@@ -470,12 +470,12 @@ public class IndexDaoImpl implements IndexDao {
 
         paramMap.put("indexList", indexList);
 
-        log.info("delMultiRelIndex--获取索引内容:\n" + querySQL + "\n参数: " + paramMap);
+        log.info("delMultiRelIndex--获取索引内容:\n{}\n参数: {}", querySQL, paramMap);
         List<Map<String, Object>> list = this.getNamedParameterJdbcTemplate().queryForList(querySQL, paramMap);
 
         String delSQL = "delete from cm_es_index where `index` in (:indexList)";
-        log.info("delMultiRelIndex--删除ES索引:\n" + delSQL + "\n参数: " + paramMap);
-        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+        log.info("delMultiRelIndex--删除ES索引:\n{},\n参数: {}", delSQL, paramMap);
+        Integer count = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         paramMap.clear();
         List<String> esIndexIdList = new ArrayList<>();
@@ -485,8 +485,8 @@ public class IndexDaoImpl implements IndexDao {
         });
         paramMap.put("esIndexIdList", esIndexIdList);
         delSQL = "delete from cm_multi_rel_es_index where es_index_id in (:esIndexIdList)";
-        log.info("delMultiRelIndex--删除映射关系:\n" + delSQL + "\n参数: " + paramMap);
-        Integer count = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+        log.info("delMultiRelIndex--删除映射关系:\n{},\n参数: {}", delSQL, paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         if (count > 0) {
             return true;
@@ -528,18 +528,18 @@ public class IndexDaoImpl implements IndexDao {
         paramMap.clear();
         paramMap.put("multiIndexId", multiIndexBean.getId());
 
-        log.info("delMultiIndex--删除数据库管理的es的index值:\n" + delSQL + "\n参数: " + paramMap);
+        log.info("delMultiIndex--删除数据库管理的es的index值:\n{},\n参数: {}", delSQL, paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         delSQL = "delete from cm_multi_rel_es_index where multi_index_id = :multiIndexId";
-        log.info("delMultiIndex--删除组合索引与es索引的关系表:\n" + delSQL + "\n参数: " + paramMap);
+        log.info("delMultiIndex--删除组合索引与es索引的关系表:\n{},\n参数: {}", delSQL, paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         delSQL = "delete from cm_user_coll_index where user_id = " + LoginInfoUtil.getUserId();
         this.jdbcTemplate.update(delSQL);
 
         delSQL = "delete from cm_multi_index where id = :multiIndexId";
-        log.info("delMultiIndex--删除组合索引:\n" + delSQL + "\n参数: " + paramMap);
+        log.info("delMultiIndex--删除组合索引:\n{},\n参数: {}", delSQL, paramMap);
         Integer count = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         if (count > 0) {
