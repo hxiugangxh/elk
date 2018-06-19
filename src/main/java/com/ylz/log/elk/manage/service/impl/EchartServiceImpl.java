@@ -189,8 +189,10 @@ public class EchartServiceImpl implements EchartService {
         searchRequestBuilder.setQuery(boolQueryBuilder);
 
         if (dateFlag) {
+            System.out.println(visualizeChartBean.getFormate());
             DateHistogramAggregationBuilder dateAgg = AggregationBuilders.dateHistogram(field).field(field)
-                    .dateHistogramInterval(DateHistogramInterval.DAY)
+                    .dateHistogramInterval(VisualizeChartBean.formataMap.get(Constants.formateMap.get
+                            (visualizeChartBean.getFormate())))
                     .format(Constants.formateMap.get(visualizeChartBean.getFormate()));
             searchRequestBuilder.addAggregation(dateAgg);
         } else {
