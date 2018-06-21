@@ -225,7 +225,16 @@
     if (!$("#field li").hasClass("active") || arr.length == $("#field li").length) {
       $("#allLiSelect").addClass("active");
     }
+
+    throttle(queryByEs, 500);
   });
+
+  function throttle(method, time){
+    clearTimeout(method.tId);
+    method.tId = setTimeout(function(){
+      method.call();
+    }, time);
+  }
 
   window.onkeyup = function (ev) {
     var key = ev.keyCode || ev.which;

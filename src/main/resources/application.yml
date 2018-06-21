@@ -18,7 +18,7 @@ spring:
   data:
     elasticsearch:
       cluster-name: ylz
-      cluster-nodes: 192.168.44.86:9300
+      cluster-nodes: 192.168.44.88:9300
 
 mybatis:
   mapper-locations: classpath:mapper/*.xml

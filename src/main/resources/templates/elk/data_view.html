@@ -462,6 +462,7 @@
   var hisEchartName = "";
 
   function editVisualizeEchart(id) {
+    var index = layer.load();
     var URL = path + "/echartManage/editVisualizeEchart/" + id;
     var formData = {};
 
@@ -520,6 +521,8 @@
           $("#myModalLabel").html("修改图表");
           $("#modifyBtn").show();
           $('#Modal_view').modal('show');
+
+          layer.close(index);
         }, "json");
       } else {
         layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
@@ -667,6 +670,22 @@
     };
     var URL = path + "/echartManage/generatEchart";
 
+    var type = $("#type").val();
+
+    if (type == "1") {
+      myChart_line.dispose();
+      myChart_line = echarts.init(document.getElementById('main_line'));
+      myChart_line.showLoading();
+    } else if (type == "2") {
+      myChart_bar.dispose();
+      myChart_bar = echarts.init(document.getElementById('main_bar'));
+      myChart_bar.showLoading();
+    } else if (type == "3") {
+      myChart_pie.dispose();
+      myChart_pie = echarts.init(document.getElementById('main_pie'));
+      myChart_pie.showLoading();
+    }
+
     $.post(URL, formData, function (jsonData) {
       generatFlag = true;
 
@@ -684,17 +703,14 @@
       var type = $("#type").val();
 
       if (type == "1") {
-        myChart_line.dispose();
-        myChart_line = echarts.init(document.getElementById('main_line'));
         myChart_line.setOption(option_line);
+        myChart_line.hideLoading();
       } else if (type == "2") {
-        myChart_bar.dispose();
-        myChart_bar = echarts.init(document.getElementById('main_bar'));
         myChart_bar.setOption(option_bar);
+        myChart_bar.hideLoading();
       } else if (type == "3") {
-        myChart_pie.dispose();
-        myChart_pie = echarts.init(document.getElementById('main_pie'));
         myChart_pie.setOption(option_pie);
+        myChart_pie.hideLoading();
       }
     }, "json");
   }

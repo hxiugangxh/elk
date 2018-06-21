@@ -98,7 +98,6 @@ public class EchartManagerController {
             jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
-            flag = false;
 
             jsonMap.put("flag", flag);
         }
@@ -126,7 +125,6 @@ public class EchartManagerController {
             jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
-            flag = false;
 
             jsonMap.put("flag", flag);
         }
@@ -172,7 +170,6 @@ public class EchartManagerController {
             jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
-            flag = false;
 
             jsonMap.put("flag", flag);
         }
@@ -235,7 +232,6 @@ public class EchartManagerController {
             jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
-            flag = false;
 
             jsonMap.put("flag", flag);
         }
@@ -255,7 +251,6 @@ public class EchartManagerController {
             jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
-            flag = false;
 
             jsonMap.put("flag", flag);
         }
@@ -286,7 +281,6 @@ public class EchartManagerController {
             jsonMap.put("flag", flag);
         } catch (Exception e) {
             e.printStackTrace();
-            flag = false;
 
             jsonMap.put("flag", flag);
         }
