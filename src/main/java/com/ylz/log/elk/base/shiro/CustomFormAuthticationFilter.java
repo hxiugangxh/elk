@@ -1,3 +1,4 @@
+/*
 package com.ylz.log.elk.base.shiro;
 
 import com.google.code.kaptcha.Constants;
@@ -7,10 +8,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+*/
 /**
  * 自定义过滤器，在此过滤器中进行验证码的校验.
  *
- */
+ *//*
+
 public class CustomFormAuthticationFilter extends FormAuthenticationFilter {
 
     @Override
@@ -33,3 +36,4 @@ public class CustomFormAuthticationFilter extends FormAuthenticationFilter {
     }
 
 }
+*/

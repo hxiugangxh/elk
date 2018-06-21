@@ -1,3 +1,4 @@
+/*
 package com.ylz.log.elk.base.shiro;
 
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
@@ -21,31 +22,37 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Properties;
 
+*/
 /**
  * 这是Shiro 配置类：
  * -----------------------
  * （1）需要配置ShiroFilterFactory :ShiroFilterFactoryBean
  * （2）配置SecurityManager
- */
+ *//*
+
 @Configuration //这是配置类.
 public class ShiroConfiguration {
 
 
-    /**
+    */
+/**
      * 定义shiro Filter 工厂类.
      *
      * @param securityManager
      * @return
-     */
+     *//*
+
     @Bean //注入shiroFilter.
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
 
-		/*
+		*/
+/*
          * 1、定义ShiroFactoryBean.
 		 * 2、设置SecurityManager;
 		 * 3、配置拦截器+配置登录和登录成功的地址.
 		 * 4、返回ShiroFactoryBean.
-		 */
+		 *//*
+
         //1、定义ShiroFactoryBean.
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
 
@@ -91,11 +98,13 @@ public class ShiroConfiguration {
         return shiroFilterFactoryBean;
     }
 
-    /**
+    */
+/**
      * 定义Shiro的安全管理器.
      *
      * @return
-     */
+     *//*
+
     @Bean
     public SecurityManager securityManager() {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
@@ -119,11 +128,13 @@ public class ShiroConfiguration {
         return myShiroRealm;
     }
 
-    /**
+    */
+/**
      * 密码加密算法.
      *
      * @return
-     */
+     *//*
+
     @Bean
     public HashedCredentialsMatcher hashedCredentialsMatcher() {
 
@@ -138,9 +149,11 @@ public class ShiroConfiguration {
     }
 
 
-    /**
+    */
+/**
      * 开启Shiro aop注解支持.
-     */
+     *//*
+
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(SecurityManager securityManager) {
         AuthorizationAttributeSourceAdvisor attributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
@@ -149,9 +162,11 @@ public class ShiroConfiguration {
     }
 
 
-    /**
+    */
+/**
      * 注入Ehcache缓存.
-     */
+     *//*
+
     @Bean
     public EhCacheManager ehCacheManager() {
         EhCacheManager ehCacheManager = new EhCacheManager();
@@ -161,9 +176,11 @@ public class ShiroConfiguration {
     }
 
 
-    /**
+    */
+/**
      * 配置cookie对象. -- 记住我cookie
-     */
+     *//*
+
     @Bean
     public SimpleCookie rememberMeCookie() {
         //cookie的名称，也即是 前端 checkbox的name = rememberMe
@@ -174,9 +191,11 @@ public class ShiroConfiguration {
     }
 
 
-    /**
+    */
+/**
      * cookie的管理对象.
-     */
+     *//*
+
     @Bean
     public CookieRememberMeManager cookieRememberMeManager() {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
@@ -185,11 +204,13 @@ public class ShiroConfiguration {
         return cookieRememberMeManager;
     }
 
-    /**
+    */
+/**
      * 是shiro - thymeleaf 解析.
      *
      * @return
-     */
+     *//*
+
     @Bean
     public ShiroDialect shiroDialect() {
         ShiroDialect shiroDialect = new ShiroDialect();
@@ -197,18 +218,21 @@ public class ShiroConfiguration {
     }
 
 
-    /**
+    */
+/**
      * 验证码生成器;
      *
      * @return
-     */
+     *//*
+
     @Bean
     public Producer producer() {
         System.out.println("ShiroConfiguration.captchaProducer()");
         DefaultKaptcha producer = new DefaultKaptcha();
         Properties properties = new Properties();
 		
-		/*
+		*/
+/*
 kaptcha.border  是否有边框  默认为true  我们可以自己设置yes，no  
 kaptcha.border.color   边框颜色   默认为Color.BLACK  
 kaptcha.border.thickness  边框粗细度  默认为1  
@@ -229,7 +253,8 @@ kaptcha.background.clear.from   验证码背景颜色渐进   默认为Color.LIG
 kaptcha.background.clear.to   验证码背景颜色渐进   默认为Color.WHITE  
 kaptcha.image.width   验证码图片宽度  默认为200  
 kaptcha.image.height  验证码图片高度  默认为50 
-		 */
+		 *//*
+
 
         // 是否有边框  默认为true  我们可以自己设置yes，no
         properties.put("kaptcha.border", "yes");
@@ -267,3 +292,4 @@ kaptcha.image.height  验证码图片高度  默认为50
     }
 
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.ylz.log.elk.base.shiro;
 
 import com.ylz.log.elk.base.core.bean.SysPermission;
@@ -21,18 +22,22 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Autowired
     private UserInfoService userInfoService;
 
-    /**
+    */
+/**
      * 身份认证 --- 登录.
-     */
+     *//*
+
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         System.out.println("MyShiroRealm.doGetAuthenticationInfo()");
-        /*
+        */
+/*
          *  1、 获取用户输入的账号.
 		 *  2、通过username 从数据库中进行查找，活到UserInfo对象.
 		 *  3、加密. 使用SimpleAuthenticationInfo 进行身份处理.
 		 *  4、返回身份处理对象.
-		 */
+		 *//*
+
         //1、 获取用户输入的账号.
         String username = (String) token.getPrincipal();
 
@@ -51,9 +56,11 @@ public class MyShiroRealm extends AuthorizingRealm {
         return simpleAuthenticationInfo;
     }
 
-    /**
+    */
+/**
      * 权限认证.
-     */
+     *//*
+
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         //如果打印信息只执行一次的话，说明缓存生效了，否则不生效. --- 配置缓存成功之后，只会执行1次/每个用户，因为每个用户的权限是不一样的.
@@ -77,3 +84,4 @@ public class MyShiroRealm extends AuthorizingRealm {
     }
 
 }
+*/

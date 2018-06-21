@@ -1,3 +1,4 @@
+/*
 package com.ylz.log.elk.controller;
 
 import com.ylz.log.elk.manage.service.IndexService;
@@ -72,3 +73,4 @@ public class TestController {
     }
 
 }
+*/
