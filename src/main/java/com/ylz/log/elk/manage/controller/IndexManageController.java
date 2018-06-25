@@ -43,12 +43,13 @@ public class IndexManageController {
             @RequestParam(value = "index") String index,
             @RequestParam(value = "type") String type,
             @RequestParam(value = "field", defaultValue = "") String field,
+            @RequestParam(value = "logLevel") String logLevel,
             @RequestParam(value = "searchContent", defaultValue = "") String searchContent
     ) {
         Map<String, Object> jsonMap = new HashMap<>();
 
         try {
-            jsonMap.putAll(indexService.queryByEs(page, pageSize, index, type, field, searchContent));
+            jsonMap.putAll(indexService.queryByEs(page, pageSize, index, type, field, logLevel, searchContent));
 
             jsonMap.put("flag", true);
         } catch (Exception e) {
@@ -230,10 +231,4 @@ public class IndexManageController {
         return jsonMap;
     }
 
-    @RequestMapping("/test")
-    @ResponseBody
-    public Object test() {
-
-        return indexService.test();
-    }
 }

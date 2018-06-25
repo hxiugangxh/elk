@@ -36,8 +36,13 @@
     .list-group-item.active:hover {
 
     }
+
     em {
       color: #e51c23;
+    }
+
+    .json-table tr td {
+      word-break: break-all;
     }
   </style>
 </head>
@@ -50,20 +55,33 @@
       <div class="box-title dec_1 theme-border-left">日志查询</div>
     </div>
     <div class="box-body">
-      <div class="search-form cf mt15">
-
-        <div class="form-group col-xs-12">
-          <div class="input-group col-xs-12" style="margin-top:0px; positon:relative">
+      <div class="row">
+        <div class="col-xs-12">
+          <span style="float: left;line-height: 34px">日志级别：</span>
+          <div style="float: left">
+            <select class="form-control" id="logLevel">
+              <option value="">全部</option>
+              <option value="INFO">INFO</option>
+              <option value="DEBUG">DEBUG</option>
+              <option value="WARN">WARN</option>
+              <option value="ERROR">ERROR</option>
+            </select>
+          </div>
+          <div class="col-xs-6">
             <input type="text" class="form-control" placeholder="请输入搜索内容" id="searchContent"/>
-            <span class="input-group-btn">
+          </div>
+          <div class="col-xs-4">
+            <span class="input-group-btn" style="display: inline">
               <button class="btn btn-info btn-search" onclick="queryByEs()"><i
                   class="iconfont icon-sousuo"></i>查找</button>
             </span>
             <span class="ml-20">搜索总数:&nbsp;&nbsp;</span><span class="bold border-bottom" id="total">0</span>
             <span>hts</span>
           </div>
+
         </div>
       </div>
+
       <div class="widget-box transparent">
         <div class="widget-header">
           <div class="widget-title theme-border-bottom">查询结果</div>
@@ -79,7 +97,7 @@
                 <label class="control-label no-pd"><b class="mr5 red500">*</b>文件\目录列表</label>
                 <div class="col-xs-12">
                   <select id="index" class="js-example-basic-single span12"
-                          onchange="listField(this)">
+                          onchange="listField(this);queryByEs()">
                     <th:block th:if="${#lists.isEmpty(esFieldmap.indexList)}">
                       <option value="">没有数据</option>
                     </th:block>
@@ -166,7 +184,7 @@
   <div class="cf data-line">
     <i class="iconfont icon-xiangyou2  text-center" data-status="0"></i>
     <div class="col-xs-12 data-cont">
-      <div class="cont-elips">
+      <div class="cont-elips" style="word-wrap: break-word;">
         称：处理器信号人工智能向量/ID：157337878/作者： antkevyv/尺寸：5000×3630px／ dpi/格式：矢量图/授权：商业用途/
       </div>
       <div class="cont-format hide">
@@ -203,13 +221,15 @@
 <script th:inline="javascript">
   /*<![CDATA[*/
   jQuery(function () {
-    queryByEs()
+    queryByEs();
   });
 
   $(document).on("click", "#allLiSelect", function () {
     $("#field li").removeClass("active");
     $(this).removeClass("active");
     $(this).addClass("active");
+
+    throttle(queryByEs, 500);
   });
   $(document).on("click", "#field li", function () {
     $(this).toggleClass("active");
@@ -229,9 +249,9 @@
     throttle(queryByEs, 500);
   });
 
-  function throttle(method, time){
+  function throttle(method, time) {
     clearTimeout(method.tId);
-    method.tId = setTimeout(function(){
+    method.tId = setTimeout(function () {
       method.call();
     }, time);
   }
@@ -274,7 +294,7 @@
   }
 
   function queryByEs() {
-    var URL = "queryByEs";
+    var loadIndex = layer.load();
 
     var index = $("#index").val();
     var type = $("#index option:selected").attr("data-type");
@@ -288,8 +308,8 @@
     // searchContent = searchContent.split(" ").join(" or ");
 
     if (index == "" || type == "") {
-        // console.log("没有数据");
-        return ;
+      // console.log("没有数据");
+      return;
     }
 
     var formData = {
@@ -297,9 +317,11 @@
       "type": type,
       "page": options.currentPage - 1,
       "field": field,
+      "logLevel": $("#logLevel").val(),
       "searchContent": searchContent
     };
 
+    var URL = "queryByEs";
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
 
@@ -338,20 +360,22 @@
           dataLineModel.find(".ios").attr("id", "ios" + i);
 
           var tableDomEle = "";
+          var txt = "{";
           $.each(jsonData.source[i], function (key, value) {
             tableDomEle += "<tr>";
             tableDomEle += "<td class='table-fir'>" + key + "</td>";
             tableDomEle += "  <td class='table-sec'>" + value + "</td>";
             tableDomEle += " </tr>";
+
+            txt += "'" + key + "':'" + value + "'";
           });
+
+          txt += "}";
 
           // table数据插入
           dataLineModel.find("table").html(tableDomEle);
 
-          // jsonTab数据插入
-          console.log((JSON.stringify(jsonData.source[i]) + "").replace("/\"/g", "&apos;"));
-
-          dataLineModel.find(".cont-elips").html(JSON.stringify(jsonData.source[i]));
+          dataLineModel.find(".cont-elips").html(txt);
 
           dataLineModel.find(".json-collapsed").JSONView(jsonData.source[i], {
             collapsed: true,
@@ -374,6 +398,8 @@
         $("#pagination-ele").html("<span>暂无数据</span>");
         layer.msg("请求失败，有不存在的文件", {icon: 2, time: 1000});
       }
+
+      layer.close(loadIndex);
     }, "json")
   }
 

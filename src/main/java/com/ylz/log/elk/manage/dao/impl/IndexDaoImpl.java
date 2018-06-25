@@ -25,6 +25,7 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -37,9 +38,7 @@ import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Slf4j
 @Repository("indexDao")
@@ -158,7 +157,7 @@ public class IndexDaoImpl implements IndexDao {
 
     @Override
     public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type,
-                                         String field, String searchContent) {
+                                         String field, String logLevel, String searchContent) {
         Map<String, Object> dataMap = new HashMap<>();
 
         List<String> indexList = new ArrayList<>();
@@ -176,28 +175,39 @@ public class IndexDaoImpl implements IndexDao {
                 .setFrom(page * pageSize).setSize(pageSize);
 
         List<String> fieldList = new ArrayList<>();
-        if (StringUtils.isEmpty(searchContent)) {
+        if (StringUtils.isEmpty(searchContent) && StringUtils.isEmpty(logLevel)) {
             searchRequestBuilder.setQuery(matchAllQuery());
         } else {
-            fieldList = this.listField(index, type);
-
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
 
             // 暂时先让message可以like全文搜索
-            for (String content : searchContent.toLowerCase().split(" ")) {
-                WildcardQueryBuilder wildcardQueryBuilder = QueryBuilders.wildcardQuery
-                        ("message", "*" + content + "*");
+            if (StringUtils.isNotEmpty(searchContent)) {
+                for (String content : searchContent.toLowerCase().split(" ")) {
+                    WildcardQueryBuilder wildcardQueryBuilder = QueryBuilders.wildcardQuery
+                            ("message", content + "*");
 
-                boolQueryBuilder.should(wildcardQueryBuilder);
+                    boolQueryBuilder.should(wildcardQueryBuilder);
+                }
+
+                // 全文分词搜索
+                boolQueryBuilder.should(queryStringQuery(StringUtils.join(searchContent.split(" "), " or ")));
             }
 
-            boolQueryBuilder.should(queryStringQuery(StringUtils.join(searchContent.split(" "), " or ")));
-            searchRequestBuilder.setQuery(queryStringQuery(searchContent));
+            // 日志级别搜索
+            if (StringUtils.isNotEmpty(logLevel)) {
+                boolQueryBuilder.must(matchQuery("logLevel", logLevel));
+            }
 
             searchRequestBuilder.setQuery(boolQueryBuilder);
 
             HighlightBuilder highlightBuilder = new HighlightBuilder();
-            fieldList = this.listField(index, type);
+
+            if (StringUtils.isNotEmpty(field)) {
+                fieldList = Arrays.asList(field.split(","));
+            } else {
+                fieldList = this.listField(index, type);
+            }
+
             for (String tmpField : fieldList) {
                 highlightBuilder.field(tmpField);
             }
@@ -224,14 +234,13 @@ public class IndexDaoImpl implements IndexDao {
                     index, indexList, page, pageSize, searchRequestBuilder);
             currentPage = totalPages;
 
-            return this.queryByEs((int) (currentPage - 1), pageSize, index, type, field, searchContent);
+            return this.queryByEs((int) (currentPage - 1), pageSize, index, type, field, "", searchContent);
         }
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (SearchHit hit : hits) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", hit.getId());
-
 
             Map<String, Object> source = hit.getSource();
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
@@ -259,50 +268,6 @@ public class IndexDaoImpl implements IndexDao {
         dataMap.put("source", result);
 
         return dataMap;
-    }
-
-    @Override
-    public Object test() {
-        String index = "hello*";
-        List<Map<String, Object>> list = new ArrayList<>();
-
-        ImmutableOpenMap<String, ImmutableOpenMap<String, MappingMetaData>> mappings = client.admin().indices()
-                .prepareGetMappings(index).execute()
-                .actionGet().getMappings();
-
-        Iterator<String> indexIterator = mappings.keysIt();
-
-        while (indexIterator.hasNext()) {
-            String indexKey = indexIterator.next();
-
-            System.out.println(indexKey);
-
-            Iterator<String> typeIterator = mappings.get(indexKey).keysIt();
-
-            while (typeIterator.hasNext()) {
-                String typeKey = typeIterator.next();
-                Map<String, Object> dataMap = new HashMap<>();
-
-                Collection values = elasticsearchTemplate.getMapping(indexKey, typeKey).values();
-
-                if (CollectionUtils.isNotEmpty(values)) {
-
-                    Iterator iterator = values.iterator();
-                    while (iterator.hasNext()) {
-                        Map<String, ?> obj = (Map<String, ?>) iterator.next();
-
-                        obj.forEach((key, value) -> {
-                            dataMap.put(indexKey, key);
-
-                            list.add(dataMap);
-                        });
-
-                    }
-                }
-            }
-        }
-
-        return list;
     }
 
     @Override
