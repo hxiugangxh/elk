@@ -9,10 +9,10 @@
   <!--主题色-->
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
 
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
+  <link type="text/css" rel="stylesheet" href="../assets/font/log/iconfont.css"/>
+  <link rel="stylesheet" type="text/css" href="../assets/css/page_data.css"/>
 
-  <script th:src="@{/assets/js/My97DatePicker/WdatePicker.js}"></script>
+  <script src="../assets/js/My97DatePicker/WdatePicker.js"></script>
   <style>
     .fixed-table-container {
       border: none;
@@ -221,7 +221,7 @@
   </div>
 </div>
 <th:block th:include="common/pub_head :: echart"></th:block>
-<script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
+<script type="text/javascript" src="../assets/js/echart.config.js"></script>
 
 <script>
   /*<![CDATA[*/
@@ -264,7 +264,7 @@
       "echartName": echartName
     };
 
-    var URL = path + "/echartManage/hasExistEchartName";
+    var URL = "hasExistEchartName";
 
     if (hisEchartName != "" && hisEchartName == echartName) {
       $("#existFlag").html("");
@@ -304,7 +304,7 @@
     infoEchart.dispose();
     infoEchart = echarts.init(document.getElementById('info_main_bar'));
 
-    var URL = path + "/echartManage/editVisualizeEchart/" + id;
+    var URL = "editVisualizeEchart/" + id;
     var formData = {};
 
     $.post(URL, formData, function (jsonData) {
@@ -370,7 +370,7 @@
   }
 
   function delVisualizeEchart(id) {
-    var URL = path + "/echartManage/delVisualizeEchart";
+    var URL = "delVisualizeEchart";
 
     var formData = {
       "id": id,
@@ -441,7 +441,7 @@
         }
       }
     }
-    var URL = path + "/echartManage/modifyVisualizeEchart/" + $("#id").val();
+    var URL = "modifyVisualizeEchart/" + $("#id").val();
     var relIndex = $("#field").find("option:selected").attr("data-relIndex");
     formData.push({"name": "_method", "value": "PUT"});
     formData.push({"name": "relIndex", "value": relIndex});
@@ -463,7 +463,7 @@
 
   function editVisualizeEchart(id) {
     var index = layer.load();
-    var URL = path + "/echartManage/editVisualizeEchart/" + id;
+    var URL = "editVisualizeEchart/" + id;
     var formData = {};
 
     generatFlag = true;
@@ -487,7 +487,7 @@
 
         var domEle = "<option value=''>请选择...</option>";
         $("#multiIndex").html(domEle);
-        var URL = path + "/echartManage/loadMultiIndex";
+        var URL = "loadMultiIndex";
         $.post(URL, {}, function (jsonData2) {
           $("#Modal_view").html(myModalClone.html());
           $("#type").val(type);
@@ -581,7 +581,7 @@
     }
 
     formData.push({"name": "relIndex", "value": relIndex});
-    var URL = path + "/echartManage/saveVisualizeEchart";
+    var URL = "saveVisualizeEchart";
 
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
@@ -668,7 +668,7 @@
       "last": last,
       "timeField": timeField
     };
-    var URL = path + "/echartManage/generatEchart";
+    var URL = "generatEchart";
 
     var type = $("#type").val();
 
@@ -727,7 +727,7 @@
 
     var domEle = "<option value=''>请选择...</option>";
     $("#multiIndex").html(domEle);
-    var URL = path + "/echartManage/loadMultiIndex";
+    var URL = "loadMultiIndex";
     $.post(URL, {}, function (jsonData) {
       $("#Modal_view").html(myModalClone.html());
       if (jsonData.flag) {
@@ -771,7 +771,7 @@
     $("#multiIndexSpan").html(multiIndex);
 
     if (multiIndex != "") {
-      var URL = path + "/echartManage/listConverField";
+      var URL = "listConverField";
       var formData = {
         "index": multiIndex
       };
@@ -820,7 +820,7 @@
     classes: 'table table-hover table-condensed table-bordered table-responsive',
     contentType: "application/x-www-form-urlencoded",
     height: getHeight(),
-    url: path + "/echartManage/pageVisualizeEchart",
+    url: "pageVisualizeEchart",
     striped: true, //隔行变色
     pagination: true,
     singleSelect: false,

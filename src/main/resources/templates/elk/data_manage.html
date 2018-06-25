@@ -10,8 +10,8 @@
   <th:block th:include="common/pub_head :: base-css"></th:block>
   <!--主题色-->
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/mage.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/rewrite.css}"/>
+  <link rel="stylesheet" type="text/css" href="../assets/css/mage.css"/>
+  <link rel="stylesheet" type="text/css" href="../assets/css/base/rewrite.css"/>
   <style>
     .deal {
       margin-left: 30px;
@@ -252,7 +252,7 @@
 
     var multiIndex = $(thisObj).attr("data-multiIdex");
     layer.confirm("确定要删除目录\\项目：" + multiIndex + " 吗？<br />与其相关的图标与面板也会被一起删除", function () {
-      var URL = path + "/indexManage/delMultiIndex";
+      var URL = "delMultiIndex";
       var formData = {
         "multiIndex": multiIndex
       };
@@ -296,7 +296,7 @@
       "multiIndex": multiIndex
     };
 
-    var URL = path + "/indexManage/hasExist";
+    var URL = "hasExist";
 
     if (multiIndex.split(" ").join("") == "") {
       $("#existFlag").html("*");
@@ -324,7 +324,7 @@
     if (index == "") {
       return;
     }
-    var URL = path + "/indexManage/listReflectField"
+    var URL = "listReflectField"
       + "?index=" + index
       + "&type=" + type;
 
@@ -341,7 +341,7 @@
 
         var index = $("#name_info").html();
         var type = $("#name_info").attr("data-type");
-        var URL = path + "/indexManage/dealNotIndex";
+        var URL = "dealNotIndex";
         var formData = {
           "index": index,
           "type": type
@@ -382,7 +382,7 @@
 
   function delMultiRelIndex(thisObj) {
     var index = $(thisObj).attr("data-index");
-    var URL = path + "/indexManage/delMultiRelIndex";
+    var URL = "delMultiRelIndex";
     var formData = {
       "index": index
     };
@@ -522,7 +522,7 @@
       return;
     }
 
-    var URL = path + "/indexManage/saveMultiIndex";
+    var URL = "saveMultiIndex";
     var formData = {
       "multiIndex": multiIndex,
       "index": index + ""
@@ -589,7 +589,7 @@
 
   //索引删除
   jQuery(function () {
-    var URL = path + "/indexManage/getUserCollIndexBean";
+    var URL = "getUserCollIndexBean";
 
     $.post(URL, {}, function (userCollIndexBean) {
       var index = userCollIndexBean.index;
@@ -625,7 +625,7 @@
       action = "delete"
     }
 
-    var URL = path + "/indexManage/dealCollIndex";
+    var URL = "dealCollIndex";
     var formData = {
       "index": index,
       "type": type,

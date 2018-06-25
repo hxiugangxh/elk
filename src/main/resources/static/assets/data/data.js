@@ -25,15 +25,10 @@ var navdata = [{
 var zNodes = [
   {id: 1, pId: 0, name: "日志模块", /*open:true,*/iconSkin: "glyphicon glyphicon-list-alt"},
   {id: 11, pId: 1, name: "日志列表查询", "url": "indexManage/dataSearch"},
-  {id: 12, pId: 1, name: "图表统计", "url": "indexManage/dataManage"},
-  {id: 13, pId: 1, name: "显示面板", "url": "echartManage/dataView"},
-  {id: 14, pId: 1, name: "管理页", "url": "echartManage/dataShowPanel"},
-  {id: 2, pId: 0, name: "日志模块(旧)", /*open:true,*/iconSkin: "glyphicon glyphicon-list-alt"},
-  {id: 21, pId: 2, name: "日志列表查询", "url": "page_data_search.html"},
-  {id: 22, pId: 2, name: "图表统计", "url": "page_data_view.html"},
-  {id: 23, pId: 2, name: "显示面板", "url": "page_data_show_panel.html"},
-  {id: 24, pId: 2, name: "管理页", "url": "page_data_manage.html"}
-
+  {id: 12, pId: 1, name: "管理页", "url": "indexManage/dataManage"},
+  {id: 13, pId: 1, name: "图表统计", "url": "echartManage/dataView"},
+  {id: 14, pId: 1, name: "显示面板", "url": "echartManage/dataShowPanel"},
+  {id: 15, pId: 1, name: "zipkin链路", "url": "http://192.168.44.88:9411"}
 
   //{ id:9, pId:0, name:"日子查询页面",iconSkin:"glyphicon glyphicon-leaf","url":"page_data_search"},
   //{ id:8, pId:0, name:"日子查询页面",iconSkin:"glyphicon glyphicon-leaf","url":"page_data_search"},

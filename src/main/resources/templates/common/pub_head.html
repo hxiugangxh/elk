@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="default">
-  <script type="text/javascript" th:src="@{/assets/js/jquery/jquery-1.12.3.min.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/select2/js/select2.full.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-3.3.0/js/bootstrap.min.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/bootstrap-table-1.11.0/bootstrap-table.min.js}"></script>
+  <script type="text/javascript" src="../assets/js/jquery/jquery-1.12.3.min.js"></script>
+  <script type="text/javascript" src="../assets/plugins/select2/js/select2.full.js"></script>
+  <script type="text/javascript" src="../assets/plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../assets/plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
   <script type="text/javascript"
-          th:src="@{/assets/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/paginator/bootstrap-paginator.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/jsonview/jquery.jsonview.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/plugins/layer-v2.4/layer.js}"></script>
-  <script type="text/javascript" th:src="@{/assets/js/common.js}"></script>
+          src="../assets/plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+  <script type="text/javascript" src="../assets/plugins/paginator/bootstrap-paginator.js"></script>
+  <script type="text/javascript" src="../assets/plugins/jsonview/jquery.jsonview.js"></script>
+  <script type="text/javascript" src="../assets/plugins/layer-v2.4/layer.js"></script>
+  <script type="text/javascript" src="../assets/js/common.js"></script>
 
-  <a th:href="${#httpServletRequest.getContextPath()}"
+  <a href="${#httpServletRequest.getContextPath()}"
      id="contextPath"></a>
   <script>
     var path = $("#contextPath").attr("href");
@@ -20,25 +20,25 @@
 </th:block>
 
 <th:block th:fragment="base-css">
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/plugins/bootstrap-3.3.0/css/bootstrap.css}"/>
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/plugins/select2/css/select2.css}"/>
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/plugins/layer-v2.4/skin/layer.css}"/>
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/plugins/jsonview/jquery.jsonview.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/plugins/bootstrap-table-1.11.0/bootstrap-table.css}">
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/iconfont.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/base.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/common.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/base/forms.css}"/>
+  <link rel="stylesheet" type="text/css" href="../assets/plugins/bootstrap-3.3.0/css/bootstrap.css"/>
+  <link type="text/css" rel="stylesheet" href="../assets/plugins/select2/css/select2.css"/>
+  <link type="text/css" rel="stylesheet" href="../assets/plugins/layer-v2.4/skin/layer.css"/>
+  <link type="text/css" rel="stylesheet" href="../assets/plugins/jsonview/jquery.jsonview.css"/>
+  <link rel="stylesheet" type="text/css" href="../assets/plugins/bootstrap-table-1.11.0/bootstrap-table.css">
+  <link type="text/css" rel="stylesheet" href="../assets/font/iconfont.css"/>
+  <link rel="stylesheet" type="text/css" href="../assets/css/base/base.css"/>
+  <link rel="stylesheet" type="text/css" href="../assets/css/base/common.css"/>
+  <link rel="stylesheet" type="text/css" href="../assets/css/base/forms.css"/>
 </th:block>
 
 <th:block th:fragment="theme-blue">
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/css/base/themecolor_blue.css}"/>
+  <link type="text/css" rel="stylesheet" href="../assets/css/base/themecolor_blue.css"/>
 </th:block>
 
 <th:block th:fragment="echart">
-  <script type="text/javascript" th:src="@{/assets/plugins/Echarts/echarts.js}"></script>
+  <script type="text/javascript" src="../assets/plugins/Echarts/echarts.js"></script>
   <!-- 图表配置JS -->
-  <script type="text/javascript" th:src="@{/assets/font/iconfont.js}"></script>
+  <script type="text/javascript" src="../assets/font/iconfont.js"></script>
 </th:block>
 
 

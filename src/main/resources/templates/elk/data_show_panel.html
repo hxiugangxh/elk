@@ -9,7 +9,7 @@
   <!--主题色-->
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
 
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
+  <link type="text/css" rel="stylesheet" href="../assets/font/log/iconfont.css"/>
   <style>
     .bor_view {
       height: 400px
@@ -182,8 +182,8 @@
   </div>
 </div>
 <th:block th:include="common/pub_head :: echart"></th:block>
-<link rel="stylesheet" type="text/css" th:href="@{/assets/css/page_data.css}"/>
-<script type="text/javascript" th:src="@{/assets/js/echart.config.js}"></script>
+<link rel="stylesheet" type="text/css" href="../assets/css/page_data.css"/>
+<script type="text/javascript" src="../assets/js/echart.config.js"></script>
 <script>
   /*<![CDATA[*/
   function hasExistPanelName() {
@@ -192,7 +192,7 @@
       "panelName": panelName
     };
 
-    var URL = path + "/echartManage/hasExistPanelName";
+    var URL = "hasExistPanelName";
 
     if (hisPanelName != "" && hisPanelName == panelName) {
       $("#existFlag").html("");
@@ -278,7 +278,7 @@
       return;
     }
 
-    var URL = path + "/echartManage/modifyVisualizePanelEchart";
+    var URL = "modifyVisualizePanelEchart";
 
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
@@ -296,7 +296,7 @@
   var hisPanelName = "";
 
   function editVisualizePanelEchart(id) {
-    var URL = path + "/echartManage/editVisualizePanelEchart/" + id;
+    var URL = "editVisualizePanelEchart/" + id;
     $.post(URL, {}, function (jsonData) {
 
       selectArr = $(".echart_view").map(function () {
@@ -338,7 +338,7 @@
   }
 
   function delVisualizePanelEchart(id) {
-    var URL = path + "/echartManage/delVisualizePanelEchart";
+    var URL = "delVisualizePanelEchart";
     var formData = {
       "id": id
     };
@@ -393,7 +393,7 @@
       return;
     }
 
-    var URL = path + "/echartManage/saveVisualizePanelEchart";
+    var URL = "saveVisualizePanelEchart";
 
     $.post(URL, formData, function (jsonData) {
       var flag = jsonData.flag;
@@ -447,7 +447,7 @@
   $("#pagination-ele").bootstrapPaginator(options);
 
   function pageSelectEchart() {
-    var URL = path + "/echartManage/pageSelectEchart";
+    var URL = "pageSelectEchart";
     var echartName = $("#echartName").val();
     var formData = {
       "pn": options.currentPage,
@@ -585,7 +585,7 @@
   }
 
   function detailVisualizeEchart(id, echartDomIndex) {
-    var URL = path + "/echartManage/editVisualizeEchart/" + id;
+    var URL = "editVisualizeEchart/" + id;
     var formData = {};
 
     var echartDom = getEchartDom(echartDomIndex);
@@ -677,7 +677,7 @@
     classes: 'table table-hover table-condensed table-bordered table-responsive',
     contentType: "application/x-www-form-urlencoded",
     height: getHeight(),
-    url: path + "/echartManage/pageVisualizePanelEchart",
+    url: "pageVisualizePanelEchart",
     striped: true, //隔行变色
     pagination: true,
     singleSelect: false,

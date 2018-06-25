@@ -10,8 +10,8 @@
   <th:block th:include="common/pub_head :: base-css"></th:block>
   <!--主题色-->
   <th:block th:include="common/pub_head :: theme-blue"></th:block>
-  <link type="text/css" rel="stylesheet" th:href="@{/assets/font/log/iconfont.css}"/>
-  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/log.css}"/>
+  <link type="text/css" rel="stylesheet" href="../assets/font/log/iconfont.css"/>
+  <link rel="stylesheet" type="text/css" href="../assets/css/log.css"/>
 
   <style>
     .left-cont3 {
@@ -246,7 +246,7 @@
   function listField(thisObj) {
     var index = $(thisObj).val();
     var type = $(thisObj).find("option:selected").attr("data-type");
-    var URL = path + "/indexManage/listField";
+    var URL = "listField";
     var formData = {
       "index": index,
       "type": type
@@ -274,7 +274,7 @@
   }
 
   function queryByEs() {
-    var URL = path + "/indexManage/queryByEs";
+    var URL = "queryByEs";
 
     var index = $("#index").val();
     var type = $("#index option:selected").attr("data-type");
@@ -349,6 +349,8 @@
           dataLineModel.find("table").html(tableDomEle);
 
           // jsonTab数据插入
+          console.log((JSON.stringify(jsonData.source[i]) + "").replace("/\"/g", "&apos;"));
+
           dataLineModel.find(".cont-elips").html(JSON.stringify(jsonData.source[i]));
 
           dataLineModel.find(".json-collapsed").JSONView(jsonData.source[i], {
