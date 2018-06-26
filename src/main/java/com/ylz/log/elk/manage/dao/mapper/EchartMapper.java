@@ -18,11 +18,13 @@ public interface EchartMapper {
 
     int saveVisualizeEchart(VisualizeChartBean visualizeChartBean);
 
+    int saveVisualizeEchartRelIndex(VisualizeChartBean visualizeChartBean);
+
     int delVisualizeEchart(@Param("idList") List<String> idList);
 
     VisualizeChartBean getVisualizeEchart(Integer id);
 
-    boolean modifyVisualizeEchart(VisualizeChartBean visualizeChartBean);
+    int modifyVisualizeEchart(VisualizeChartBean visualizeChartBean);
 
     List<VisualizePanelEchartBean> pageVisualizePanelEchart(
             @Param("panelName") String panelName,
@@ -50,4 +52,8 @@ public interface EchartMapper {
     List<VisualizePanelEchartBean> getVisualizePanelEchartRelNull();
 
     void delVisualizePanelEchartRelNull(@Param("delPanelIdList") List<Integer> delPanelIdList);
+
+    String getVisualizeRelIndex(@Param("id") Integer id);
+
+    int delVisualizeRelIndex(@Param("idList") List<String> idList);
 }

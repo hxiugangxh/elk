@@ -79,13 +79,13 @@ public class EchartServiceImpl implements EchartService {
     public boolean saveVisualizeEchart(VisualizeChartBean visualizeChartBean) {
         int count = echartMapper.saveVisualizeEchart(visualizeChartBean);
 
+        count = (count > 0)? echartMapper.saveVisualizeEchartRelIndex(visualizeChartBean) : 0;
+
         if (count > 0) {
             return true;
         }
 
-        log.error("saveVisualizeEchart: 保存失败，有效行为0");
-
-        return false;
+        throw new RuntimeException("saveVisualizeEchart: 保存失败，有效行为0");
     }
 
     @Override
@@ -168,8 +168,12 @@ public class EchartServiceImpl implements EchartService {
         List<Map<String, Object>> pieSeriesDataList = new ArrayList<>();
 
         log.info("generatEchart: index = {}", visualizeChartBean.getRelIndex());
+        String relIndex = visualizeChartBean.getRelIndex();
+        if (StringUtils.isEmpty(relIndex)) {
+            relIndex = echartMapper.getVisualizeRelIndex(visualizeChartBean.getId());
+        }
         SearchRequestBuilder searchRequestBuilder = this.client
-                .prepareSearch(visualizeChartBean.getRelIndex().split(","));
+                .prepareSearch(relIndex.split(","));
 
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
         if (StringUtils.isNotBlank(visualizeChartBean.getFilterStr())) {
@@ -281,6 +285,8 @@ public class EchartServiceImpl implements EchartService {
 
         int count = echartMapper.delVisualizeEchart(idList);
 
+        echartMapper.delVisualizeRelIndex(idList);
+
         List<VisualizePanelEchartBean> visualizePanelEchartList = echartMapper.getVisualizePanelEchartRelNull();
 
         List<Integer> delPanelIdList = visualizePanelEchartList.stream()
@@ -313,7 +319,18 @@ public class EchartServiceImpl implements EchartService {
     @Override
     @Transactional
     public boolean modifyVisualizeEchart(VisualizeChartBean visualizeChartBean) {
-        return echartMapper.modifyVisualizeEchart(visualizeChartBean);
+        boolean flag = false;
+        int count = echartMapper.modifyVisualizeEchart(visualizeChartBean);
+
+        count = (count > 0)? echartMapper.delVisualizeRelIndex(Arrays.asList(visualizeChartBean.getId() + "")) : 0;
+
+        echartMapper.saveVisualizeEchartRelIndex(visualizeChartBean);
+
+        if (count > 0) {
+            return flag = true;
+        }
+
+        throw new RuntimeException("modifyVisualizeEchart--修改失败，返回有效行数为0");
     }
 
     @Override

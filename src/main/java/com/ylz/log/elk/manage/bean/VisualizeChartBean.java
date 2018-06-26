@@ -6,9 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.search.aggregations.bucket.histogram.DateHistogramInterval;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Data
 @Entity
@@ -46,11 +44,15 @@ public class VisualizeChartBean {
     private Integer type;
     private String multiIndex;
     private String field;
+    @Transient
     private String relIndex;
     private String filterStr;
     private Integer last;
     private Integer timeField;
     private String formate;
+
+    @Transient
+    private List<String> relIndexList;
 
     @Transient
     private String typePo;
@@ -69,4 +71,10 @@ public class VisualizeChartBean {
         return str;
     }
 
+    public List<String> getRelIndexList() {
+        if (StringUtils.isNotEmpty(relIndex)) {
+            relIndexList = Arrays.asList(relIndex.split(","));
+        }
+        return relIndexList;
+    }
 }

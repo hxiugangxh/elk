@@ -22,8 +22,24 @@
     <insert id="saveVisualizeEchart" parameterType="VisualizeChartBean"
             useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into cm_visualize_echart values
-          (null, #{echartName}, #{type}, #{multiIndex}, #{field}, #{relIndex},#{filterStr},
-            #{last}, #{timeField}, #{formate})
+          (null, #{echartName}, #{type}, #{multiIndex}, #{field}, #{filterStr},
+            #{last}, #{timeField}, #{formate});
+    </insert>
+
+    <insert id="saveVisualizeEchartRelIndex">
+        insert into cm_visualize_echart_rel_index select '${id}' echart_id, id echart_id, `index`
+          from cm_es_index
+        <where>
+            <if test="relIndexList != null and relIndexList.size > 0">
+                and `index` in
+                <foreach collection="relIndexList" item="index" open="(" close=")" separator=",">
+                    '${index}'
+                </foreach>
+            </if>
+            <if test="relIndexList == null or relIndexList.size == 0">
+                and 1 = 2
+            </if>
+        </where>
     </insert>
 
     <delete id="delVisualizeEchart">
@@ -61,7 +77,7 @@
     <update id="modifyVisualizeEchart" parameterType="VisualizeChartBean">
         update cm_visualize_echart set
           echart_name = #{echartName}, type = #{type}, multi_index = #{multiIndex},
-          field = #{field}, rel_index = #{relIndex}, filter_str = #{filterStr}, last = #{last},
+          field = #{field}, filter_str = #{filterStr}, last = #{last},
           time_field = #{timeField}, formate = #{formate}
           where id = #{id}
     </update>
@@ -161,6 +177,25 @@
             </if>
             <if test="delPanelIdList == null or delPanelIdList.size == 0">
                 and 1 = 2;
+            </if>
+        </where>
+    </delete>
+
+    <select id="getVisualizeRelIndex" resultType="string">
+        select GROUP_CONCAT(`index`) from cm_visualize_echart_rel_index where echart_id = ${id}
+    </select>
+
+    <delete id="delVisualizeRelIndex">
+        delete from cm_visualize_echart_rel_index
+        <where>
+            <if test="idList != null and idList.size > 0">
+                and echart_id in
+                <foreach collection="idList" item="id" open="(" close=")" separator=",">
+                    ${id}
+                </foreach>
+            </if>
+            <if test="idList == null or idList.size == 0">
+                and 1 = 2
             </if>
         </where>
     </delete>

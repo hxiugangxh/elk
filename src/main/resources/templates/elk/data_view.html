@@ -216,7 +216,7 @@
   </div>
   <div class="row">
     <div calss="info_main">
-      <div id="info_main_bar" style="width: 500px;height: 500px;margin:auto"></div>
+      <div id="info_main_bar" style="width: 1000px;height: 500px;margin:auto"></div>
     </div>
   </div>
 </div>
@@ -522,11 +522,11 @@
           $("#modifyBtn").show();
           $('#Modal_view').modal('show');
 
-          layer.close(index);
         }, "json");
       } else {
         layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
       }
+      layer.close(index);
     }, "json");
   }
 
@@ -781,7 +781,7 @@
         var flag = jsonData.flag;
 
         if (flag) {
-          var fieldList = jsonData.fieldList
+          var fieldList = jsonData.fieldList;
 
           var domEle = "<option value=''>请选择...</option>";
           var existFieldFlag = false;

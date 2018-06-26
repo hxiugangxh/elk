@@ -42,8 +42,6 @@ public class GlobalExceptionHandler {
         }
     }
 
-
-
     /**
      * 请求参数错误
      **/
