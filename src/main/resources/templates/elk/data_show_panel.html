@@ -242,12 +242,12 @@
     var clazz = $("#existFlag").attr("class");
     var panelName = $("#panelName").val();
     if (panelName.split(" ").join("") == "") {
-      layer.msg('面板名称不能为空！', {icon: 2, time: 1000});
+      layer.msg('面板名称不能为空！', {icon: 2});
 
       return;
     }
     if (clazz.indexOf("red500") != -1) {
-      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
+      layer.msg('面板名称已经存在！', {icon: 2});
 
       return;
     }
@@ -288,7 +288,7 @@
         $("#table").bootstrapTable("refresh");
         layer.msg('修改成功！', {icon: 1, time: 1000});
       } else {
-        layer.msg('修改失败！', {icon: 2, time: 1000});
+        layer.msg('修改失败！', {icon: 2});
       }
     }, "json");
   }
@@ -296,6 +296,7 @@
   var hisPanelName = "";
 
   function editVisualizePanelEchart(id) {
+    var index = layer.load();
     var URL = "editVisualizePanelEchart/" + id;
     $.post(URL, {}, function (jsonData) {
 
@@ -334,6 +335,8 @@
       $(".modal-btn").hide();
       $("#modifyBtn").show();
       $("#myModalLabel").html("修改面板");
+
+      layer.close(index);
     }, "json");
   }
 
@@ -351,7 +354,7 @@
           $("#table").bootstrapTable("refresh");
           layer.msg('删除成功！', {icon: 1, time: 1000});
         } else {
-          layer.msg('删除失败！', {icon: 2, time: 1000});
+          layer.msg('删除失败！', {icon: 2});
         }
       }, "json");
     });
@@ -361,12 +364,12 @@
     var clazz = $("#existFlag").attr("class");
     var panelName = $("#panelName").val();
     if (panelName.split(" ").join("") == "") {
-      layer.msg('面板名称不能为空！', {icon: 2, time: 1000});
+      layer.msg('面板名称不能为空！', {icon: 2});
 
       return;
     }
     if (clazz.indexOf("red500") != -1) {
-      layer.msg('面板名称已经存在！', {icon: 2, time: 1000});
+      layer.msg('面板名称已经存在！', {icon: 2});
 
       return;
     }
@@ -403,7 +406,7 @@
         $("#table").bootstrapTable("refresh");
         layer.msg('保存成功！', {icon: 1, time: 1000});
       } else {
-        layer.msg('保存失败！', {icon: 2, time: 1000});
+        layer.msg('保存失败！', {icon: 2});
       }
     }, "json");
   }
@@ -766,7 +769,8 @@
     },
     grid: {
       y: 30,
-      y2: 35
+      y2: 35,
+      x: 45
     },
     tooltip: {
       trigger: 'axis'
@@ -777,12 +781,22 @@
       axisLabel: {
         show: true,
         formatter: function (val) {
-          return val.split(" ").join("\n")
+          return val.split(" ").join("\n");
         }
       }
 
     },
-    yAxis: {},
+    yAxis: {
+      axisLabel: {
+        show: true,
+        formatter: function (val) {
+          if (val >= 100000) {
+            val = val / 1000 + "k";
+          }
+          return val;
+        }
+      }
+    },
     series: [{
       name: '记录',
       type: 'line',
@@ -799,18 +813,33 @@
       x: 'center'
     },
     grid: {
-      x: 30,
-      x2: 30,
-      y: 40,
-      y2: 30
+      y: 30,
+      y2: 35,
+      x: 45
     },
     tooltip: {
       trigger: 'axis'
     },
     xAxis: {
-      data: ["A", "B", "C", "D", "E", "F"]
+      data: ["A", "B", "C", "D", "E", "F"],
+      axisLabel: {
+        show: true,
+        formatter: function (val) {
+          return val.split(" ").join("\n");
+        }
+      }
     },
-    yAxis: {},
+    yAxis: {
+      axisLabel: {
+        show: true,
+        formatter: function (val) {
+          if (val >= 1000000) {
+            val = val / 1000 + "k";
+          }
+          return val;
+        }
+      }
+    },
     series: [{
       name: '记录',
       type: 'bar',

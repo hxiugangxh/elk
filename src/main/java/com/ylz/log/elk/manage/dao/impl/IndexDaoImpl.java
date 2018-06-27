@@ -450,7 +450,13 @@ public class IndexDaoImpl implements IndexDao {
         });
         paramMap.put("esIndexIdList", esIndexIdList);
         delSQL = "delete from cm_multi_rel_es_index where es_index_id in (:esIndexIdList)";
-        log.info("delMultiRelIndex--删除映射关系:\n{},\n参数: {}", delSQL, paramMap);
+        log.info("delMultiRelIndex--删除索引与目录映射关系:\n{},\n参数: {}", delSQL, paramMap);
+        this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
+
+        paramMap.clear();
+        paramMap.put("indexList", indexList);
+        delSQL = "delete from cm_visualize_echart_rel_index where `index` in (:indexList)";
+        log.info("delMultiRelIndex--删除索引与图表映射关系:\n{},\n参数: {}", delSQL, paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
         if (count > 0) {

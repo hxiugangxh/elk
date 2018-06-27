@@ -267,7 +267,7 @@
             $(".manage ul li").eq(0).click();
           }
         } else {
-          layer.msg('删除失败！', {icon: 2, time: 1000});
+          layer.msg('删除失败！', {icon: 2});
         }
       });
     });
@@ -396,7 +396,7 @@
         $("#indexInfoModal").modal("hide");
         $(".manage li.active").click();
       } else {
-        layer.msg('删除失败！', {icon: 2, time: 1000});
+        layer.msg('删除失败！', {icon: 2});
       }
     }, "json");
   }
@@ -502,12 +502,12 @@
     var multiIndex = $("#multiIndex").val();
 
     if (multiIndex.split(" ").join("") == "") {
-      layer.msg('目录\项目不能为空！', {icon: 2, time: 1000});
+      layer.msg('目录\项目不能为空！', {icon: 2});
 
       return;
     }
     if (clazz.indexOf("red500") != -1) {
-      layer.msg('目录项目已经存在！', {icon: 2, time: 1000});
+      layer.msg('目录项目已经存在！', {icon: 2});
 
       return;
     }
@@ -517,7 +517,7 @@
     }).get();
 
     if (index.length == 0) {
-      layer.msg('已选索引不能为空！', {icon: 2, time: 1000});
+      layer.msg('已选索引不能为空！', {icon: 2});
 
       return;
     }
@@ -541,7 +541,7 @@
         $("#myModal").modal("hide");
         $(".manage li.active").click();
       } else {
-        layer.msg("保存失败，" + jsonData.errorMsg, {icon: 2, time: 1000});
+        layer.msg("保存失败，" + jsonData.errorMsg, {icon: 2});
       }
     }, "json");
   }

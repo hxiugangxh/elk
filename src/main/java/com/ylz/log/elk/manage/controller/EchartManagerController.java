@@ -140,7 +140,6 @@ public class EchartManagerController {
         VisualizeChartBean visualizeChartBean = null;
         try {
             visualizeChartBean = echartService.getVisualizeEchart(id);
-            System.out.println("id = " + visualizeChartBean.getId());
             Map<String, Object> echartMap = echartService.generatEchart(visualizeChartBean);
 
             jsonMap.put("flag", true);

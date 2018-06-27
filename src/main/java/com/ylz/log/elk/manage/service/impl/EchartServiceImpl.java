@@ -172,6 +172,9 @@ public class EchartServiceImpl implements EchartService {
         if (StringUtils.isEmpty(relIndex)) {
             relIndex = echartMapper.getVisualizeRelIndex(visualizeChartBean.getId());
         }
+        if (StringUtils.isEmpty(relIndex)) {
+            throw  new RuntimeException("关联的日志都已经不存在了，请去索引管理页面修正");
+        }
         SearchRequestBuilder searchRequestBuilder = this.client
                 .prepareSearch(relIndex.split(","));
 

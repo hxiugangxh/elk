@@ -385,7 +385,7 @@
           $("#Modal_view").modal("hide");
           $("#table").bootstrapTable("refresh");
         } else {
-          layer.msg('删除失败！', {icon: 2, time: 1000});
+          layer.msg('删除失败！', {icon: 2});
         }
 
         $("#add_btn").removeAttr("disabled");
@@ -398,12 +398,12 @@
     var clazz = $("#existFlag").attr("class");
     var echartName = $("#echartName").val();
     if (echartName.split(" ").join("") == "") {
-      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
+      layer.msg('图表名称不能为空！', {icon: 2});
 
       return;
     }
     if (clazz.indexOf("red500") != -1) {
-      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
+      layer.msg('图表名称已经存在！', {icon: 2});
 
       return;
     }
@@ -454,7 +454,7 @@
         $("#Modal_view").modal("hide");
         $("#table").bootstrapTable("refresh");
       } else {
-        layer.msg('修改失败！', {icon: 2, time: 1000});
+        layer.msg('修改失败！', {icon: 2});
       }
     }, "json");
   }
@@ -524,7 +524,7 @@
 
         }, "json");
       } else {
-        layer.msg(jsonData.errorMsg, {icon: 2, time: 1000});
+        layer.msg(jsonData.errorMsg, {icon: 2});
       }
       layer.close(index);
     }, "json");
@@ -536,12 +536,12 @@
     var clazz = $("#existFlag").attr("class");
     var echartName = $("#echartName").val();
     if (echartName.split(" ").join("") == "") {
-      layer.msg('图表名称不能为空！', {icon: 2, time: 1000});
+      layer.msg('图表名称不能为空！', {icon: 2});
 
       return;
     }
     if (clazz.indexOf("red500") != -1) {
-      layer.msg('图表名称已经存在！', {icon: 2, time: 1000});
+      layer.msg('图表名称已经存在！', {icon: 2});
 
       return;
     }
@@ -591,7 +591,7 @@
         $("#Modal_view").modal("hide");
         $("#table").bootstrapTable("refresh");
       } else {
-        layer.msg('保存失败！', {icon: 2, time: 1000});
+        layer.msg('保存失败！', {icon: 2});
       }
     });
   }
