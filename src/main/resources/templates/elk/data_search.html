@@ -337,66 +337,70 @@
           return;
         }
 
-        /* 参考原始demo吧 */
-        for (var i = 0; i < jsonData.source.length; i++) {
-          var dataLineModel = $("#data-line-model").clone();
-          var clazz = "data-line-odd";
-          if (i % 2 == 1) {
-            clazz = "data-line-even";
+        if (jsonData.source) {
+
+
+          /* 参考原始demo吧 */
+          for (var i = 0; i < jsonData.source.length; i++) {
+            var dataLineModel = $("#data-line-model").clone();
+            var clazz = "data-line-odd";
+            if (i % 2 == 1) {
+              clazz = "data-line-even";
+            }
+
+            // 挂载全屏展示index
+            dataLineModel.find(".btn-look").attr("data-index", i);
+            dataLineModel.find(".btn-look").attr("data-es-index", index);
+
+            // 单双行颜色区分
+            dataLineModel.find(".data-line").addClass(clazz);
+            // tab美工定义使用方案
+            dataLineModel.find(".nav-tabs").attr("id", "myTab" + i);
+            dataLineModel.find(".tab-content").attr("id", "myTabContent" + i);
+            dataLineModel.find(".homeTab").attr("href", "#home" + i);
+            dataLineModel.find(".home").attr("id", "home" + i);
+            dataLineModel.find(".iosTab").attr("href", "#ios" + i);
+            dataLineModel.find(".ios").attr("id", "ios" + i);
+
+            var tableDomEle = "";
+            var txt = "{";
+            $.each(jsonData.source[i], function (key, value) {
+              tableDomEle += "<tr>";
+              tableDomEle += "<td class='table-fir'>" + key + "</td>";
+              tableDomEle += "  <td class='table-sec'>" + value + "</td>";
+              tableDomEle += " </tr>";
+
+              txt += "'" + key + "':'" + value + "'";
+            });
+
+            txt += "}";
+
+            // table数据插入
+            dataLineModel.find("table").html(tableDomEle);
+
+            dataLineModel.find(".cont-elips").html(txt);
+
+            dataLineModel.find(".json-collapsed").JSONView(jsonData.source[i], {
+              collapsed: true,
+              nl2br: true
+            });
+
+            // 藏匿原始数据
+            dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData.source[i]));
+
+            domEle += dataLineModel.html();
           }
 
-          // 挂载全屏展示index
-          dataLineModel.find(".btn-look").attr("data-index", i);
-          dataLineModel.find(".btn-look").attr("data-es-index", index);
+          $("#data-line-div").html(domEle);
 
-          // 单双行颜色区分
-          dataLineModel.find(".data-line").addClass(clazz);
-          // tab美工定义使用方案
-          dataLineModel.find(".nav-tabs").attr("id", "myTab" + i);
-          dataLineModel.find(".tab-content").attr("id", "myTabContent" + i);
-          dataLineModel.find(".homeTab").attr("href", "#home" + i);
-          dataLineModel.find(".home").attr("id", "home" + i);
-          dataLineModel.find(".iosTab").attr("href", "#ios" + i);
-          dataLineModel.find(".ios").attr("id", "ios" + i);
-
-          var tableDomEle = "";
-          var txt = "{";
-          $.each(jsonData.source[i], function (key, value) {
-            tableDomEle += "<tr>";
-            tableDomEle += "<td class='table-fir'>" + key + "</td>";
-            tableDomEle += "  <td class='table-sec'>" + value + "</td>";
-            tableDomEle += " </tr>";
-
-            txt += "'" + key + "':'" + value + "'";
-          });
-
-          txt += "}";
-
-          // table数据插入
-          dataLineModel.find("table").html(tableDomEle);
-
-          dataLineModel.find(".cont-elips").html(txt);
-
-          dataLineModel.find(".json-collapsed").JSONView(jsonData.source[i], {
-            collapsed: true,
-            nl2br: true
-          });
-
-          // 藏匿原始数据
-          dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData.source[i]));
-
-          domEle += dataLineModel.html();
+          options.totalPages = jsonData.totalPages;
+          options.currentPage = jsonData.currentPage;
+          $("#pagination-ele").bootstrapPaginator(options);
+        } else {
+          $("#data-line-div").html("");
+          $("#pagination-ele").html("<span>暂无数据</span>");
+          layer.msg("请求失败，有不存在的文件", {icon: 2});
         }
-
-        $("#data-line-div").html(domEle);
-
-        options.totalPages = jsonData.totalPages;
-        options.currentPage = jsonData.currentPage;
-        $("#pagination-ele").bootstrapPaginator(options);
-      } else {
-        $("#data-line-div").html("");
-        $("#pagination-ele").html("<span>暂无数据</span>");
-        layer.msg("请求失败，有不存在的文件", {icon: 2});
       }
 
       layer.close(loadIndex);

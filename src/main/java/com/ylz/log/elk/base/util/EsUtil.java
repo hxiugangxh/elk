@@ -1,5 +1,6 @@
 package com.ylz.log.elk.base.util;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsRequest;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
@@ -34,6 +35,10 @@ public class EsUtil {
     }
 
     public boolean isExistsIndex(List<String> indexList) {
+
+        if (CollectionUtils.isEmpty(indexList)) {
+            return false;
+        }
 
         IndicesExistsResponse response = transportClient
                 .admin()
