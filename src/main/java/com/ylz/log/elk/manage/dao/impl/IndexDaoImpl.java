@@ -239,10 +239,8 @@ public class IndexDaoImpl implements IndexDao {
 
         List<Map<String, Object>> result = new ArrayList<>();
         for (SearchHit hit : hits) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("id", hit.getId());
-
             Map<String, Object> source = hit.getSource();
+            source.remove("@version");
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
 
             for (String tmpField : fieldList) {
@@ -258,8 +256,7 @@ public class IndexDaoImpl implements IndexDao {
                 }
             }
 
-            map.putAll(source);
-            result.add(map);
+            result.add(source);
         }
 
         dataMap.put("currentPage", currentPage);

@@ -320,7 +320,7 @@
 
       for (var i = 0; i < selectArr.length; i++) {
         if (selectArr[i] > -1) {
-          detailVisualizeEchart(selectArr[i], i);
+          editVisualizeEchart(selectArr[i], i);
         }
       }
 
@@ -519,6 +519,7 @@
 </script>
 <script>
   /*<![CDATA[*/
+  // 美工与Modal_view不知道在哪css挂钩，暂时不改命名
   var myModalClone = $("#Modal_view").clone();
 
   function addVisualizePanelEchart() {
@@ -587,7 +588,7 @@
     return $(".echart_view").eq(0);
   }
 
-  function detailVisualizeEchart(id, echartDomIndex) {
+  function editVisualizeEchart(id, echartDomIndex) {
     var URL = "editVisualizeEchart/" + id;
     var formData = {};
 
@@ -641,6 +642,22 @@
           $(echartDom).prepend(txtDom);
           //layer.msg($input.parents("td").next().html() + "所属的" + jsonData.errorMsg, {icon: 2});
         }
+
+        $.each($(".table_show input[type=checkbox]"), function(index, domEle) {
+          if ($(domEle).prop("checked")) {
+            var id = $(this).val();
+            var flag = true;
+            for (var i = 0; i < selectArr.length; i++) {
+              if(id == selectArr[i]) {
+                flag = false;
+              }
+            }
+
+            if (flag) {
+              $(this).removeAttr("checked");
+            }
+          }
+        });
       });
     }
   }
@@ -652,7 +669,7 @@
     var id = $(this).val();
 
     if (selectedFlag) {
-      detailVisualizeEchart(id, -1);
+      editVisualizeEchart(id, -1);
     } else {
       var index = 0;
       $(".echart_view").each(function (i, domEle) {
@@ -863,7 +880,7 @@
       {
         name: '记录',
         type: 'pie',
-        center: ['50%', '50%'],
+        center: ['50%', '52%'],
         data: [
           {value: 5, name: 'A'},
           {value: 20, name: 'B'},

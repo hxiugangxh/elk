@@ -1,4 +1,4 @@
-
+/*
 package com.ylz.log.elk.controller;
 
 import com.google.code.kaptcha.Constants;
@@ -30,6 +30,11 @@ public class HomeController {
     @Autowired
     private Producer producer;
 
+    @RequestMapping(value = {"/", "/index"})
+    public String index(Map<String, Object> map) {
+
+        return "index";
+    }
 
     @RequestMapping(value = "/login")
     public String login(Map<String, Object> map) {
@@ -37,7 +42,8 @@ public class HomeController {
         return "index";
     }
 
-    @RequestMapping(value = {"/", "/index"})
+    */
+/*@RequestMapping(value = {"/", "/index"})
     public String index(Map<String, Object> map) {
         //获取到用户信息.Shiro.---SecurityUtils.getSubject() 获取到.UserInfo.
         Subject subject = SecurityUtils.getSubject();
@@ -53,7 +59,8 @@ public class HomeController {
     @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
     public String login() {
         return "/login";
-    }
+    }*//*
+
 
 
     @RequestMapping(value = {"/login"}, method = RequestMethod.POST)
@@ -122,5 +129,6 @@ public class HomeController {
             }
         }
     }
-}
 
+}
+*/

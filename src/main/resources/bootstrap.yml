@@ -19,7 +19,7 @@ eureka:
     prefer-ip-address: true
     leaseRenewalIntervalInSeconds: 1
     leaseExpirationDurationInSeconds: 2
-#    instance-id: localhost:${spring.application.name}:${spring.application.instance_id:${server.port}}
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${spring.application.instance_id:${server.port}}
     status-page-url-path: /
 
 feign:
