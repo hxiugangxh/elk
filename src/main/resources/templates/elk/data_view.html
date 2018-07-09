@@ -228,12 +228,14 @@
   function query() {
     $('#table').bootstrapTable('refresh')
   }
+
   window.onkeyup = function (ev) {
     var key = ev.keyCode || ev.which;
     if (key == 13) { //按下Escape
       query();
     }
   }
+
   function dealTime() {
     var endTime = new Date($("#endTime").val());
     var startTime = new Date($("#startTime").val());
@@ -786,14 +788,16 @@
           var domEle = "<option value=''>请选择...</option>";
           var existFieldFlag = false;
           $.each(fieldList, function (key, value) {
-            if (key == field) {
-              existFieldFlag = true;
+            if (!(key.indexOf("@version") != -1 || key.indexOf("tags") != -1)) {
+              if (key == field) {
+                existFieldFlag = true;
+              }
+              var txt = key;
+              if (txt.indexOf("\.date")) {
+                txt = txt.replace("\.date", "");
+              }
+              domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + txt + "</option>";
             }
-            var txt = key;
-            if (txt.indexOf("\.date")) {
-              txt = txt.replace("\.date", "");
-            }
-            domEle += "<option value='" + key + "' data-relIndex='" + value + "'>" + txt + "</option>";
           });
           $("#field").html(domEle);
 

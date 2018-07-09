@@ -128,7 +128,12 @@ public class IndexDaoImpl implements IndexDao {
             }
         }
 
-        return new ArrayList<>(fieldSet);
+        List<String> list = new ArrayList<>(fieldSet);
+
+        list.remove("@version");
+        list.remove("tags");
+
+        return list;
     }
 
     // 通过multiIndex关联得到所有的es中的index
@@ -315,10 +320,12 @@ public class IndexDaoImpl implements IndexDao {
                     map.keySet().forEach((key) -> {
                         Map<String, Object> dataMap = new HashMap<>();
 
-                        dataMap.put("index", indexKey);
-                        dataMap.put("field", key);
+                        if (!("@version".equals(key) || "tags".equals(key))) {
+                            dataMap.put("index", indexKey);
+                            dataMap.put("field", key);
 
-                        list.add(dataMap);
+                            list.add(dataMap);
+                        }
                     });
                 }
             }
