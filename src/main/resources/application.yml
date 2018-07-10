@@ -34,4 +34,21 @@ logging:
   level:
     com.ylz.log.elk.manage.dao.mapper: debug
 
-
+# 单点登录
+ms:
+  admin:
+    auth:
+      # 访问单点登入的url地址
+      serverName: http://localhost:${server.port}/microservice-management
+      shiro:
+        logoutUrl: /logout.html
+        successUrl: /index.html
+        unauthorizedUrl: /500.html
+      cas:
+        logoutUrl: http://wwwdemo.msyos.com/adminAuth/logout
+        changePwdUrl: http://wwwdemo.msyos.com/adminAuth/oauth2.0
+      oauth:
+        urlPrefix: http://wwwdemo.msyos.com/adminAuth/oauth2.0
+        clientId: MicroServiceManagement
+        clientSecret: Ylzinfo@pt
+        successUrl: /index.html

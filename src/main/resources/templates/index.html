@@ -41,7 +41,12 @@
           <ul class="header-child userinfo">
             <li><a>个人信息</a></li>
             <li><a>密码修改</a></li>
-            <li class="last"><a href="page_login.html" target="_blank">安全退出</a></li>
+            <li class="last"><a href="javaScript:loginOut()" target="_blank">安全退出</a></li>
+            <script>
+              function loginOut() {
+                window.location.href = "logout.html";
+              }
+            </script>
           </ul>
         </li>
         <li>
