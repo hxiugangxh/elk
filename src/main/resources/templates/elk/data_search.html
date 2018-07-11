@@ -308,7 +308,9 @@
     // searchContent = searchContent.split(" ").join(" or ");
 
     if (index == "" || type == "") {
-      // console.log("没有数据");
+      layer.close(loadIndex);
+      $("#data-line-div").html("");
+      $("#pagination-ele").html("<span>暂无数据</span>");
       return;
     }
 

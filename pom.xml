@@ -58,11 +58,12 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>com.ylzinfo.ms</groupId>
-            <artifactId>admin-auth-starter</artifactId>
-            <version>2.0</version>
-        </dependency>
+        <!--单点登录依赖-->
+        <!--<dependency>-->
+            <!--<groupId>com.ylzinfo.ms</groupId>-->
+            <!--<artifactId>admin-auth-starter</artifactId>-->
+            <!--<version>2.0</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -79,8 +80,8 @@
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
 
-        <!--分布式session开启-->
-        <!--<dependency>
+        <!--分布式session开启
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
