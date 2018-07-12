@@ -246,6 +246,7 @@ public class IndexDaoImpl implements IndexDao {
         for (SearchHit hit : hits) {
             Map<String, Object> source = hit.getSource();
             source.remove("@version");
+            source.remove("tags");
             Map<String, HighlightField> highlightFields = hit.getHighlightFields();
 
             for (String tmpField : fieldList) {

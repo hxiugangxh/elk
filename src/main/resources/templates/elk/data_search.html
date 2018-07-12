@@ -330,18 +330,16 @@
       if (flag) {
 
         var domEle = "";
-
         $("#total").html(jsonData.total);
         if (jsonData.total == 0) {
           $("#pagination-ele").html("<span>暂无数据</span>");
           $("#data-line-div").html(domEle);
+          layer.close(loadIndex);
 
           return;
         }
 
         if (jsonData.source) {
-
-
           /* 参考原始demo吧 */
           for (var i = 0; i < jsonData.source.length; i++) {
             var dataLineModel = $("#data-line-model").clone();
@@ -382,13 +380,14 @@
 
             dataLineModel.find(".cont-elips").html(txt);
 
+            // 藏匿原始数据
+            dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData.source[i]));
+
+            jsonData.source[i].message = jsonData.source[i].message.replace(/<\/em>/gm, "").replace(/<em>/gm, "");
             dataLineModel.find(".json-collapsed").JSONView(jsonData.source[i], {
               collapsed: true,
               nl2br: true
             });
-
-            // 藏匿原始数据
-            dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData.source[i]));
 
             domEle += dataLineModel.html();
           }
