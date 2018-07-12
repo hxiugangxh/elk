@@ -5,27 +5,23 @@ import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.manage.bean.*;
 import com.ylz.log.elk.manage.dao.IndexDao;
 import com.ylz.log.elk.manage.dao.mapper.EchartMapper;
-import com.ylz.log.elk.manage.service.impl.EchartServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.elasticsearch.action.admin.indices.stats.IndicesStatsRequest;
 import org.elasticsearch.action.search.SearchRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchPhraseQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -34,7 +30,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -511,7 +506,7 @@ public class IndexDaoImpl implements IndexDao {
         log.info("delMultiIndex--删除组合索引与es索引的关系表:\n{},\n参数: {}", delSQL, paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
-        delSQL = "delete from cm_user_coll_index where user_id = " + LoginInfoUtil.getUserId();
+        delSQL = "delete from cm_user_coll_index where user_name = " + LoginInfoUtil.getUserName();
         this.jdbcTemplate.update(delSQL);
 
         delSQL = "delete from cm_multi_index where id = :multiIndexId";
@@ -528,8 +523,8 @@ public class IndexDaoImpl implements IndexDao {
     }
 
     @Override
-    public UserCollIndexBean getUserCollIndexBean(Integer userId) {
-        String querySQL = "select * from cm_user_coll_index where user_id = '" + userId + "'";
+    public UserCollIndexBean getUserCollIndexBean(String userName) {
+        String querySQL = "select * from cm_user_coll_index where user_name = '" + userName + "'";
 
         log.info("getUserCollIndexBean: {}", querySQL);
 
@@ -543,14 +538,14 @@ public class IndexDaoImpl implements IndexDao {
     public boolean dealCollIndex(String index, String type, String action) {
         Map<String, Object> paramMap = new HashMap<>();
 
-        paramMap.put("userId", LoginInfoUtil.getUserId());
-        String delSQL = "delete from cm_user_coll_index where user_id = :userId";
+        paramMap.put("userName", LoginInfoUtil.getUserName());
+        String delSQL = "delete from cm_user_coll_index where user_name = :userName";
         log.info("dealCollIndex--删除原有收藏: {}, \n参数: {}", delSQL, paramMap);
         Integer delCount = this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
         Integer saveCount = 0;
 
         if ("save".equals(action)) {
-            String saveSQL = "insert into cm_user_coll_index values(:userId, :index, :type)";
+            String saveSQL = "insert into cm_user_coll_index values(:userName, :index, :type)";
 
             paramMap.put("index", index);
             paramMap.put("type", type);

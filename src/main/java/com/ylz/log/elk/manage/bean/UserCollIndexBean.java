@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserCollIndexBean {
-    private Integer userId;
+    private String userName;
     private String index;
     private String type;
 }

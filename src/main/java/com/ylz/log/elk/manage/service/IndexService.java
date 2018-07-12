@@ -30,7 +30,7 @@ public interface IndexService {
 
     boolean delMultiIndex(String multiIndex);
 
-    UserCollIndexBean getUserCollIndexBean(Integer userId);
+    UserCollIndexBean getUserCollIndexBean(String userName);
 
     boolean dealCollIndex(String index, String type, String action);
 

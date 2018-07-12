@@ -30,7 +30,7 @@ public class IndexServiceImpl implements IndexService {
 
         List<MultiIndexBean> multiIndexList = indexDao.listMultiIndex();
         List<String> esIndexList = indexDao.listIndex();
-        UserCollIndexBean userCollIndexBean = this.getUserCollIndexBean(LoginInfoUtil.getUserId());
+        UserCollIndexBean userCollIndexBean = this.getUserCollIndexBean(LoginInfoUtil.getUserName());
 
         multiIndexList.forEach(multiIndexBean -> {
             Map<String, Object> map = new HashMap<>();
@@ -134,8 +134,8 @@ public class IndexServiceImpl implements IndexService {
     }
 
     @Override
-    public UserCollIndexBean getUserCollIndexBean(Integer userId) {
-        return indexDao.getUserCollIndexBean(userId);
+    public UserCollIndexBean getUserCollIndexBean(String userName) {
+        return indexDao.getUserCollIndexBean(userName);
     }
 
     @Override

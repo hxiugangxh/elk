@@ -28,7 +28,7 @@ public interface IndexDao {
 
     boolean delMultiIndex(String multiIndex);
 
-    UserCollIndexBean getUserCollIndexBean(Integer userId);
+    UserCollIndexBean getUserCollIndexBean(String userName);
 
     boolean dealCollIndex(String s, String type, String index);
 
