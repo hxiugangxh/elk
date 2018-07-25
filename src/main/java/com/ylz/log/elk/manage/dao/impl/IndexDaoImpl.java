@@ -506,7 +506,7 @@ public class IndexDaoImpl implements IndexDao {
         log.info("delMultiIndex--删除组合索引与es索引的关系表:\n{},\n参数: {}", delSQL, paramMap);
         this.getNamedParameterJdbcTemplate().update(delSQL, paramMap);
 
-        delSQL = "delete from cm_user_coll_index where user_name = " + LoginInfoUtil.getUserName();
+        delSQL = "delete from cm_user_coll_index where user_name = '" + LoginInfoUtil.getUserName() + "'";
         this.jdbcTemplate.update(delSQL);
 
         delSQL = "delete from cm_multi_index where id = :multiIndexId";
