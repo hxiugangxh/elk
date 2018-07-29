@@ -46,7 +46,7 @@ logging:
   level:
     com.ylz.log.elk.manage.dao.mapper: debug
 
-# 单点登录
+# 单点登录 对接
 ms:
   admin:
     auth:
