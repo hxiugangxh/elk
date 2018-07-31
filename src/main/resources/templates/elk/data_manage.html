@@ -134,22 +134,24 @@
                   添加目录\项目
                 </h4>
                 <div class="col-xs-3" style="position: absolute;top:15px; left: 125px">
-                  <select class="form-control input-sm" title="目录\项目的匹配模式">
-                    <option value="">指定文件</option>
+                  <select class="form-control input-sm" title="目录\项目的匹配模式" id="model">
+                    <option value="appoint">指定文件</option>
+                    <option value="fuzzy">模糊匹配</option>
                   </select>
                 </div>
-                <div class="form-horizontal" style="position: absolute;top: 15px; left: 470px">
+                <div class="form-horizontal" style="position: absolute;top: 15px; left: 470px" id="logName">
                   <div class="form-group">
                     <div style="position: absolute;top: 8px; left: 0px"><b class="mr5 red500" id="existFlag">*</b>
                     </div>
-                    <div class="block-cont col-md-12">
+                    <div class="block-cont col-md-12" id="logInput">
                       <input type="text" class="form-control" id="multiIndex" onkeyup="throttle(hasExist)"
                              placeholder="请输入目录\项目名称">
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="modal-body" style="min-height: 450px;">
+              <!--指定文件表单-->
+              <div class="modal-body" style="min-height: 450px;" id="appoint">
                 <div class="col-md-6">
                   <div class="input-group col-md-11">
                     <label style="margin-bottom: 5px">ES日志文件：</label>
@@ -186,11 +188,32 @@
                     </select>
                   </div>
                 </div>
-
               </div>
+
+              <!--模糊匹配表单-->
+              <div class="modal-body" style="min-height: 450px;display: none;" id="fuzzy">
+                <div class="col-md-6 col-md-offset-3">
+                  <div class="input-group col-md-11">
+                    <label style="margin-bottom: 5px">ES日志文件：</label>
+                    <input type="text" style="margin-bottom: 5px" name="" id="fuzzyText" class="form-control"
+                           onkeyup="throttle(selectOption(this, 'fuzzySelect'))"/>
+                  </div>
+                  <div class="col-md-11" style="padding:0;border-left: 1px solid #ddd;
+              border-bottom: 1px solid #ddd;border-radius: 3px">
+                    <select style="height: 350px;width: 258px;" multiple="multiple" id="fuzzySelect">
+                      <th:block th:each="index : ${indexList}">
+                        <option class="list-group-item option-item"
+                                th:value="${index}"
+                                th:text="${index}"></option>
+                      </th:block>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" onclick="saveMultiIndex()">保存</button>
+                <button type="button" class="btn btn-primary" id="save">保存</button>
               </div>
             </div>
           </div>
@@ -232,7 +255,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span
-            class="sr-only">Close</span></button>
+                class="sr-only">Close</span></button>
         <h4 class="modal-title">提示信息</h4>
       </div>
       <div class="modal-body">
@@ -246,476 +269,541 @@
   </div><!-- /.modal-dialog -->
 </div>
 <script th:inline="javascript">
-  /*<![CDATA[*/
-  function delMultiIndex(thisObj) {
-    event.stopPropagation();
+    /*<![CDATA[*/
+    function delMultiIndex(thisObj) {
+        event.stopPropagation();
 
-    var multiIndex = $(thisObj).attr("data-multiIdex");
-    layer.confirm("确定要删除目录\\项目：" + multiIndex + " 吗？<br />与其相关的图标与面板也会被一起删除", function () {
-      var URL = "delMultiIndex";
-      var formData = {
-        "multiIndex": multiIndex
-      };
+        var multiIndex = $(thisObj).attr("data-multiIdex");
+        layer.confirm("确定要删除目录\\项目：" + multiIndex + " 吗？<br />与其相关的图表与面板也会被一起删除", function () {
+            var URL = "delMultiIndex";
+            var formData = {
+                "multiIndex": multiIndex
+            };
 
-      $.post(URL, formData, function (jsonData) {
-        var flag = jsonData.flag;
+            $.post(URL, formData, function (jsonData) {
+                var flag = jsonData.flag;
 
-        if (flag) {
-          $(thisObj).parents("li").remove();
-          layer.msg('删除成功！', {icon: 1, time: 1000});
-          if ($(thisObj).parents("li").attr("class").indexOf("active") != -1) {
-            $(".manage ul li").eq(0).click();
-          }
-        } else {
-          layer.msg('删除失败！', {icon: 2});
-        }
-      });
-    });
-  }
-
-  function throttle(method) {
-    clearTimeout(method.tId);
-    method.tId = setTimeout(function () {
-      method.call();
-    }, 200);
-  }
-
-  var myModalClone = $("#myModal").clone();
-
-  function addMultiIndex() {
-    $("#myModal").html(myModalClone.html());
-    $('#myModal').modal('show').css({
-      width: 'auto',
-      'margin-left': 'auto'
-    });
-  }
-
-  function hasExist() {
-    var multiIndex = $("#multiIndex").val();
-    var formData = {
-      "multiIndex": multiIndex
-    };
-
-    var URL = "hasExist";
-
-    if (multiIndex.split(" ").join("") == "") {
-      $("#existFlag").html("*");
-      $("#existFlag").attr("class", "mr5 red500");
-    } else {
-      $.post(URL, formData, function (jsonData) {
-        var flag = jsonData.flag;
-
-        if (flag) {
-          $("#existFlag").html("");
-          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-remove red500");
-        } else {
-          $("#existFlag").html("");
-          $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
-        }
-      }, "json");
+                if (flag) {
+                    $(thisObj).parents("li").remove();
+                    layer.msg('删除成功！', {icon: 1, time: 1000});
+                    if ($(thisObj).parents("li").attr("class").indexOf("active") != -1) {
+                        $(".manage ul li").eq(0).click();
+                    }
+                } else {
+                    layer.msg('删除失败！', {icon: 2});
+                }
+            });
+        });
     }
-  }
 
-  function listReflectField(initFlag) {
-    var index = $("#name_info").html();
-    var type = $("#name_info").attr("data-type");
-
-    // index为空，即索引不存在，无需向服务器发送请求
-    if (index == "") {
-      return;
+    function throttle(method) {
+        clearTimeout(method.tId);
+        method.tId = setTimeout(function () {
+            method.call();
+        }, 200);
     }
-    var URL = "listReflectField"
-      + "?index=" + index
-      + "&type=" + type;
 
-    var opt = {
-      url: URL,
-      pagination: true,
-      pageSize: 20,
-      pageList: [5, 10, 15, 20],
-      onLoadSuccess: function () {
-        mergeColumn("table", 0);
-      },
-      onLoadError: function (data) {
-        $("#table").bootstrapTable('removeAll');
+    var myModalClone = $("#myModal").clone();
 
+    function addMultiIndex() {
+        $("#myModal").html(myModalClone.html());
+        $('#myModal').modal('show').css({
+            width: 'auto',
+            'margin-left': 'auto'
+        });
+        $("#save").on("click", function () {
+            saveMultiIndex()
+        });
+    }
+
+    function hasExist() {
+        var multiIndex = $("#multiIndex").val();
+        var formData = {
+            "multiIndex": multiIndex
+        };
+
+        var URL = "hasExist";
+
+        if (multiIndex.split(" ").join("") == "") {
+            $("#existFlag").html("*");
+            $("#existFlag").attr("class", "mr5 red500");
+        } else {
+            $.post(URL, formData, function (jsonData) {
+                var flag = jsonData.flag;
+
+                if (flag) {
+                    $("#existFlag").html("");
+                    $("#existFlag").attr("class", "mr5 glyphicon glyphicon-remove red500");
+                } else {
+                    $("#existFlag").html("");
+                    $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+                }
+            }, "json");
+        }
+    }
+
+    function listReflectField(initFlag) {
         var index = $("#name_info").html();
         var type = $("#name_info").attr("data-type");
-        var URL = "dealNotIndex";
+
+        // index为空，即索引不存在，无需向服务器发送请求
+        if (index == "") {
+            return;
+        }
+        var URL = "listReflectField"
+            + "?index=" + index
+            + "&type=" + type;
+
+        var opt = {
+            url: URL,
+            pagination: true,
+            pageSize: 20,
+            pageList: [5, 10, 15, 20],
+            onLoadSuccess: function () {
+                mergeColumn("table", 0);
+            },
+            onLoadError: function (data) {
+                $("#table").bootstrapTable('removeAll');
+
+                var index = $("#name_info").html();
+                var type = $("#name_info").attr("data-type");
+                var URL = "dealNotIndex";
+                var formData = {
+                    "index": index,
+                    "type": type
+                };
+
+                $.post(URL, formData, function (jsonData) {
+                    var flag = jsonData.flag;
+
+                    if (!flag) {
+                        var content = "<div class='modal-div'>";
+                        content += "<label>" + jsonData.errorMsg + "</label><br />";
+                        content += "<label>映射索引：[" + jsonData.indexList + "]</label><br />";
+                        content += "<label>不存在索引：[" + jsonData.notExistList + "]</label><br />";
+                        content += "<label>是否删除不存在的映射索引？</label></div>";
+
+                        $("#delMultiRelIndex").attr("data-index", jsonData.notExistList);
+
+                        $("#indexInfoModal .modal-body").html(content);
+
+                        $('#indexInfoModal').modal('show').css({
+                            width: 'auto',
+                            'margin-left': 'auto'
+                        });
+                    }
+                }, "json");
+            },
+            onPageChange: function () {
+                mergeColumn("table", 0);
+            }
+        };
+
+        if (initFlag) {
+            $("#table").bootstrapTable(opt);
+        } else {
+            $("#table").bootstrapTable("refresh", opt);
+        }
+    }
+
+    function delMultiRelIndex(thisObj) {
+        var index = $(thisObj).attr("data-index");
+        var URL = "delMultiRelIndex";
         var formData = {
-          "index": index,
-          "type": type
+            "index": index
         };
 
         $.post(URL, formData, function (jsonData) {
-          var flag = jsonData.flag;
+            var flag = jsonData.flag;
 
-          if (!flag) {
-            var content = "<div class='modal-div'>";
-            content += "<label>" + jsonData.errorMsg + "</label><br />";
-            content += "<label>映射索引：[" + jsonData.indexList + "]</label><br />";
-            content += "<label>不存在索引：[" + jsonData.notExistList + "]</label><br />";
-            content += "<label>是否删除不存在的映射索引？</label></div>";
+            if (flag) {
+                layer.msg('删除成功！', {icon: 1, time: 1000});
 
-            $("#delMultiRelIndex").attr("data-index", jsonData.notExistList);
-
-            $("#indexInfoModal .modal-body").html(content);
-
-            $('#indexInfoModal').modal('show').css({
-              width: 'auto',
-              'margin-left': 'auto'
-            });
-          }
+                $("#indexInfoModal").modal("hide");
+                $(".manage li.active").click();
+            } else {
+                layer.msg('删除失败！', {icon: 2});
+            }
         }, "json");
-      },
-      onPageChange: function () {
-        mergeColumn("table", 0);
-      }
-    };
-
-    if (initFlag) {
-      $("#table").bootstrapTable(opt);
-    } else {
-      $("#table").bootstrapTable("refresh", opt);
-    }
-  }
-
-  function delMultiRelIndex(thisObj) {
-    var index = $(thisObj).attr("data-index");
-    var URL = "delMultiRelIndex";
-    var formData = {
-      "index": index
-    };
-
-    $.post(URL, formData, function (jsonData) {
-      var flag = jsonData.flag;
-
-      if (flag) {
-        layer.msg('删除成功！', {icon: 1, time: 1000});
-
-        $("#indexInfoModal").modal("hide");
-        $(".manage li.active").click();
-      } else {
-        layer.msg('删除失败！', {icon: 2});
-      }
-    }, "json");
-  }
-
-  $(document).on("click", ".tab", function () {
-    var clazz = $(this).find(".iconfont").attr("class");
-    if (clazz.indexOf("icon-down") != -1) {
-      $(this).find(".iconfont").removeClass("icon-down").addClass("icon-up");
-    } else {
-      $(this).find(".iconfont").removeClass("icon-up").addClass("icon-down");
-    }
-    $(this).next().find("li").toggleClass("hide");
-  });
-  $(document).on("click", ".manage ul li", function () {
-    $(".manage ul li").removeClass("active");
-    $(this).addClass("active");
-
-    var collFlag = $(this).attr("data-collFlag");
-    $("#name_info").html($(this).find("a").html());
-    $("#name_info").attr("data-type", $(this).find("a").attr("data-type"));
-
-    dealCollFlag(collFlag);
-    listReflectField(false);
-  });
-
-  // //模糊匹配，将所有匹配项显示
-  function selectOption(thisObj, target) {
-    var txt = $(thisObj).val();
-
-    $("#" + target + " option").show();
-
-    if (txt == "") {
-      return;
     }
 
-    for (var i = 0; i < $("#" + target + " option").length; i++) {
-      //模糊匹配，将所有匹配项显示
-      if ($("#" + target + " option").eq(i).text().substr(0, txt.length) != txt) {
-        $("#" + target + " option").eq(i).hide();
-      }
-    }
-  }
-
-  $(document).on("dblclick", "#left option", function () {
-    toRight(this);
-  });
-  $(document).on("dblclick", "#right option", function () {
-    toLeft(this);
-  });
-
-  function toRight(thisObj) {
-    var domEle = "<option class='list-group-item option-item'" +
-      +"value='" + $(thisObj).val() + "'>"
-      + $(thisObj).html() + "</option>";
-    $("#right").html(domEle + $("#right").html());
-    $(thisObj).remove();
-  }
-
-  function toLeft(thisObj) {
-    var domEle = "<option class='list-group-item option-item'" +
-      +"value='" + $(thisObj).val() + "'>"
-      + $(thisObj).html() + "</option>";
-    $("#left").html(domEle + $("#left").html());
-    $(thisObj).remove();
-  }
-
-  function toSelRight() {
-    $("#left").find("option:selected").each(function () {
-      toRight(this);
+    $(document).on("click", ".tab", function () {
+        var clazz = $(this).find(".iconfont").attr("class");
+        if (clazz.indexOf("icon-down") != -1) {
+            $(this).find(".iconfont").removeClass("icon-down").addClass("icon-up");
+        } else {
+            $(this).find(".iconfont").removeClass("icon-up").addClass("icon-down");
+        }
+        $(this).next().find("li").toggleClass("hide");
     });
-  }
 
-  function toSelLeft() {
-    $("#right").find("option:selected").each(function () {
-      toLeft(this);
+    function dealCollFlag(flag) {
+        if (flag == "1") {
+            $("#coll").find("span").eq(0).addClass("yellow");
+            $("#coll").find("span").eq(1).html("已默认");
+        } else {
+            $("#coll").find("span").eq(0).removeClass("yellow");
+            $("#coll").find("span").eq(1).html("设为默认");
+        }
+    }
+
+    $(document).on("click", ".manage ul li", function () {
+        $(".manage ul li").removeClass("active");
+        $(this).addClass("active");
+
+        var collFlag = $(this).attr("data-collFlag");
+        $("#name_info").html($(this).find("a").html());
+        $("#name_info").attr("data-type", $(this).find("a").attr("data-type"));
+
+        dealCollFlag(collFlag);
+        listReflectField(false);
     });
-  }
 
-  /*]]>*/
+    // //模糊匹配，将所有匹配项显示
+    function selectOption(thisObj, target) {
+        var txt = $(thisObj).val();
+
+        $("#" + target + " option").show();
+
+        if (txt == "") {
+            return;
+        }
+
+        for (var i = 0; i < $("#" + target + " option").length; i++) {
+            //模糊匹配，将所有匹配项显示
+            if ($("#" + target + " option").eq(i).text().substr(0, txt.length) != txt) {
+                $("#" + target + " option").eq(i).hide();
+            }
+        }
+    }
+
+    $(document).on("dblclick", "#left option", function () {
+        toRight(this);
+    });
+    $(document).on("dblclick", "#right option", function () {
+        toLeft(this);
+    });
+
+    function toRight(thisObj) {
+        var domEle = "<option class='list-group-item option-item'" +
+            +"value='" + $(thisObj).val() + "'>"
+            + $(thisObj).html() + "</option>";
+        $("#right").html(domEle + $("#right").html());
+        $(thisObj).remove();
+    }
+
+    function toLeft(thisObj) {
+        var domEle = "<option class='list-group-item option-item'" +
+            +"value='" + $(thisObj).val() + "'>"
+            + $(thisObj).html() + "</option>";
+        $("#left").html(domEle + $("#left").html());
+        $(thisObj).remove();
+    }
+
+    function toSelRight() {
+        $("#left").find("option:selected").each(function () {
+            toRight(this);
+        });
+    }
+
+    function toSelLeft() {
+        $("#right").find("option:selected").each(function () {
+            toLeft(this);
+        });
+    }
+
+    //切换添加日志的模式
+    $(document).on("change", "#model", function () {
+        var model = $("#model option:selected").val();
+        if (model == "fuzzy") {
+            $("#logName").hide();
+            $("#appoint").hide();
+            $("#fuzzy").show();
+            $("#save").off("click");
+            $("#save").on("click", function () {
+                fuzzySave();
+            });
+        } else if (model == "appoint") {
+            $("#logName").show();
+            $("#fuzzy").hide();
+            $("#appoint").show();
+            $("#save").off("click");
+            $("#save").on("click", function () {
+                saveMultiIndex();
+            });
+        }
+    });
+
+    /*]]>*/
 </script>
 
 <script th:inline="javascript">
-  /*<![CDATA[*/
-  //弹出框，input框字符匹配
-  $("#txt").keyup(function () {
-    if ($("#txt").val().length <= 0) {
-      $("#listCell li").css('background-color', '#fff');
-      return;
-    }
-    for (var i = 0; i < $("#listCell li").length; i++) {
-      //模糊匹配，将所有匹配项显示
-      if ($("#listCell li").eq(i).text().substr(0, $("#txt").val().length) == $("#txt").val()) {
-        $("#listCell li").eq(i).css('background-color', '#ccc');
-      }
-    }
-  });
-  $("#listCell li").click(function () {
-    $("#txt").val($(this).text());
-  });
-
-  function saveMultiIndex() {
-    var clazz = $("#existFlag").attr("class");
-    var multiIndex = $("#multiIndex").val();
-
-    if (multiIndex.split(" ").join("") == "") {
-      layer.msg('目录\项目不能为空！', {icon: 2});
-
-      return;
-    }
-    if (clazz.indexOf("red500") != -1) {
-      layer.msg('目录\项目已经存在！', {icon: 2});
-
-      return;
-    }
-
-    var index = $("#right option").map(function () {
-      return $(this).html();
-    }).get();
-
-    if (index.length == 0) {
-      layer.msg('已选索引不能为空！', {icon: 2});
-
-      return;
-    }
-
-    var URL = "saveMultiIndex";
-    var formData = {
-      "multiIndex": multiIndex,
-      "index": index + ""
-    };
-
-    $.post(URL, formData, function (jsonData) {
-      var flag = jsonData.flag;
-      var type = jsonData.type;
-
-      if (flag) {
-        layer.msg('保存成功！', {icon: 1, time: 1000});
-
-        $(".manage li").removeClass("active");
-        appendMultiIndex(multiIndex, type);
-        $(".manage li.active").parent().scrollTop(9999);
-        $("#myModal").modal("hide");
-        $(".manage li.active").click();
-      } else {
-        layer.msg("保存失败，" + jsonData.errorMsg, {icon: 2});
-      }
-    }, "json");
-  }
-
-  function appendMultiIndex(multiIndex, type) {
-    var domEle = "";
-    domEle += "<li class='list-group-item active'>";
-    domEle += "  <a href='javascript:void(0)' class='deal' data-type='" + type + "'>" + multiIndex + "</a>";
-    domEle += "<span class='glyphicon glyphicon-star li-star yellow'></span>"
-    domEle += "  <i class='glyphicon glyphicon-remove li-close' data-multiIdex='" + multiIndex + "'";
-    domEle += "     onclick='delMultiIndex(this)'></i>";
-    domEle += " </li>";
-
-    $(".manage ul:eq(0)").append(domEle);
-  }
-
-  function test() {
-    var layerIndex = layer.open({
-      title: '新增',
-      area: ['450px', '340px'], //宽高
-      content: "内容",
-      btn: ['保存', '取消', "测试"],
-      btn1: function (index, layero) {
-        alert("保存");
-      },
-      btn2: function (index, layero) {
-        layer.close(index);
-        alert("取消");
-      }
-    });
-  }
-
-  //选中索引
-  $(document).on("click", "#list_info li a", function () {
-    $(this).parent().addClass("active").siblings().removeClass("active");
-    act();
-  });
-
-  function act() {
-    var text_info = $(".manage ul li.active a").text();
-    var flag = $(".manage ul li.active a").attr("data-type");
-    $("#name_info").text(text_info);
-    $("#name_info").attr("data-type", flag);
-  }
-
-  //索引删除
-  jQuery(function () {
-    var URL = "getUserCollIndexBean";
-
-    $.post(URL, {}, function (userCollIndexBean) {
-      var index = userCollIndexBean.index;
-      if (index != null) {
-        var index = index;
-
-        $(".manage ul li").each(function () {
-          if ($(this).find("a").html() == index) {
-            $(this).attr("data-collFlag", "1");
-            $(this).find(".li-star").show();
-            $(this).click();
-
-            var a = $(".manage li.active").offset().top;
-            var b = $(".manage li.active").parent().offset().top;
-            $(".manage li.active").parent().scrollTop(a - b);
-          }
-        })
-      } else {
-        $(".manage ul li").eq(0).click();
-      }
-
-      listReflectField(true);
-    }, "json");
-  });
-
-  $("#coll").on("click", function () {
-    var that = this;
-    var index = $("#name_info").html();
-    var type = $("#name_info").attr("data-type");
-    var txt = $(that).find("span").eq(1).html();
-    var action = "save";
-    if (txt == "已默认") {
-      action = "delete"
-    }
-
-    var URL = "dealCollIndex";
-    var formData = {
-      "index": index,
-      "type": type,
-      "action": action
-    };
-
-    $.post(URL, formData, function (jsonData) {
-      var flag = jsonData.flag;
-      if (flag) {
-        var star = $(that).find("span").eq(0);
-        var txt = $(that).find("span").eq(1);
-        if (txt.html() == "已默认") {
-          star.removeClass("yellow");
-          txt.html("设为默认");
-
-          dealCollRelLi(index, false);
-        } else {
-          star.addClass("yellow");
-          txt.html("已默认");
-
-          dealCollRelLi(index, true);
+    /*<![CDATA[*/
+    //弹出框，input框字符匹配
+    $("#txt").keyup(function () {
+        if ($("#txt").val().length <= 0) {
+            $("#listCell li").css('background-color', '#fff');
+            return;
         }
-      } else {
-        layer.msg("设置默认值失败，请与管理员联系", {icon: 2});
-      }
+        for (var i = 0; i < $("#listCell li").length; i++) {
+            //模糊匹配，将所有匹配项显示
+            if ($("#listCell li").eq(i).text().substr(0, $("#txt").val().length) == $("#txt").val()) {
+                $("#listCell li").eq(i).css('background-color', '#ccc');
+            }
+        }
+    });
+    $("#listCell li").click(function () {
+        $("#txt").val($(this).text());
     });
 
-  });
+    function saveMultiIndex() {
+        var clazz = $("#existFlag").attr("class");
+        var multiIndex = $("#multiIndex").val();
 
-  // 点击默认按钮影响右边索引li
-  function dealCollRelLi(index, flag) {
-    $(".manage ul li .li-star").hide();
-    $(".manage ul li").attr("data-collFlag", "0");
-    if (flag) {
-      $(".manage ul li").filter(function () {
-        return $(this).find("a").html() == index;
-      }).find(".li-star").show();
-    }
-  }
+        if (multiIndex.split(" ").join("") == "") {
+            layer.msg('目录\项目不能为空！', {icon: 2});
 
-  function dealCollFlag(flag) {
-    if (flag == "1") {
-      $("#coll").find("span").eq(0).addClass("yellow");
-      $("#coll").find("span").eq(1).html("已默认");
-    } else {
-      $("#coll").find("span").eq(0).removeClass("yellow");
-      $("#coll").find("span").eq(1).html("设为默认");
-    }
-  }
-
-  function mergeColumn(tbodyId, columnNum) {
-    if ($("#" + tbodyId + " tbody tr").length > 0) {
-      var tdStrCur = "";
-      var countCur = 0;
-      var countNext = 0;
-      var flag = false;
-      var objCur;
-      var objNext;
-      $("#" + tbodyId + " tr").each(function () {
-        if ($(this).find("td").eq(columnNum).text() != tdStrCur) {
-          tdStrCur = $(this).find("td").eq(columnNum).text();
-          countCur = 1;
-          flag = true;
-          objCur = $(this).find("td").eq(columnNum);
-        } else if (objCur) {
-          if ($(this).find("td").eq(columnNum).text() != "") {
-            $(this).find("td").eq(columnNum).remove();
-            countCur++;
-            flag = false;
-            objNext = objCur;
-            countNext = countCur;
-          }
+            return;
         }
-        if (flag && countCur != 1) {
-          objNext.attr("rowspan", countNext);
+        if (clazz.indexOf("red500") != -1) {
+            layer.msg('目录\项目已经存在！', {icon: 2});
+
+            return;
+        }
+
+        var index = $("#right option").map(function () {
+            return $(this).html();
+        }).get();
+
+        if (index.length == 0) {
+            layer.msg('已选索引不能为空！', {icon: 2});
+
+            return;
+        }
+
+        var URL = "saveMultiIndex";
+        var formData = {
+            "multiIndex": multiIndex,
+            "index": index + ""
+        };
+
+        $.post(URL, formData, function (jsonData) {
+            var flag = jsonData.flag;
+            var type = jsonData.type;
+
+            if (flag) {
+                layer.msg('保存成功！', {icon: 1, time: 1000});
+
+                $(".manage li").removeClass("active");
+                appendMultiIndex(multiIndex, type);
+                $(".manage li.active").parent().scrollTop(9999);
+                $("#myModal").modal("hide");
+                $(".manage li.active").click();
+            } else {
+                layer.msg("保存失败，" + jsonData.errorMsg, {icon: 2});
+            }
+        }, "json");
+    }
+
+    //模糊匹配保存
+    function fuzzySave() {
+        var visible = $("#fuzzySelect option:visible");
+        if ($("#fuzzyText").val() == "") {
+            layer.msg('目录名不能为空！', {icon: 2});
+            return;
+        }
+        if (visible.length == 0) {
+            layer.msg('索引不能为空！', {icon: 2});
         } else {
-          if (objCur) {
-            objCur.attr("rowspan", countCur);
-            objCur.attr("style", "vertical-align: middle;text-align: center");
-          }
-        }
-      });
-      if (objCur) {
-        objCur.attr("rowspan", countCur);
-        objCur.attr("style", "vertical-align: middle;text-align: center");
-      }
-    }
-  }
+            var index = visible.map(function () {
+                return $(this).html();
+            }).get();
+            var multiIndex = $("#fuzzyText").val() + "*";
+            $.post({
+                url: "saveMultiIndex",
+                data: {
+                    "multiIndex": multiIndex,
+                    "index": index + ""
+                },
+                success: function (jsonData) {
+                    var flag = jsonData.flag;
+                    var type = jsonData.type;
+                    if (flag) {
+                        layer.msg('保存成功！', {icon: 1, time: 1000});
 
-  /*]]>*/
+                        $(".manage li").removeClass("active");
+                        appendMultiIndex(multiIndex, type);
+                        $(".manage li.active").parent().scrollTop(9999);
+                        $("#myModal").modal("hide");
+                        $(".manage li.active").click();
+                    } else {
+                        layer.msg("保存失败，" + jsonData.errorMsg, {icon: 2});
+                    }
+                }
+            });
+        }
+    }
+
+    function appendMultiIndex(multiIndex, type) {
+        var domEle = "";
+        domEle += "<li class='list-group-item active'>";
+        domEle += "  <a href='javascript:void(0)' class='deal' data-type='" + type + "'>" + multiIndex + "</a>";
+        domEle += "<span class='glyphicon glyphicon-star li-star yellow'></span>";
+        domEle += "  <i class='glyphicon glyphicon-remove li-close' data-multiIdex='" + multiIndex + "'";
+        domEle += "     onclick='delMultiIndex(this)'></i>";
+        domEle += " </li>";
+
+        $(".manage ul:eq(0)").append(domEle);
+    }
+
+    function test() {
+        var layerIndex = layer.open({
+            title: '新增',
+            area: ['450px', '340px'], //宽高
+            content: "内容",
+            btn: ['保存', '取消', "测试"],
+            btn1: function (index, layero) {
+                alert("保存");
+            },
+            btn2: function (index, layero) {
+                layer.close(index);
+                alert("取消");
+            }
+        });
+    }
+
+    //选中索引
+    $(document).on("click", "#list_info li a", function () {
+        $(this).parent().addClass("active").siblings().removeClass("active");
+        act();
+    });
+
+    function act() {
+        var text_info = $(".manage ul li.active a").text();
+        var flag = $(".manage ul li.active a").attr("data-type");
+        $("#name_info").text(text_info);
+        $("#name_info").attr("data-type", flag);
+    }
+
+    //索引删除
+    jQuery(function () {
+        var URL = "getUserCollIndexBean";
+
+        $.post(URL, {}, function (userCollIndexBean) {
+            var index = userCollIndexBean.index;
+            if (index != null) {
+                var index = index;
+
+                $(".manage ul li").each(function () {
+                    if ($(this).find("a").html() == index) {
+                        $(this).attr("data-collFlag", "1");
+                        $(this).find(".li-star").show();
+                        $(this).click();
+
+                        var a = $(".manage li.active").offset().top;
+                        var b = $(".manage li.active").parent().offset().top;
+                        $(".manage li.active").parent().scrollTop(a - b);
+                    }
+                })
+            } else {
+                $(".manage ul li").eq(0).click();
+            }
+
+            listReflectField(true);
+        }, "json");
+    });
+
+    $("#coll").on("click", function () {
+        var that = this;
+        var index = $("#name_info").html();
+        var type = $("#name_info").attr("data-type");
+        var txt = $(that).find("span").eq(1).html();
+        var action = "save";
+        if (txt == "已默认") {
+            action = "delete"
+        }
+
+        var URL = "dealCollIndex";
+        var formData = {
+            "index": index,
+            "type": type,
+            "action": action
+        };
+
+        $.post(URL, formData, function (jsonData) {
+            var flag = jsonData.flag;
+            if (flag) {
+                var star = $(that).find("span").eq(0);
+                var txt = $(that).find("span").eq(1);
+                if (txt.html() == "已默认") {
+                    star.removeClass("yellow");
+                    txt.html("设为默认");
+
+                    dealCollRelLi(index, false);
+                } else {
+                    star.addClass("yellow");
+                    txt.html("已默认");
+
+                    dealCollRelLi(index, true);
+                }
+            } else {
+                layer.msg("设置默认值失败，请与管理员联系", {icon: 2});
+            }
+        });
+
+    });
+
+    // 点击默认按钮影响右边索引li
+    function dealCollRelLi(index, flag) {
+        $(".manage ul li .li-star").hide();
+        $(".manage ul li").attr("data-collFlag", "0");
+        if (flag) {
+            $(".manage ul li").filter(function () {
+                return $(this).find("a").html() == index;
+            }).find(".li-star").show();
+        }
+    }
+
+    function mergeColumn(tbodyId, columnNum) {
+        if ($("#" + tbodyId + " tbody tr").length > 0) {
+            var tdStrCur = "";
+            var countCur = 0;
+            var countNext = 0;
+            var flag = false;
+            var objCur;
+            var objNext;
+            $("#" + tbodyId + " tr").each(function () {
+                if ($(this).find("td").eq(columnNum).text() != tdStrCur) {
+                    tdStrCur = $(this).find("td").eq(columnNum).text();
+                    countCur = 1;
+                    flag = true;
+                    objCur = $(this).find("td").eq(columnNum);
+                } else if (objCur) {
+                    if ($(this).find("td").eq(columnNum).text() != "") {
+                        $(this).find("td").eq(columnNum).remove();
+                        countCur++;
+                        flag = false;
+                        objNext = objCur;
+                        countNext = countCur;
+                    }
+                }
+                if (flag && countCur != 1) {
+                    objNext.attr("rowspan", countNext);
+                } else {
+                    if (objCur) {
+                        objCur.attr("rowspan", countCur);
+                        objCur.attr("style", "vertical-align: middle;text-align: center");
+                    }
+                }
+            });
+            if (objCur) {
+                objCur.attr("rowspan", countCur);
+                objCur.attr("style", "vertical-align: middle;text-align: center");
+            }
+        }
+    }
+
+    /*]]>*/
 </script>
 </body>
 
