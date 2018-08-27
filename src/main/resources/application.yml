@@ -51,7 +51,7 @@ ms:
   admin:
     auth:
       # 访问单点登入的url地址
-      serverName: http://localhost:${server.port}/elk
+      serverName: http://wwwdemo.msyos.com/elk
       shiro:
         logoutUrl: /logout.html
         successUrl: /index.html
