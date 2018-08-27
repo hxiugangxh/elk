@@ -383,7 +383,9 @@
             // 藏匿原始数据
             dataLineModel.find(".json-collapsed").attr("data", JSON.stringify(jsonData.source[i]));
 
-            jsonData.source[i].message = jsonData.source[i].message.replace(/<\/em>/gm, "").replace(/<em>/gm, "");
+            if (jsonData.source[i].message) {
+              jsonData.source[i].message = jsonData.source[i].message.replace(/<\/em>/gm, "").replace(/<em>/gm, "");
+            }
             dataLineModel.find(".json-collapsed").JSONView(jsonData.source[i], {
               collapsed: true,
               nl2br: true
