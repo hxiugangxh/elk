@@ -36,7 +36,7 @@
     <div class="fr header-fr">
       <ul class="header-tools cf">
         <li>
-          <a><i class="iconfont icon-yonghu"></i><span class="login-user">林某某</span><i
+          <a><i class="iconfont icon-yonghu"></i><span class="login-user" th:text="${userName}"></span><i
               class="iconfont icon-down"></i></a>
           <ul class="header-child userinfo">
            <!-- <li><a>个人信息</a></li>
@@ -44,7 +44,7 @@
             <li class="last"><a href="javaScript:loginOut()" target="_blank">安全退出</a></li>
             <script>
               function loginOut() {
-                window.location.href = "logout.html";
+                window.location.href = "http://wwwdemo.msyos.com/adminAuth/logout?service=http://wwwdemo.msyos.com/elk/logout.html";
               }
             </script>
           </ul>

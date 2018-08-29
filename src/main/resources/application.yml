@@ -5,21 +5,12 @@ server:
 spring:
   application:
       name: elk
-#  cloud:
-#    config:
-#      discovery:
-#        enabled: true
-#        service-id: CONFIG
-#      profile: dev
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: ylzinfo
     url: jdbc:mysql://192.168.43.33:3306/elk?useSSL=false&allowMultiQueries=true
-#  redis:
-#    host: localhost
-#  session:
-#      store-type: redis
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -54,7 +45,7 @@ ms:
       serverName: http://wwwdemo.msyos.com/elk
       shiro:
         logoutUrl: /logout.html
-        successUrl: /index.html
+        successUrl: /index
         unauthorizedUrl: /500.html
       cas:
         logoutUrl: http://wwwdemo.msyos.com/adminAuth/logout
@@ -63,4 +54,4 @@ ms:
         urlPrefix: http://wwwdemo.msyos.com/adminAuth/oauth2.0
         clientId: elk
         clientSecret: Ylzinfo@pt
-        successUrl: /index.html
+        successUrl: /index
