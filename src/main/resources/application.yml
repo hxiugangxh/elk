@@ -22,7 +22,7 @@ ms:
       serverName: http://wwwdemo.msyos.com/elk/
       shiro:
         logoutUrl: /logout.html
-        successUrl: /index
+        successUrl: /index.html
         unauthorizedUrl: /500.html
       cas:
         logoutUrl: http://wwwdemo.msyos.com/adminAuth/logout
@@ -31,7 +31,4 @@ ms:
         urlPrefix: http://wwwdemo.msyos.com/adminAuth/oauth2.0
         clientId: elk
         clientSecret: Ylzinfo@pt
-        successUrl: /index
-spring:
-  config:
-    location:
+        successUrl: /index.html
