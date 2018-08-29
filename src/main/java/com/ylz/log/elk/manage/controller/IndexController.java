@@ -2,19 +2,20 @@ package com.ylz.log.elk.manage.controller;
 
 import com.ylz.log.elk.base.util.LoginInfoUtil;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-@Controller
+@RestController
 public class IndexController {
 
-    @RequestMapping("/index")
-    public String index(Map<String, Object> map) {
+    @GetMapping("/getUserName")
+    public String getUserName() {
 
-        map.put("userName", LoginInfoUtil.getUserName());
-
-        return "index";
+        return LoginInfoUtil.getUserName();
     }
 
 }

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head lang="en">
+<head>
   <meta charset="UTF-8" />
   <title>首页</title>
   <link rel="shortcut icon" href="./assets/img/favicon.ico"/>
@@ -36,39 +36,14 @@
     <div class="fr header-fr">
       <ul class="header-tools cf">
         <li>
-          <a><i class="iconfont icon-yonghu"></i><span class="login-user" th:text="${userName}"></span><i
+          <a><i class="iconfont icon-yonghu"></i><span class="login-user" id="userName"></span><i
               class="iconfont icon-down"></i></a>
           <ul class="header-child userinfo">
            <!-- <li><a>个人信息</a></li>
             <li><a>密码修改</a></li>-->
             <li class="last"><a href="javaScript:loginOut()" target="_blank">安全退出</a></li>
-            <script>
-              function loginOut() {
-                window.location.href = "http://wwwdemo.msyos.com/adminAuth/logout?service=http://wwwdemo.msyos.com/elk/logout.html";
-              }
-            </script>
           </ul>
         </li>
-        <!--<li>
-          <a><i class="iconfont icon-tixing"></i><sup class="light_green400-bg">3</sup></a>
-          <ul class="header-child">
-            <li><a onclick="showallnews('8888','未读信息内容','')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a></li>
-            <li><a onclick="showallnews('9999','未读信息内容','')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a></li>
-            <li class="tools"><a onclick="showallnews('6666','未读信息','')"><i class="iconfont icon-weidu"></i>查看所有消息</a>
-            </li>
-          </ul>
-        </li>
-        <li>
-          <a><i class="iconfont icon-svg31"></i><sup class="yellow800-bg">3</sup></a>
-          <ul class="header-child">
-            <li><a onclick="showallnews('6666','报警信息','warning-content.html')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a>
-            </li>
-            <li><a onclick="showallnews('5555','报警信息','warning-content.html')"><span>该框架还在完善中</span><i class="time">2017-4-20</i></a>
-            </li>
-            <li class="tools"><a onclick="showallnews('7777','报警信息','warning-content.html')"><i
-                class="iconfont icon-weidu"></i>查看所有消息</a></li>
-          </ul>
-        </li>-->
       </ul>
     </div>
   </div>
@@ -139,7 +114,18 @@
 <script type="text/javascript" src="./assets/js/ggfwkj.js"></script>
 <script type="text/javascript" src="./assets/plugins/warn-dialog/js/warnDialog.js"></script>
 <script type="text/javascript">
-
+  jQuery(function() {
+    getUserName()
+  });
+  function getUserName() {
+    var URL = "getUserName"
+    $.get(URL, {}, function(userName) {
+      $("#userName").html(userName);
+    })
+  }
+  function loginOut() {
+    window.location.href = "http://wwwdemo.msyos.com/adminAuth/logout?service=http://wwwdemo.msyos.com/elk/logout.html";
+  }
   $(function () {
     $.warnDialog({
       height: 152,
