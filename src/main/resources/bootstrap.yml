@@ -1,14 +1,52 @@
-eureka:
-  client:
-    service-url:
-      defaultZone: http://192.168.44.56:8080/eureka
-  instance:
-    prefer-ip-address: true
-    leaseRenewalIntervalInSeconds: 1
-    leaseExpirationDurationInSeconds: 2
-    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${spring.application.instance_id:${server.port}}
-    status-page-url-path: /${spring.application.name}
+spring:
+  application:
+      name: elk
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: ylzinfo
+    url: jdbc:mysql://192.168.43.33:3306/elk?useSSL=false&allowMultiQueries=true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  http:
+    encoding:
+      force: true
+  data:
+    elasticsearch:
+      cluster-name: ylz
+      cluster-nodes: 192.168.44.88:9300
 
-feign:
-  hystrix:
-    enabled: true
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  config-location: classpath:config/mybatis-conf.xml
+
+pagehelper:
+  auto-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
+
+logging:
+  level:
+    com.ylz.log.elk.manage.dao.mapper: debug
+
+# 单点登录 对接
+ms:
+  admin:
+    auth:
+      # 访问单点登入的url地址
+      serverName: http://wwwdemo.msyos.com/elk/
+      shiro:
+        logoutUrl: /logout.html
+        successUrl: /index
+        unauthorizedUrl: /500.html
+      cas:
+        logoutUrl: http://wwwdemo.msyos.com/adminAuth/logout
+        changePwdUrl: http://wwwdemo.msyos.com/adminAuth/oauth2.0
+      oauth:
+        urlPrefix: http://wwwdemo.msyos.com/adminAuth/oauth2.0
+        clientId: elk
+        clientSecret: Ylzinfo@pt
+        successUrl: /index
