@@ -2,10 +2,10 @@ spring:
   application:
       name: elk
   datasource:
-    driver-class-name: com.mysql.jdbc.Driver
-    username: root
-    password: ylzinfo
-    url: jdbc:mysql://192.168.43.33:3306/elk?useSSL=false&allowMultiQueries=true
+    driver-class-name: com.informix.jdbc.IfxDriver
+    username: cloud_sys
+    password: ylz2018
+    url: jdbc:informix-sqli://192.168.44.86:9088/cloud_sys:INFORMIXSERVER=gbaseserver;DB_LOCALE=zh_CN.utf8;CLIENT_LOCALE=zh_CN.utf8;NEWCODESET=UTF8,utf8,57372;GL_USEGLU=1
   jpa:
     hibernate:
       ddl-auto: none
@@ -21,12 +21,6 @@ spring:
 mybatis:
   mapper-locations: classpath:mapper/*.xml
   config-location: classpath:config/mybatis-conf.xml
-
-pagehelper:
-  auto-dialect: mysql
-  reasonable: true
-  support-methods-arguments: true
-  params: count=countSql
 
 logging:
   level:

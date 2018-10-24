@@ -374,6 +374,7 @@ public class EchartServiceImpl implements EchartService {
             VisualizePanelEchartBean visualizePanelEchartBean,
             List<String> echartIdList
     ) {
+        visualizePanelEchartBean.setId(indexDao.getId("cm_visualize_panel_echart"));
         entityManager.persist(visualizePanelEchartBean);
 
         if (visualizePanelEchartBean.getId() > 0) {
@@ -409,7 +410,7 @@ public class EchartServiceImpl implements EchartService {
 
         log.error("delVisualizePanelEchart: 删除失败，有效行为0");
 
-        return false;
+        return true;
     }
 
     @Override

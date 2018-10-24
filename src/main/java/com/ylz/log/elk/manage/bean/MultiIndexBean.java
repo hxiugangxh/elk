@@ -15,7 +15,7 @@ public class MultiIndexBean {
         this.multiIndex = multiIndex;
     }
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer id;
     private String multiIndex;
 

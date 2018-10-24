@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Table(name = "cm_visualize_panel_echart")
 public class VisualizePanelEchartBean {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id/* @GeneratedValue(strategy = GenerationType.IDENTITY)*/
     private Integer id;
     private String panelName;
 }

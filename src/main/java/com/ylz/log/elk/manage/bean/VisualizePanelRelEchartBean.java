@@ -11,7 +11,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "cm_visualize_panel_rel_echart")
 public class VisualizePanelRelEchartBean {
-    @Id @GeneratedValue
+    @Id/* @GeneratedValue*/
     private Integer panelId;
     private Integer echartId;
     private Integer sort;

@@ -37,7 +37,7 @@ public class VisualizeChartBean {
         formataMap.put("yyyy-MM-dd", DateHistogramInterval.DAY);
     }
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer id;
 
     private String echartName;

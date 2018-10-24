@@ -75,6 +75,14 @@ public class IndexDaoImpl implements IndexDao {
         return new ArrayList<>(indexSet);
     }
 
+    public Integer getId(String tableName) {
+        String querySQL = "select case when max(id) is not null then max(id) else 0 end id from " + tableName;
+
+        Integer id = this.jdbcTemplate.queryForObject(querySQL, Integer.class);
+
+        return ++id;
+    }
+
     /**
      * 通过index获取type，以type获取其所有字段
      *
@@ -334,34 +342,31 @@ public class IndexDaoImpl implements IndexDao {
     public boolean saveMultiIndex(String multiIndex, List<String> indexList) {
         log.info("saveMultiIndex: index = {}, indexList = {}", multiIndex, indexList);
         MultiIndexBean mutilIndexBean = new MultiIndexBean(multiIndex);
+        mutilIndexBean.setId(this.getId("cm_multi_index"));
         entityManager.persist(mutilIndexBean);
+
+        Integer id = this.getId("cm_es_index");
 
         List<EsIndexBean> esIndexList = new EsIndexBean(indexList).getEsIndex();
 
-        esIndexList.forEach((esIndexBean) -> {
+        for (EsIndexBean esIndexBean : esIndexList) {
+            esIndexBean.setId(id++);
             entityManager.persist(esIndexBean);
-        });
-
-        Integer length = esIndexList.size();
-        String insertSQL = "insert into cm_multi_rel_es_index values";
-        for (int i = 0; i < length; i++) {
-            if (i == length - 1) {
-                insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + ")";
-            } else {
-                insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + "),";
-            }
         }
 
-        log.info("saveMultiIndex--批量保存关系: {}", insertSQL);
+        Integer length = esIndexList.size();
 
-        Integer count = this.jdbcTemplate.update(insertSQL);
-        if (count > 0) {
-            return true;
+        for (int i = 0; i < length; i++) {
+            String insertSQL = "insert into cm_multi_rel_es_index values";
+                insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + ")";
+            log.info("saveMultiIndex--批量保存关系: {}", insertSQL);
+
+            this.jdbcTemplate.update(insertSQL);
         }
 
         log.error("saveMultiIndex--保存失败，有效行数为0");
 
-        return false;
+        return true;
     }
 
     @Override

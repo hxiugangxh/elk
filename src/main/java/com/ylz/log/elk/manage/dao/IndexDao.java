@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface IndexDao {
+    Integer getId(String tableName);
+
     List<String> listIndex();
 
     List<String> listField(String index, String type);

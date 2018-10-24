@@ -299,42 +299,45 @@
     var index = layer.load();
     var URL = "editVisualizePanelEchart/" + id;
     $.post(URL, {}, function (jsonData) {
+      if (jsonData.visualizePanelEchartBean != null) {
+        selectArr = $(".echart_view").map(function () {
+          return -1;
+        }).get();
 
-      selectArr = $(".echart_view").map(function () {
-        return -1;
-      }).get();
-
-      var panelRelEchartList = jsonData.panelRelEchartList;
-      for (var i = 0; i < panelRelEchartList.length; i++) {
-        selectArr[panelRelEchartList[i].sort] = panelRelEchartList[i].echartId;
-      }
-
-      $("#Modal_view").html(myModalClone.html());
-      initEchart();
-      options.currentPage = 1;
-
-      for (var i = 0; i < panelRelEchartList.length; i++) {
-        selectArr[panelRelEchartList[i].sort] = panelRelEchartList[i].echartId;
-      }
-      pageSelectEchart();
-
-      for (var i = 0; i < selectArr.length; i++) {
-        if (selectArr[i] > -1) {
-          editVisualizeEchart(selectArr[i], i);
+        var panelRelEchartList = jsonData.panelRelEchartList;
+        for (var i = 0; i < panelRelEchartList.length; i++) {
+          selectArr[panelRelEchartList[i].sort] = panelRelEchartList[i].echartId;
         }
+
+        $("#Modal_view").html(myModalClone.html());
+        initEchart();
+        options.currentPage = 1;
+
+        for (var i = 0; i < panelRelEchartList.length; i++) {
+          selectArr[panelRelEchartList[i].sort] = panelRelEchartList[i].echartId;
+        }
+        pageSelectEchart();
+
+        for (var i = 0; i < selectArr.length; i++) {
+          if (selectArr[i] > -1) {
+            editVisualizeEchart(selectArr[i], i);
+          }
+        }
+
+        $("#id").val(jsonData.visualizePanelEchartBean.id);
+        $("#panelName").val(jsonData.visualizePanelEchartBean.panelName);
+        hisPanelName = jsonData.visualizePanelEchartBean.panelName;
+        $("#existFlag").html("");
+        $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
+
+        $('#Modal_view').modal('show');
+
+        $(".modal-btn").hide();
+        $("#modifyBtn").show();
+        $("#myModalLabel").html("修改面板");
+      } else {
+        layer.msg("目录\\项目已经被删除", {icon: 2});
       }
-
-      $("#id").val(jsonData.visualizePanelEchartBean.id);
-      $("#panelName").val(jsonData.visualizePanelEchartBean.panelName);
-      hisPanelName = jsonData.visualizePanelEchartBean.panelName;
-      $("#existFlag").html("");
-      $("#existFlag").attr("class", "mr5 glyphicon glyphicon-ok green");
-
-      $('#Modal_view').modal('show');
-
-      $(".modal-btn").hide();
-      $("#modifyBtn").show();
-      $("#myModalLabel").html("修改面板");
 
       layer.close(index);
     }, "json");
@@ -636,19 +639,19 @@
             txt = "id=" + id + "的图表已经不存在";
           }
           var txtDom = "<div style='font-size: 20px;font-weight: bold;color: #ddd;line-height: 174px;vertical-align: center;text-align: center'>" +
-             txt + "</div>";
+            txt + "</div>";
           // 放个空值 占位
           echartArr[index].setOption({title: {text: " "}});
           $(echartDom).prepend(txtDom);
           //layer.msg($input.parents("td").next().html() + "所属的" + jsonData.errorMsg, {icon: 2});
         }
 
-        $.each($(".table_show input[type=checkbox]"), function(index, domEle) {
+        $.each($(".table_show input[type=checkbox]"), function (index, domEle) {
           if ($(domEle).prop("checked")) {
             var id = $(this).val();
             var flag = true;
             for (var i = 0; i < selectArr.length; i++) {
-              if(id == selectArr[i]) {
+              if (id == selectArr[i]) {
                 flag = false;
               }
             }

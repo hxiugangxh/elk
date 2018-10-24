@@ -15,20 +15,20 @@ eureka:
     status-page-url-path: /${spring.application.name}
 
 # 单点登录 对接
-ms:
-  admin:
-    auth:
-      # 访问单点登入的url地址
-      serverName: http://wwwdemo.msyos.com/elk/
-      shiro:
-        logoutUrl: /logout.html
-        successUrl: /index.html
-        unauthorizedUrl: /500.html
-      cas:
-        logoutUrl: http://wwwdemo.msyos.com/adminAuth/logout
-        changePwdUrl: http://wwwdemo.msyos.com/adminAuth/oauth2.0
-      oauth:
-        urlPrefix: http://wwwdemo.msyos.com/adminAuth/oauth2.0
-        clientId: elk
-        clientSecret: Ylzinfo@pt
-        successUrl: /index.html
+#ms:
+#  admin:
+#    auth:
+#      # 访问单点登入的url地址
+#      serverName: http://wwwdemo.msyos.com/elk/
+#      shiro:
+#        logoutUrl: /logout.html
+#        successUrl: /index.html
+#        unauthorizedUrl: /500.html
+#      cas:
+#        logoutUrl: http://wwwdemo.msyos.com/adminAuth/logout
+#        changePwdUrl: http://wwwdemo.msyos.com/adminAuth/oauth2.0
+#      oauth:
+#        urlPrefix: http://wwwdemo.msyos.com/adminAuth/oauth2.0
+#        clientId: elk
+#        clientSecret: Ylzinfo@pt
+#        successUrl: /index.html

@@ -12,10 +12,9 @@ import java.util.List;
 @Table(name = "cm_es_index")
 public class EsIndexBean {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Integer id;
 
-    @Column(name = "\"index\"")
     private String index;
 
     public EsIndexBean() {}
