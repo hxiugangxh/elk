@@ -14,7 +14,7 @@ public interface IndexDao {
     List<String> listField(String index, String type);
 
     Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field,
-                                  String logLevel, String searchContent);
+                                  String logLevel, String searchContent, String startTime, String endTime);
 
     List<MultiIndexBean> listMultiIndex();
 

@@ -1,12 +1,12 @@
 server:
-  port: 12500
+  port: 8100
   servlet:
     context-path: /${spring.application.name}
 
 eureka:
   client:
     service-url:
-      defaultZone: http://10.1.71.21:10800/eureka/
+      defaultZone: http://192.168.44.56:8080/eureka
   instance:
     prefer-ip-address: true
     leaseRenewalIntervalInSeconds: 1
@@ -19,9 +19,9 @@ spring:
       name: elk
   datasource:
     driver-class-name: com.informix.jdbc.IfxDriver
-    url: jdbc:informix-sqli://10.1.70.57:1521/dept_im:INFORMIXSERVER=gbase;DB_LOCALE=zh_CN.utf8;CLIENT_LOCALE=zh_CN.utf8;NEWCODESET=UTF8,utf8,57372;GL_USEGLU=1
-    username: informix
-    password: zwxxglc1264
+    username: cloud_sys
+    password: ylz2018
+    url: jdbc:informix-sqli://192.168.44.86:9088/cloud_sys:INFORMIXSERVER=gbaseserver;DB_LOCALE=zh_CN.utf8;CLIENT_LOCALE=zh_CN.utf8;NEWCODESET=UTF8,utf8,57372;GL_USEGLU=1
   jpa:
     hibernate:
       ddl-auto: none
@@ -31,8 +31,8 @@ spring:
       force: true
   data:
     elasticsearch:
-      cluster-name: esCluster
-      cluster-nodes: node-2
+      cluster-name: ylz
+      cluster-nodes: 192.168.44.88:9300
 
 logging:
   level:
@@ -47,16 +47,16 @@ ms:
   admin:
     auth:
       # 访问单点登入的url地址
-      serverName: http://10.1.71.21:12500/elk/
+      serverName: http://wwwdemo.msyos.com/elk/
       shiro:
         logoutUrl: /logout.html
         successUrl: /index.html
         unauthorizedUrl: /500.html
       cas:
-        logoutUrl: http://10.1.71.21:12500/adminAuth/logout
-        changePwdUrl: http://10.1.71.21:12500/adminAuth/oauth2.0
+        logoutUrl: http://wwwdemo.msyos.com/adminAuth/logout
+        changePwdUrl: http://wwwdemo.msyos.com/adminAuth/oauth2.0
       oauth:
-        urlPrefix: http://10.1.71.21:12500/adminAuth/oauth2.0
+        urlPrefix: http://wwwdemo.msyos.com/adminAuth/oauth2.0
         clientId: elk
         clientSecret: Ylzinfo@pt
         successUrl: /index.html

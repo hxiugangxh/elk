@@ -29,7 +29,6 @@ public class IndexManageController {
     public String index(Map<String, Object> map) {
 
 
-
         Map<String, Object> esFieldmap = indexService.esFieldMap();
 
         map.put("esFieldmap", esFieldmap);
@@ -46,12 +45,15 @@ public class IndexManageController {
             @RequestParam(value = "type") String type,
             @RequestParam(value = "field", defaultValue = "") String field,
             @RequestParam(value = "logLevel") String logLevel,
+            @RequestParam(value = "startTime", defaultValue = "") String startTime,
+            @RequestParam(value = "endTime", defaultValue = "") String endTime,
             @RequestParam(value = "searchContent", defaultValue = "") String searchContent
     ) {
         Map<String, Object> jsonMap = new HashMap<>();
 
         try {
-            jsonMap.putAll(indexService.queryByEs(page, pageSize, index, type, field, logLevel, searchContent));
+            jsonMap.putAll(indexService.queryByEs(page, pageSize, index, type, field, logLevel, searchContent,
+                    startTime, endTime));
 
             jsonMap.put("flag", true);
         } catch (Exception e) {

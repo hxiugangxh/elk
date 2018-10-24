@@ -76,9 +76,9 @@ public class IndexServiceImpl implements IndexService {
 
     @Override
     public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type, String field,
-                                         String logLevel, String searchContent) {
+                                         String logLevel, String searchContent, String startTime, String endTime) {
 
-        return indexDao.queryByEs(page, pageSize, index, type, field, logLevel, searchContent);
+        return indexDao.queryByEs(page, pageSize, index, type, field, logLevel, searchContent, startTime, endTime);
     }
 
     @Override

@@ -5,6 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>日志搜索</title>
+
   <!--基础样式-->
   <th:block th:include="common/pub_head :: default"></th:block>
   <th:block th:include="common/pub_head :: base-css"></th:block>
@@ -58,7 +59,7 @@
       <div class="row">
         <div class="col-xs-12">
           <span style="float: left;line-height: 34px">日志级别：</span>
-          <div style="float: left">
+          <div style="float: left;margin-left: 14px">
             <select class="form-control" id="logLevel">
               <option value="">全部</option>
               <option value="INFO">INFO</option>
@@ -67,6 +68,27 @@
               <option value="ERROR">ERROR</option>
             </select>
           </div>
+
+          <div class="col-xs-8">
+            <div style="float: left">
+              <span style="float: left;line-height: 34px;margin-left: 10px">开始时间：</span>
+              <input type="text" class="form-control" style="display: inline;width: 200px!important; margin: 0"
+                     onclick="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss', maxDate:'#F{$dp.$D(\'endTime\')||\'%y-%M-%d\'}'})"
+                     placeholder="开始时间" id="startTime"/>
+            </div>
+            <div style="float: left;margin-left: 20px">
+              <span style="float: left;line-height: 34px">结束时间：</span>
+              <input type="text" class="form-control" style="display: inline;width: 200px!important"
+                     onclick="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss', maxDate: '%y-%M-%d'})"
+                     placeholder="结束时间" id="endTime" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12">
+          <span style="float: left;line-height: 34px">搜索内容：</span>
           <div class="col-xs-6">
             <input type="text" class="form-control" placeholder="请输入搜索内容" id="searchContent"/>
           </div>
@@ -78,7 +100,6 @@
             <span class="ml-20">搜索总数:&nbsp;&nbsp;</span><span class="bold border-bottom" id="total">0</span>
             <span>条</span>
           </div>
-
         </div>
       </div>
 
@@ -311,7 +332,17 @@
       layer.close(loadIndex);
       $("#data-line-div").html("");
       $("#pagination-ele").html("<span>暂无数据</span>");
-      return;
+      return;sta
+    }
+
+    var startTime = $("#startTime").val();
+    var endTime = $("#endTime").val();
+    if (startTime != "" && endTime != "") {
+      if (new Date(startTime).getTime() > new Date(endTime).getTime()) {
+        layer.msg("开始时间不能大于结束时间", {icon: 2});
+        layer.close(loadIndex);
+        return;
+      }
     }
 
     var formData = {
@@ -320,6 +351,8 @@
       "page": options.currentPage - 1,
       "field": field,
       "logLevel": $("#logLevel").val(),
+      "startTime": startTime,
+      "endTime": endTime,
       "searchContent": searchContent
     };
 

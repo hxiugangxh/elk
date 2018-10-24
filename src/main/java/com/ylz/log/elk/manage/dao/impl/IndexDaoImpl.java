@@ -1,5 +1,6 @@
 package com.ylz.log.elk.manage.dao.impl;
 
+import com.ylz.log.elk.base.util.DateUtils;
 import com.ylz.log.elk.base.util.EsUtil;
 import com.ylz.log.elk.base.util.LoginInfoUtil;
 import com.ylz.log.elk.manage.bean.*;
@@ -17,6 +18,7 @@ import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.text.Text;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -165,7 +167,8 @@ public class IndexDaoImpl implements IndexDao {
 
     @Override
     public Map<String, Object> queryByEs(Integer page, Integer pageSize, String index, String type,
-                                         String field, String logLevel, String searchContent) {
+                                         String field, String logLevel, String searchContent, String startTime,
+                                         String endTime) {
         Map<String, Object> dataMap = new HashMap<>();
 
         List<String> indexList = new ArrayList<>();
@@ -183,7 +186,8 @@ public class IndexDaoImpl implements IndexDao {
                 .setFrom(page * pageSize).setSize(pageSize);
 
         List<String> fieldList = new ArrayList<>();
-        if (StringUtils.isEmpty(searchContent) && StringUtils.isEmpty(logLevel)) {
+        if (StringUtils.isBlank(searchContent) && StringUtils.isBlank(logLevel)
+                && StringUtils.isBlank(startTime) && StringUtils.isBlank(endTime)) {
             searchRequestBuilder.setQuery(matchAllQuery());
         } else {
             BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -204,6 +208,16 @@ public class IndexDaoImpl implements IndexDao {
             // 日志级别搜索
             if (StringUtils.isNotEmpty(logLevel)) {
                 boolQueryBuilder.must(matchQuery("logLevel", logLevel));
+            }
+
+            RangeQueryBuilder rangeQueryBuilder = rangeQuery("@timestamp");
+            String formate = "yyyy-MM-dd HH:mm:ss";
+            if (StringUtils.isNotEmpty(startTime)) {
+                boolQueryBuilder.must(rangeQueryBuilder.gte(DateUtils.parse(startTime, formate).getTime()));
+            }
+
+            if (StringUtils.isNotEmpty(endTime)) {
+                boolQueryBuilder.must(rangeQueryBuilder.lte(DateUtils.parse(endTime, formate).getTime()));
             }
 
             searchRequestBuilder.setQuery(boolQueryBuilder);
@@ -242,7 +256,8 @@ public class IndexDaoImpl implements IndexDao {
                     index, indexList, page, pageSize, searchRequestBuilder);
             currentPage = totalPages;
 
-            return this.queryByEs((int) (currentPage - 1), pageSize, index, type, field, "", searchContent);
+            return this.queryByEs((int) (currentPage - 1), pageSize, index, type, field, "", searchContent,
+                    startTime, endTime);
         }
 
         List<Map<String, Object>> result = new ArrayList<>();
@@ -358,7 +373,7 @@ public class IndexDaoImpl implements IndexDao {
 
         for (int i = 0; i < length; i++) {
             String insertSQL = "insert into cm_multi_rel_es_index values";
-                insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + ")";
+            insertSQL += "(" + mutilIndexBean.getId() + ", " + esIndexList.get(i).getId() + ")";
             log.info("saveMultiIndex--批量保存关系: {}", insertSQL);
 
             this.jdbcTemplate.update(insertSQL);
