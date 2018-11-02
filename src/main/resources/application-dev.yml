@@ -32,7 +32,7 @@ spring:
   data:
     elasticsearch:
       cluster-name: esCluster
-      cluster-nodes: node-2
+      cluster-nodes: 10.1.71.22:9300
 
 logging:
   level:
@@ -47,7 +47,7 @@ ms:
   admin:
     auth:
       # 访问单点登入的url地址
-      serverName: http://10.1.71.21:${server.port}/elk
+      serverName: http://10.1.71.23:21400/elk
       shiro:
         logoutUrl: /logout.html
         successUrl: /index.html
