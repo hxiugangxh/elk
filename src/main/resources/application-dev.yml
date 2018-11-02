@@ -19,7 +19,7 @@ spring:
       name: elk
   datasource:
     driver-class-name: com.informix.jdbc.IfxDriver
-    url: jdbc:informix-sqli://10.1.70.57:1521/dept_im:INFORMIXSERVER=gbase;DB_LOCALE=zh_CN.utf8;CLIENT_LOCALE=zh_CN.utf8;NEWCODESET=UTF8,utf8,57372;GL_USEGLU=1
+    url: jdbc:informix-sqli://10.1.70.57:1521/log_link:INFORMIXSERVER=gbase;DB_LOCALE=zh_CN.utf8;CLIENT_LOCALE=zh_CN.utf8;NEWCODESET=UTF8,utf8,57372;GL_USEGLU=1
     username: informix
     password: zwxxglc1264
   jpa:
@@ -47,16 +47,12 @@ ms:
   admin:
     auth:
       # 访问单点登入的url地址
-      serverName: http://10.1.71.21:12500/elk/
+      serverName: http://10.1.71.21:${server.port}/elk
       shiro:
         logoutUrl: /logout.html
         successUrl: /index.html
         unauthorizedUrl: /500.html
       cas:
-        logoutUrl: http://10.1.71.21:12500/adminAuth/logout
-        changePwdUrl: http://10.1.71.21:12500/adminAuth/oauth2.0
-      oauth:
-        urlPrefix: http://10.1.71.21:12500/adminAuth/oauth2.0
-        clientId: elk
-        clientSecret: Ylzinfo@pt
-        successUrl: /index.html
+        prefixUrl: http://10.1.71.23:11300/adminAuth
+        logoutUrl: http://10.1.71.23:11300/adminAuth/logout
+        changePwdUrl: http://10.1.71.23:11300/adminAuth/oauth2.0

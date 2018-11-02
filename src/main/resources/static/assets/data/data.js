@@ -28,7 +28,7 @@ var zNodes = [
   {id: 12, pId: 1, name: "管理页", "url": "indexManage/dataManage"},
   {id: 13, pId: 1, name: "图表统计", "url": "echartManage/dataView"},
   {id: 14, pId: 1, name: "显示面板", "url": "echartManage/dataShowPanel"},
-  {id: 15, pId: 1, name: "zipkin链路", "url": "http://192.168.44.88:9411"}
+  {id: 15, pId: 1, name: "zipkin链路", "url": "http://10.1.71.22:9411"}
 
   //{ id:9, pId:0, name:"日子查询页面",iconSkin:"glyphicon glyphicon-leaf","url":"page_data_search"},
   //{ id:8, pId:0, name:"日子查询页面",iconSkin:"glyphicon glyphicon-leaf","url":"page_data_search"},
