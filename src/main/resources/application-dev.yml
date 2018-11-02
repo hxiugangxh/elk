@@ -32,7 +32,11 @@ spring:
   data:
     elasticsearch:
       cluster-name: esCluster
-      cluster-nodes: 10.1.71.22:9300
+      cluster-nodes: 10.1.71.21:9300
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  config-location: classpath:config/mybatis-conf.xml
 
 logging:
   level:

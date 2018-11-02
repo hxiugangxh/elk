@@ -34,6 +34,10 @@ spring:
       cluster-name: ylz
       cluster-nodes: 192.168.44.88:9300
 
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  config-location: classpath:config/mybatis-conf.xml
+
 logging:
   level:
     com.ylz.log.elk.manage.dao.mapper: debug

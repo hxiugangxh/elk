@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>首页</title>
+  <link rel="shortcut icon" href="./assets/img/favicon.ico"/>
+  <link rel="bookmark" href="./assets/img/favicon.ico"/>
+  <!-- 插件样式库 -->
+  <link rel="stylesheet" type="text/css" href="./assets/plugins/bootstrap-3.3.0/css/bootstrap.min.css"/>
+  <!--layer-->
+  <link type="text/css" rel="stylesheet" href="./assets/plugins/layer-v2.4/skin/layer.css"/>
+  <!--zTree插件-->
+  <link type="text/css" rel="stylesheet" href="./assets/plugins/zTree_v3-master/css/zTreeStyle/zTreeStyle.css"/>
+  <!--iconfont字体库-->
+  <link type="text/css" rel="stylesheet" href="./assets/font/iconfont.css"/>
+  <link type="text/css" rel="stylesheet" href="./assets/font/font-awesome.css"/>
+  <!--基础样式-->
+  <link type="text/css" rel="stylesheet" href="./assets/css/base/base.css"/>
+  <!--页面布局样式文件-->
+  <link type="text/css" rel="stylesheet" href="./assets/css/base/layout.css"/>
+  <!--颜色样式-->
+  <link type="text/css" rel="stylesheet" href="./assets/css/base/color.css"/>
+  <!--warnDialog样式文件-->
+  <link type="text/css" rel="stylesheet" href="./assets/plugins/warn-dialog/css/warnDialog.css"/>
+
+  <!--主题色-->
+  <link type="text/css" rel="stylesheet" href="./assets/css/base/themecolor_blue.css"/>
+</head>
+<body class="well-blue">
+<div class="index">
+  <!--logo 头部-->
+  <div class="themebg header cf">
+    <div class="fl header-fl">
+      <img src="./assets/img/logo3.png" style="width: 137px;margin-right: 22px;">分布式日志监控系统
+    </div>
+    <div class="fr header-fr">
+      <ul class="header-tools cf">
+        <li>
+          <a><i class="iconfont icon-yonghu"></i><span class="login-user" id="userName"></span><i
+              class="iconfont icon-down"></i></a>
+          <ul class="header-child userinfo">
+           <!-- <li><a>个人信息</a></li>
+            <li><a>密码修改</a></li>-->
+            <li class="last"><a href="javaScript:loginOut()" target="_blank">安全退出</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <!--logo 头部-->
+  <!--nav 菜单栏 头部-->
+  <!--<div id="nav" class="nav"></div>-->
+  <!--nav 菜单栏 头部-->
+  <!--左侧菜单-->
+  <div class="left">
+    <div class="search-nav">
+      <input type="text" placeholder="搜索..."/><i class="icon-search"></i>
+    </div>
+    <div class="left-nav" id="left-nav" tabindex="5000" style="height: 566px; overflow-y: hidden; outline: none;">
+      <ul id="treeDemo" class="ztree"></ul>
+    </div>
+    <!---收缩按钮-->
+    <div class="shrink"></div>
+    <!---收缩按钮-->
+  </div>
+  <!--左侧菜单-->
+  <!--右侧内容-->
+  <div class="page-wrapper">
+    <!--右侧内容主tab-->
+    <div class="content-tabs">
+      <button class="roll-nav roll-left"><i class="iconfont icon-ttpodicon"></i></button>
+      <div class="page-tabs">
+        <a href="javascript:void(0);" class="first J_menuTab active last" data-id="daas"><i
+            class="iconfont icon-shouyeshouye2"></i>首页</a>
+      </div>
+      <button class="roll-nav roll-right J_tabRight"><i class="iconfont icon-next"></i></button>
+      <div class="roll-nav roll-right btn-group" id="other_operation">
+        <button class="closeopers">其他操作<i class="iconfont icon-down"></i></button>
+        <ul class="dropdown-menu-right">
+          <li class="J_tabRefreshActive"><a>刷新当前选项卡</a></li>
+          <li class="J_tabShowActive"><a>定位当前选项卡</a></li>
+          <li class="divider"></li>
+          <li class="J_tabCloseAll"><a>关闭全部选项卡</a></li>
+          <li class="J_tabCloseOther"><a>关闭其他选项卡</a></li>
+        </ul>
+      </div>
+    </div>
+    <!--右侧内容主tab-->
+    <div class="page-content" id="pageContent" style="overflow-y: hidden">
+      <iframe class="J_iframe" scrolling="no" src="page_index_first.html" width="100%" height="100%" frameborder="0"
+              data-id="daas"></iframe>
+    </div>
+    <!--右侧内容-->
+  </div>
+  <!--底部-->
+  <!--<div class="footer" id="indexfooter">-->
+    <!--版权所有:易联众信息技术股份有限公司-->
+  <!--</div>-->
+</div>
+<!--底部-->
+<!--jquery 引入-->
+<script type="text/javascript" src="./assets/js/jquery/jquery-1.12.3.min.js"></script>
+<!--[if lte IE 8]>
+<script type="text/javascript" src="./assets/js/jquery/jquery-1.9.0.min.js"></script>
+<![endif]-->
+<!--layer插件-->
+<script type="text/javascript" src="./assets/plugins/layer-v2.4/layer.js"></script>
+<!--滚动条-->
+<script type="text/javascript" src="./assets/plugins/scroll/jquery.nicescroll.js"></script>
+<script type="text/javascript" src="./assets/plugins/scroll/jquery.SuperSlide.2.1.js"></script>
+<!--zTree插件-->
+<script type="text/javascript" src="./assets/plugins/zTree_v3-master/js/jquery.ztree.core.min.js"></script>
+<script type="text/javascript" src="./assets/data/data.js"></script>
+<script type="text/javascript" src="./assets/js/ggfwkj.js"></script>
+<script type="text/javascript" src="./assets/plugins/warn-dialog/js/warnDialog.js"></script>
+<script type="text/javascript">
+  jQuery(function() {
+    getUserName()
+  });
+  function getUserName() {
+    var URL = "getUserName"
+    $.get(URL, {}, function(userName) {
+      $("#userName").html(userName);
+    })
+  }
+  function loginOut() {
+    window.location.href = "http://10.1.71.23:11300/adminAuth/logout?service=http://10.1.71.23:11300/elk/logout.html";
+  }
+  $(function () {
+    $.warnDialog({
+      height: 152,
+      firstBtn: "处理完成",
+      secBtn: "忽略",
+      url: ""
+    });
+    /***通过大菜单的id获取对应左侧的子菜单**/
+    loadleftnav('treeDemo', '', zNodes);
+
+    function setHeight() {
+      var bodyHeight = $(window).height();
+      var contHeight = bodyHeight - 160;
+      $("#left-nav").css("height", contHeight + "px");
+    }
+
+    setHeight();
+    var html = '<div style="padding: 10px 30px;line-height: 30px;">该框架仅适用于易联众公司，<br>如有在使用过程中有任何疑问，<br>请及时跟开发人员联系</div>';
+    /*var ob={aaa:1,callback: {onClick:function(that){console.log("aaa")}}}
+     loadleftnav('treeDemo',ob,zNodes);*/
+    $("#left-nav,.ztree,.J_iframe").niceScroll({
+      cursorcolor: "#666666",
+      cursoropacitymax: 1,
+      touchbehavior: false,
+      cursorwidth: "5px",
+      cursorborder: "0",
+      cursorborderradius: "5px",
+      horizrailenabled: false,
+      autohidemode: true//不滚动时设置隐藏滚动条
+    });
+    $(window).resize(function () {
+      setHeight();
+      var smy_hei = $(window).height() - 100;
+      $("#left-nav").height(smy_hei);
+      $(".ztree").height(smy_hei);
+      $(".J_iframe").height(smy_hei);
+    });
+  });
+</script>
+</body>
+</html>
